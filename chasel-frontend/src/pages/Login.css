@@ -1,0 +1,148 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fce9e4;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-panel {
+  background: white;
+  width: 400px;
+  padding: 48px 40px;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.login-logo {
+  color: #ec6f5c;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.login-panel h1 {
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.login-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-panel input[type='email'],
+.login-panel input[type='password'] {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-panel input[type='email']:focus,
+.login-panel input[type='password']:focus {
+  border-color: #ec6f5c;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+  align-items: center;
+}
+
+.login-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.login-options a {
+  color: #666;
+  text-decoration: none;
+}
+
+.login-panel button[type='submit'] {
+  background: #ec6f5c;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-panel button[type='submit']:hover {
+  background: #e15a45;
+}
+
+.login-panel button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-error {
+  color: #d9453d;
+  font-size: 13px;
+  margin: 0;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 20px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dashed #ddd;
+}
+
+.login-divider span {
+  padding: 0 12px;
+}
+
+.login-social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.social-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login-illustration {
+  width: 400px;
+  height: 600px;
+  background: rgb(236, 167, 114);
+  border-radius: 0 16px 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustration-shape {
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
