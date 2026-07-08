@@ -3,6 +3,7 @@ package com.app.chasel.dto;
 public class RegisterRequest {
     private String email;
     private String password;
+    private String location;
 
     public String getEmail() {
         return email;
@@ -18,5 +19,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

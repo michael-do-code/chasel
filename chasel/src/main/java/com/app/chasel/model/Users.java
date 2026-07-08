@@ -14,8 +14,10 @@ public class Users {
 
     @Column(nullable = false)
     private String password;
-    // getters and setters
 
+    private String location;
+
+    // getters and setters
     public Long getId() {
         return id;
     }
@@ -40,4 +42,11 @@ public class Users {
         this.password = password;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }
