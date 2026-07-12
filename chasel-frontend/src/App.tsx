@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
+import SellItem from './pages/SellItem';
+import Home from './pages/Home';
 import Tasks from './pages/Tasks';
 
 function App() {
@@ -9,16 +11,16 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<SellItem/>} />
           <Route
-            path="/tasks"
+            path="/home"
             element={
               <ProtectedRoute>
-                <Tasks />
+                <Home/>
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/tasks" replace />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

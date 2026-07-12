@@ -37,7 +37,7 @@ public class Listing {
     private List<String> imageUrls;
 
     @Column(nullable = false)
-    // e.g. "WA", "NY", "CA" - defaults from User, can be changed during listing
+    // e.g. "WA", "NY", "CA" - defaults from User, can be changed during listing creation
     private String location; 
 
     @Enumerated(EnumType.STRING)

@@ -1,0 +1,66 @@
+.sell-container {
+  max-width: 480px;
+  margin: 48px auto;
+  font-family: 'Inter', sans-serif;
+  padding: 0 20px;
+}
+
+.sell-container h1 {
+  margin-bottom: 24px;
+}
+
+.sell-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sell-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.sell-form input,
+.sell-form textarea,
+.sell-form select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.sell-form button[type='submit'] {
+  background: #ec6f5c;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.sell-form button[type='submit']:disabled {
+  opacity: 0.6;
+}
+
+.form-error {
+  color: #d9453d;
+  font-size: 13px;
+}
+
+.form-success {
+  color: #2e7d32;
+  font-size: 13px;
+}
