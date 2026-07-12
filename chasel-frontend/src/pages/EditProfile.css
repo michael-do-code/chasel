@@ -1,0 +1,102 @@
+.profile-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fce9e4;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-panel {
+  background: white;
+  width: 400px;
+  padding: 48px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.profile-header h1 {
+  font-size: 22px;
+}
+
+.profile-header button {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #000;
+  cursor: pointer;
+}
+
+.profile-email {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.profile-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.profile-panel input {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  font-size: 14px;
+  outline: none;
+}
+
+.profile-panel input:focus {
+  border-color: #ec6f5c;
+}
+
+.profile-panel button[type='submit'] {
+  background: #ec6f5c;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-panel button[type='submit']:hover {
+  background: #e15a45;
+}
+
+.profile-panel button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-error {
+  color: #d9453d;
+  font-size: 13px;
+  margin: 0;
+}
+
+.profile-success {
+  color: #2e8b57;
+  font-size: 13px;
+  margin: 0;
+}

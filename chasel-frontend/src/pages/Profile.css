@@ -1,0 +1,116 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fce9e4;
+  align-items: stretch;
+}
+
+.dashboard-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: white;
+  padding: 40px 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ec6f5c;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+
+.dashboard-sidebar h2 {
+  text-align: center;
+  font-size: 26px;
+  color: #000;
+  word-break: break-word;
+}
+
+.dashboard-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 17px;
+  color: #000;
+}
+
+.dashboard-info dt {
+  color: #000;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 12px;
+}
+
+.dashboard-info dt:first-child {
+  margin-top: 0;
+}
+
+.dashboard-info dd {
+  margin: 0;
+  color: #000;
+  word-break: break-word;
+}
+
+.dashboard-edit-link {
+  text-align: center;
+  background: #ec6f5c;
+  color: #000;
+  border: none;
+  padding: 12px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.dashboard-edit-link:hover {
+  background: #e15a45;
+}
+
+.dashboard-sidebar button {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  padding: 12px;
+  font-size: 16px;
+  color: #000;
+  cursor: pointer;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 40px 48px;
+}
+
+.dashboard-main h1 {
+  font-size: 28px;
+  color: #000;
+  margin-bottom: 24px;
+}
+
+.dashboard-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320px;
+  border: 1px dashed #ddd;
+  border-radius: 16px;
+  color: #000;
+  font-size: 17px;
+  background: rgba(255, 255, 255, 0.4);
+}

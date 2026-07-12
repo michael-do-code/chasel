@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface Task {
   id: number;
@@ -45,7 +45,10 @@ function Tasks() {
     <div style={{ maxWidth: 400, margin: '40px auto', fontFamily: 'sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h1>Tasks</h1>
-        <button onClick={handleLogout}>Log out</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Link to="/profile">Profile</Link>
+          <button onClick={handleLogout}>Log out</button>
+        </div>
       </div>
       <input
         value={title}
