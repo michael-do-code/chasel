@@ -4,23 +4,38 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import SellItem from './pages/SellItem';
 import Home from './pages/Home';
-import Tasks from './pages/Tasks';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<SellItem/>} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/login" element={<Login />} />
           <Route
             path="/home"
             element={
               <ProtectedRoute>
-                <Home/>
+                <Home />
               </ProtectedRoute>
             }
           />
-          <Route path="/home" element={<Home />} />
+          <Route
+            path="/sell-item"
+            element={
+              <ProtectedRoute>
+                <SellItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
