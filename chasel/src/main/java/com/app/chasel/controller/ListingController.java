@@ -51,11 +51,13 @@ public class ListingController {
 
         Listing listing = new Listing();
         listing.setTitle(request.getTitle());
+        listing.setBrand(request.getBrand());
         listing.setDescription(request.getDescription());
         listing.setCategory(request.getCategory());
+        listing.setSize(request.getSize());
+        listing.setCondition(request.getCondition());
+        listing.setOriginalRetail(request.getOriginalRetail());
         listing.setPrice(request.getPrice());
-        listing.setOpenToTrade(request.isOpenToTrade());
-        listing.setTradeDescription(request.getTradeDescription());
         listing.setImageUrls(request.getImageUrls());
         listing.setLocation(request.getLocation() != null ? request.getLocation() : seller.getLocation());
         listing.setSeller(seller);
