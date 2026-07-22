@@ -1,12 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import './Navbar.css';
+
+interface UserProfile {
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+}
+
+function getInitials(profile: UserProfile): string {
+  const first = profile.firstName?.trim()[0];
+  const last = profile.lastName?.trim()[0];
+  if (first && last) return (first + last).toUpperCase();
+  if (first) return first.toUpperCase();
+  return profile.email[0].toUpperCase();
+}
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { token, logout } = useAuth();
   const isAuthenticated = !!token;
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    api.get<UserProfile>('/users/me').then((res) => setProfile(res.data));
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     logout();
@@ -62,6 +84,15 @@ function Navbar() {
 
         {/* Right: Account & Logout */}
         <div className="navbar-right">
+          {profile && (
+            <div
+              className="navbar-avatar"
+              onClick={() => navigate('/profile')}
+              title="View profile"
+            >
+              {getInitials(profile)}
+            </div>
+          )}
           <button
             className="nav-item nav-logout"
             onClick={handleLogout}

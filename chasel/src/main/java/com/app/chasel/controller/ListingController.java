@@ -34,6 +34,14 @@ public class ListingController {
                 .orElseThrow(() -> new RuntimeException("Listing not found"));
     }
 
+    @GetMapping("/mine")
+    public List<Listing> getMyListings(Authentication authentication) {
+        String email = authentication.getName();
+        Users seller = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return listingRepository.findBySellerId(seller.getId());
+    }
+
     @PostMapping
     public Listing createListing(@RequestBody CreateListingRequest request, Authentication authentication) {
         // set by JwtAuthFilter
@@ -56,5 +64,42 @@ public class ListingController {
         listing.setStatus(ListingStatus.ACTIVE);
 
         return listingRepository.save(listing);
+    }
+
+    @PutMapping("/{id}")
+    public Listing updateListing(@PathVariable Long id, @RequestBody CreateListingRequest request, Authentication authentication) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Listing not found"));
+
+        String email = authentication.getName();
+        if (!listing.getSeller().getEmail().equals(email)) {
+            throw new RuntimeException("Not authorized to edit this listing");
+        }
+
+        listing.setTitle(request.getTitle());
+        listing.setDescription(request.getDescription());
+        listing.setCategory(request.getCategory());
+        listing.setPrice(request.getPrice());
+        if (request.getImageUrls() != null) {
+            listing.setImageUrls(request.getImageUrls());
+        }
+        if (request.getLocation() != null) {
+            listing.setLocation(request.getLocation());
+        }
+
+        return listingRepository.save(listing);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteListing(@PathVariable Long id, Authentication authentication) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Listing not found"));
+
+        String email = authentication.getName();
+        if (!listing.getSeller().getEmail().equals(email)) {
+            throw new RuntimeException("Not authorized to delete this listing");
+        }
+
+        listingRepository.delete(listing);
     }
 }
