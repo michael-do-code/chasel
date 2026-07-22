@@ -20,23 +20,29 @@ public class Listing {
     private String description;
 
     @Column(nullable = false)
-    // e.g. "Handbags", "Watches", "Shoes"
-    private String category; 
-
-    // Null for trade-only listing
-    private Double price; 
+    // e.g. "The Row", "Celine", "Hermes"
+    private String brand;
 
     @Column(nullable = false)
-    private boolean openToTrade;
+    // e.g. "Handbags", "Watches", "Shoes"
+    private String category;
 
-    @Column(length = 1000)
-    // e.g. "Looking for a Dior Saddle bag, size M"
-    private String tradeDescription; 
+    // e.g. "M", "32", "42"
+    private String size;
+
+    // e.g. "Excellent", "Very Good", "Good"
+    private String condition;
+
+    // Original retail price before discount
+    private Double originalRetail;
+
+    @Column(nullable = false)
+    // Price is always required (no trade-only listings)
+    private Double price; 
 
     @ElementCollection
     private List<String> imageUrls;
 
-    @Column(nullable = false)
     // e.g. "WA", "NY", "CA" - defaults from User, can be changed during listing creation
     private String location; 
 
@@ -75,6 +81,14 @@ public class Listing {
         this.title = title;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -91,6 +105,30 @@ public class Listing {
         this.category = category;
     }
 
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public Double getOriginalRetail() {
+        return originalRetail;
+    }
+
+    public void setOriginalRetail(Double originalRetail) {
+        this.originalRetail = originalRetail;
+    }
+
     public Double getPrice() {
         return price;
     }
@@ -99,21 +137,6 @@ public class Listing {
         this.price = price;
     }
 
-    public boolean isOpenToTrade() {
-        return openToTrade;
-    }
-
-    public void setOpenToTrade(boolean openToTrade) {
-        this.openToTrade = openToTrade;
-    }
-
-    public String getTradeDescription() {
-        return tradeDescription;
-    }
-
-    public void setTradeDescription(String tradeDescription) {
-        this.tradeDescription = tradeDescription;
-    }
 
     public List<String> getImageUrls() {
         return imageUrls;
@@ -179,27 +202,7 @@ public class Listing {
         this.status = ListingStatus.ACTIVE;
     }
 
-    public boolean isTradeOnly() {
-        return this.price == null;
-    }
-
     public boolean isForSale() {
         return this.price != null;
-    }
-
-    public boolean isOpenToTradeOnly() {
-        return this.openToTrade && this.price == null;
-    }
-
-    public boolean isOpenToTradeAndForSale() {
-        return this.openToTrade && this.price != null;
-    }
-
-    public boolean isNotOpenToTrade() {
-        return !this.openToTrade;
-    }
-
-    public boolean isNotForSale() {
-        return this.price == null;
     }
 }

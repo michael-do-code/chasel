@@ -4,11 +4,13 @@ import java.util.List;
 
 public class CreateListingRequest {
     private String title;
+    private String brand;
     private String description;
     private String category;
+    private String size;
+    private String condition;
+    private Double originalRetail;
     private Double price;
-    private boolean openToTrade;
-    private String tradeDescription;
     private List<String> imageUrls;
     private String location;
 
@@ -18,6 +20,13 @@ public class CreateListingRequest {
     }
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getDescription() {
@@ -34,6 +43,27 @@ public class CreateListingRequest {
         this.category = category;
     }
 
+    public String getSize() {
+        return size;
+    }
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public Double getOriginalRetail() {
+        return originalRetail;
+    }
+    public void setOriginalRetail(Double originalRetail) {
+        this.originalRetail = originalRetail;
+    }
+
     public Double getPrice() {
         return price;
     }
@@ -41,19 +71,6 @@ public class CreateListingRequest {
         this.price = price;
     }
 
-    public boolean isOpenToTrade() {
-        return openToTrade;
-    }
-    public void setOpenToTrade(boolean openToTrade) {
-        this.openToTrade = openToTrade;
-    }
-
-    public String getTradeDescription() {
-        return tradeDescription;
-    }
-    public void setTradeDescription(String tradeDescription) {
-        this.tradeDescription = tradeDescription;
-    }
 
     public List<String> getImageUrls() {
         return imageUrls;
