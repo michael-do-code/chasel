@@ -19,9 +19,7 @@ function SellItem() {
   const [condition, setCondition] = useState('');
   const [originalRetail, setOriginalRetail] = useState('');
   const [description, setDescription] = useState('');
-  const [intent, setIntent] = useState('for-sale');
   const [price, setPrice] = useState('');
-  const [tradeDescription, setTradeDescription] = useState('');
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState('');
@@ -36,12 +34,7 @@ function SellItem() {
     if (!title.trim()) newErrors.title = 'Title is required';
     if (!category.trim()) newErrors.category = 'Category is required';
     if (!condition) newErrors.condition = 'Condition is required';
-    if (intent === 'for-sale' && !price.trim()) {
-      newErrors.price = 'Price is required for "For Sale" listings';
-    }
-    if (intent === 'trade-only' && !tradeDescription.trim()) {
-      newErrors.tradeDescription = 'Please specify what you would trade for';
-    }
+    if (!price.trim()) newErrors.price = 'Price is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -87,9 +80,7 @@ function SellItem() {
     setSuccess('');
 
     try {
-      const openToTrade = intent === 'trade-only' || intent === 'sale-or-trade';
-
-      await api.post('/listings', {
+      const payload = {
         brand,
         title,
         description,
@@ -97,16 +88,22 @@ function SellItem() {
         size: size || null,
         condition,
         originalRetail: originalRetail ? parseFloat(originalRetail) : null,
-        price: price ? parseFloat(price) : null,
-        openToTrade,
-        tradeDescription: openToTrade ? tradeDescription : null,
+        price: parseFloat(price),
         imageUrls: [],
-      });
+      };
+
+      console.log('Submitting listing with payload:', payload);
+
+      const response = await api.post('/listings', payload);
+      console.log('Listing created successfully:', response.data);
 
       setSuccess('Listing created! Redirecting...');
       setTimeout(() => navigate('/home'), 1500);
     } catch (err) {
-      setErrors({ ...errors, submit: 'Failed to create listing. Please try again.' });
+      console.error('Error creating listing:', err);
+
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create listing. Please try again.';
+      setErrors({ ...errors, submit: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -314,77 +311,20 @@ function SellItem() {
                 />
               </div>
 
-              {/* Intent */}
-              <div className="form-group">
-                <label className="form-label">INTENT</label>
-                <div className="intent-buttons">
-                  <button
-                    type="button"
-                    className={`intent-btn ${intent === 'for-sale' ? 'active' : ''}`}
-                    onClick={() => setIntent('for-sale')}
-                  >
-                    FOR SALE
-                  </button>
-                  <button
-                    type="button"
-                    className={`intent-btn ${intent === 'trade-only' ? 'active' : ''}`}
-                    onClick={() => setIntent('trade-only')}
-                  >
-                    TRADE ONLY
-                  </button>
-                  <button
-                    type="button"
-                    className={`intent-btn ${intent === 'sale-or-trade' ? 'active' : ''}`}
-                    onClick={() => setIntent('sale-or-trade')}
-                  >
-                    SALE OR TRADE
-                  </button>
-                </div>
-              </div>
-
               {/* Price */}
-              {(intent === 'for-sale' || intent === 'sale-or-trade') && (
-                <div className="form-group">
-                  <label className="form-label">ASKING PRICE</label>
-                  <div className="input-prefix">
-                    <span>$</span>
-                    <input
-                      type="number"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      placeholder="0"
-                      className={`form-input ${errors.price ? 'error' : ''}`}
-                    />
-                  </div>
-                  {errors.price && <p className="field-error">{errors.price}</p>}
-                </div>
-              )}
-
-              {/* Trade Description */}
-              {(intent === 'trade-only' || intent === 'sale-or-trade') && (
-                <div className="form-group">
-                  <label className="form-label">WHAT WOULD YOU TRADE FOR?</label>
-                  <input
-                    type="text"
-                    value={tradeDescription}
-                    onChange={(e) => setTradeDescription(e.target.value)}
-                    placeholder="e.g. Dior Saddle Bag, size M"
-                    className={`form-input ${errors.tradeDescription ? 'error' : ''}`}
-                  />
-                  {errors.tradeDescription && <p className="field-error">{errors.tradeDescription}</p>}
-                </div>
-              )}
-
-              {/* Location */}
               <div className="form-group">
-                <label className="form-label">SHIPS FROM</label>
-                <input
-                  type="text"
-                  placeholder="Your profile location"
-                  className="form-input"
-                  disabled
-                />
-                <small>Uses your profile location</small>
+                <label className="form-label">ASKING PRICE</label>
+                <div className="input-prefix">
+                  <span>$</span>
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0"
+                    className={`form-input ${errors.price ? 'error' : ''}`}
+                  />
+                </div>
+                {errors.price && <p className="field-error">{errors.price}</p>}
               </div>
 
               {/* Messages */}

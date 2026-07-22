@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import './Home.css';
 
 interface Listing {
@@ -9,68 +10,8 @@ interface Listing {
   price: number;
   condition: string;
   size?: string;
-  badge: 'FOR SALE' | 'OPEN TO TRADE';
-  image: string;
+  category: string;
 }
-
-const featuredListings: Listing[] = [
-  {
-    id: 1,
-    title: 'Raw Silk Overshirt',
-    brand: 'LEMAIRE',
-    price: 340,
-    condition: 'Excellent',
-    badge: 'FOR SALE',
-    image: 'linear-gradient(135deg, #D2B499, #956F4C)',
-  },
-  {
-    id: 2,
-    title: 'Heavy Wool Trouser',
-    brand: 'THE ROW',
-    price: 480,
-    condition: 'Very good',
-    size: '32',
-    badge: 'OPEN TO TRADE',
-    image: 'linear-gradient(135deg, #AEA397, #D2B499)',
-  },
-  {
-    id: 3,
-    title: 'Archive Chelsea Boot 02',
-    brand: 'MARGIELA',
-    price: 620,
-    condition: 'Excellent',
-    size: '42',
-    badge: 'FOR SALE',
-    image: 'linear-gradient(135deg, #956F4C, #4A2B17)',
-  },
-  {
-    id: 4,
-    title: 'Cashmere Blend Sweater',
-    brand: 'LORO PIANA',
-    price: 520,
-    condition: 'Like New',
-    badge: 'FOR SALE',
-    image: 'linear-gradient(135deg, #E6C9AC, #AEA397)',
-  },
-  {
-    id: 5,
-    title: 'Leather Crossbody Bag',
-    brand: 'CELINE',
-    price: 890,
-    condition: 'Very good',
-    badge: 'OPEN TO TRADE',
-    image: 'linear-gradient(135deg, #956F4C, #D2B499)',
-  },
-  {
-    id: 6,
-    title: 'Silk Scarves Set',
-    brand: 'HERMES',
-    price: 380,
-    condition: 'Excellent',
-    badge: 'FOR SALE',
-    image: 'linear-gradient(135deg, #D2B499, #E6C9AC)',
-  },
-];
 
 const categories = [
   'All Items',
@@ -82,15 +23,32 @@ const categories = [
 ];
 
 function Home() {
+  const [listings, setListings] = useState<Listing[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All Items');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const filteredListings = featuredListings.filter(
-    (item) =>
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const res = await api.get('/listings');
+        setListings(res.data);
+      } catch (err) {
+        console.error('Error fetching listings:', err);
+      }
+    };
+
+    fetchListings();
+  }, []);
+
+  const filteredListings = listings.filter((item) => {
+    const matchesSearch =
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      item.brand.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 'All Items' || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="home">
@@ -146,9 +104,9 @@ function Home() {
         <div className="listings-grid">
           {filteredListings.map((item) => (
             <div className="listing-card" key={item.id}>
-              <div className="listing-image" style={{ background: item.image }}>
-                <span className={`badge badge-${item.badge === 'FOR SALE' ? 'sale' : 'trade'}`}>
-                  {item.badge}
+              <div className="listing-image" style={{ background: `linear-gradient(135deg, #D2B499, #956F4C)` }}>
+                <span className="badge badge-sale">
+                  FOR SALE
                 </span>
               </div>
               <div className="listing-info">
