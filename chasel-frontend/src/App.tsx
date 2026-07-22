@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Navbar from './components/Navbar';
 import Login from './pages/Login';
-import Tasks from './pages/Tasks';
+import SellItem from './pages/SellItem';
+import Home from './pages/Home';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 
@@ -10,13 +12,23 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Navbar />
         <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/tasks"
+            path="/home"
             element={
               <ProtectedRoute>
-                <Tasks />
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sell-item"
+            element={
+              <ProtectedRoute>
+                <SellItem />
               </ProtectedRoute>
             }
           />
@@ -36,7 +48,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/tasks" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

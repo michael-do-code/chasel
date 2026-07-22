@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import React from 'react';
 import './Login.css';
 
 function Login() {
@@ -21,7 +22,7 @@ function Login() {
     try {
       const res = await api.post('/auth/login', { email, password });
       login(res.data.token);
-      navigate('/tasks');
+      navigate('/home');
     } catch (err) {
       setError('Invalid email or password');
     } finally {

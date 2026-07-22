@@ -1,0 +1,755 @@
+* {
+  box-sizing: border-box;
+}
+
+.home {
+  background-color: #F5F0E7;
+  font-family: 'Segoe UI', sans-serif;
+  color: #4A2B17;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #F5F0E7 0%, #E6C9AC 100%);
+  padding: 80px 40px;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-content h1 {
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+.hero-content .highlight {
+  font-style: italic;
+  color: #956F4C;
+  font-weight: 500;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  color: #4A2B17;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background: #956F4C;
+  color: #FEFDFB;
+}
+
+.btn-primary:hover {
+  background: #4A2B17;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #4A2B17;
+  border: 1px solid #956F4C;
+}
+
+.btn-secondary:hover {
+  background: #956F4C;
+  color: #FEFDFB;
+  transform: translateY(-2px);
+}
+
+/* Search & Filter Section */
+.search-section {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 40px;
+}
+
+.search-container {
+  margin-bottom: 40px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  font-size: 15px;
+  background: #FEFDFB;
+  color: #4A2B17;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.search-input::placeholder {
+  color: #AEA397;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #956F4C;
+  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
+}
+
+.category-filter {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: 10px 18px;
+  border: 1px solid #D2B499;
+  background: transparent;
+  color: #4A2B17;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.category-btn:hover {
+  border-color: #956F4C;
+  color: #956F4C;
+}
+
+.category-btn.active {
+  background: #956F4C;
+  border-color: #956F4C;
+  color: #FEFDFB;
+}
+
+/* Listings Section */
+.listings-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-style: italic;
+  margin-bottom: 48px;
+  font-weight: 400;
+  color: #4A2B17;
+}
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.listing-card {
+  background: #FEFDFB;
+  border-radius: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.listing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(74, 43, 23, 0.12);
+}
+
+.listing-image {
+  aspect-ratio: 1;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 16px;
+  background-size: cover;
+  background-position: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 14px;
+  background: #FEFDFB;
+  border: 1px solid #4A2B17;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.badge-sale {
+  color: #4A2B17;
+  border-color: #4A2B17;
+}
+
+.badge-trade {
+  color: #956F4C;
+  border-color: #956F4C;
+}
+
+.listing-info {
+  padding: 20px;
+}
+
+.listing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.listing-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #4A2B17;
+}
+
+.listing-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #956F4C;
+  white-space: nowrap;
+}
+
+.listing-brand {
+  font-size: 12px;
+  color: #956F4C;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 12px 0;
+}
+
+.listing-details {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #AEA397;
+}
+
+.detail {
+  display: inline-block;
+}
+
+/* Philosophy Section */
+.philosophy {
+  background: #FEFDFB;
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.philosophy-content {
+  margin-bottom: 60px;
+  max-width: 700px;
+}
+
+.philosophy-content h2 {
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 400;
+  margin-bottom: 24px;
+  color: #4A2B17;
+}
+
+.philosophy-content p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #4A2B17;
+}
+
+.philosophy-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  margin-top: 60px;
+}
+
+.feature {
+  text-align: left;
+}
+
+.feature h4 {
+  font-size: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #4A2B17;
+}
+
+.feature p {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #956F4C;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Ultra-wide monitors (1920px+) */
+@media (min-width: 1920px) {
+  .home {
+    font-size: 18px;
+  }
+
+  .hero-content h1 {
+    font-size: 72px;
+  }
+
+  .listings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 40px;
+  }
+
+  .listing-card {
+    border-radius: 8px;
+  }
+
+  .section-title {
+    font-size: 48px;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+  }
+}
+
+/* Large desktop (1440px - MacBook 14", 27" monitors) */
+@media (max-width: 1919px) and (min-width: 1200px) {
+  .listings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 32px;
+  }
+
+  .hero-content h1 {
+    font-size: 64px;
+  }
+
+  .section-title {
+    font-size: 40px;
+  }
+}
+
+/* Tablet landscape & small desktop (900px - 1199px) */
+@media (max-width: 1199px) and (min-width: 900px) {
+  .hero {
+    padding: 70px 40px;
+  }
+
+  .hero-content h1 {
+    font-size: 48px;
+  }
+
+  .listings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+  }
+
+  .section-title {
+    font-size: 32px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+}
+
+/* Tablet (768px - 899px) */
+@media (max-width: 899px) and (min-width: 768px) {
+  .hero {
+    padding: 60px 32px;
+  }
+
+  .hero-content h1 {
+    font-size: 40px;
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+  }
+
+  .listings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 36px;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 12px 28px;
+  }
+
+  .category-btn {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+
+  .listing-info {
+    padding: 16px;
+  }
+
+  .philosophy-features {
+    gap: 32px;
+  }
+}
+
+/* Mobile landscape (600px - 767px) */
+@media (max-width: 767px) and (min-width: 600px) {
+  .hero {
+    padding: 50px 24px;
+  }
+
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .listings-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+
+  .search-section {
+    padding: 0 24px;
+    margin: 40px auto;
+  }
+
+  .listings-section {
+    padding: 40px 24px;
+  }
+
+  .philosophy {
+    padding: 60px 24px;
+  }
+
+  .philosophy-features {
+    gap: 20px;
+  }
+
+  .feature h4 {
+    font-size: 24px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 12px;
+    padding: 12px 20px;
+  }
+
+  .category-filter {
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .category-btn {
+    font-size: 11px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+/* Mobile (480px - 599px) */
+@media (max-width: 599px) and (min-width: 480px) {
+  .hero {
+    padding: 48px 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 28px;
+    line-height: 1.3;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+    margin: 16px auto 32px;
+    line-height: 1.5;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 11px;
+    padding: 12px 16px;
+  }
+
+  .search-section {
+    padding: 0 20px;
+    margin: 36px auto;
+  }
+
+  .search-input {
+    font-size: 13px;
+    padding: 14px 16px;
+  }
+
+  .category-filter {
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-btn {
+    font-size: 10px;
+    padding: 8px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .listings-section {
+    padding: 32px 20px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  .listing-info {
+    padding: 12px;
+  }
+
+  .listing-title {
+    font-size: 14px;
+  }
+
+  .listing-price {
+    font-size: 14px;
+  }
+
+  .listing-brand {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .listing-details {
+    font-size: 10px;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 6px 10px;
+  }
+
+  .philosophy {
+    padding: 40px 20px;
+  }
+
+  .philosophy-content h2 {
+    font-size: 24px;
+  }
+
+  .philosophy-content p {
+    font-size: 14px;
+  }
+
+  .philosophy-features {
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .feature h4 {
+    font-size: 20px;
+  }
+
+  .feature p {
+    font-size: 10px;
+  }
+}
+
+/* Small mobile (< 480px) */
+@media (max-width: 479px) {
+  .hero {
+    padding: 40px 16px;
+  }
+
+  .hero-content h1 {
+    font-size: 24px;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+    margin: 12px auto 24px;
+    line-height: 1.5;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 10px;
+    padding: 11px 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .search-section {
+    padding: 0 16px;
+    margin: 28px auto;
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+
+  .category-filter {
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .category-btn {
+    font-size: 9px;
+    padding: 7px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .listings-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .listings-section {
+    padding: 28px 16px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .listing-image {
+    padding: 12px;
+  }
+
+  .listing-info {
+    padding: 12px;
+  }
+
+  .listing-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .listing-title {
+    font-size: 13px;
+  }
+
+  .listing-price {
+    font-size: 13px;
+  }
+
+  .listing-brand {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+
+  .listing-details {
+    font-size: 9px;
+    gap: 8px;
+  }
+
+  .badge {
+    font-size: 8px;
+    padding: 5px 8px;
+  }
+
+  .philosophy {
+    padding: 32px 16px;
+  }
+
+  .philosophy-content h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .philosophy-content p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .philosophy-features {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .feature {
+    text-align: left;
+  }
+
+  .feature h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .feature p {
+    font-size: 9px;
+  }
+}

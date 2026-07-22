@@ -33,7 +33,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/options/**").permitAll()
                 .anyRequest().authenticated()
             )
             // needed for H2 console to render
@@ -42,4 +42,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

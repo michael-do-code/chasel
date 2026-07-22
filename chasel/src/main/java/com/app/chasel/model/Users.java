@@ -24,11 +24,13 @@ public class Users {
 
     private String phone;
 
+    private String location;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
-    // getters and setters
 
+    // getters and setters
     public Long getId() {
         return id;
     }
@@ -81,4 +83,11 @@ public class Users {
         return createdAt;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

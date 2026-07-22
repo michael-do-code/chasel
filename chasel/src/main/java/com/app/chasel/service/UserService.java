@@ -28,12 +28,13 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
+        user.setLocation(request.getLocation());
         userRepository.save(user);
 
         return toResponse(user);
     }
 
     private UserProfileResponse toResponse(Users user) {
-        return new UserProfileResponse(user.getEmail(), user.getFirstName(), user.getLastName(), user.getPhone(), user.getCreatedAt());
+        return new UserProfileResponse(user.getEmail(), user.getFirstName(), user.getLastName(), user.getPhone(), user.getLocation(), user.getCreatedAt());
     }
 }

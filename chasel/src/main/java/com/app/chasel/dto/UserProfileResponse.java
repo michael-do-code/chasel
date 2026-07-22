@@ -7,13 +7,15 @@ public class UserProfileResponse {
     private String firstName;
     private String lastName;
     private String phone;
+    private String location;
     private LocalDateTime createdAt;
 
-    public UserProfileResponse(String email, String firstName, String lastName, String phone, LocalDateTime createdAt) {
+    public UserProfileResponse(String email, String firstName, String lastName, String phone, String location, LocalDateTime createdAt) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.location = location;
         this.createdAt = createdAt;
     }
 
@@ -47,6 +49,14 @@ public class UserProfileResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public LocalDateTime getCreatedAt() {
