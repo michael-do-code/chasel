@@ -9,57 +9,6 @@
   color: #4A2B17;
 }
 
-/* Navigation Header */
-.sell-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 60px;
-  border-bottom: 1px solid #D2B499;
-  background: #FEFDFB;
-  gap: 40px;
-}
-
-.sell-nav {
-  display: flex;
-  gap: 24px;
-  flex: 1;
-}
-
-.nav-link {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #4A2B17;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: #956F4C;
-}
-
-.nav-link.active {
-  color: #956F4C;
-  border-bottom: 2px solid #956F4C;
-  padding-bottom: 2px;
-}
-
-.nav-logo {
-  font-size: 20px;
-  font-weight: 600;
-  color: #956F4C;
-  flex-shrink: 0;
-}
-
-.nav-right {
-  display: flex;
-  gap: 24px;
-  flex: 1;
-  justify-content: flex-end;
-}
-
 /* Main Container */
 .sell-container {
   max-width: 1400px;
@@ -452,16 +401,6 @@ textarea.form-input {
 }
 
 @media (max-width: 1023px) {
-  .sell-header {
-    padding: 20px 40px;
-    flex-wrap: wrap;
-  }
-
-  .sell-nav,
-  .nav-right {
-    gap: 16px;
-  }
-
   .form-columns {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -485,24 +424,6 @@ textarea.form-input {
 }
 
 @media (max-width: 767px) {
-  .sell-header {
-    padding: 16px 24px;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .sell-nav {
-    justify-content: center;
-    gap: 12px;
-    font-size: 10px;
-  }
-
-  .nav-right {
-    justify-content: center;
-    gap: 12px;
-    font-size: 10px;
-  }
-
   .sell-container {
     padding: 32px 24px;
   }
@@ -555,18 +476,9 @@ textarea.form-input {
   .btn-draft {
     width: 100%;
   }
-
-  .nav-logo {
-    font-size: 16px;
-  }
 }
 
 @media (max-width: 479px) {
-  .sell-header {
-    padding: 12px 16px;
-    font-size: 8px;
-  }
-
   .sell-container {
     padding: 24px 16px;
   }

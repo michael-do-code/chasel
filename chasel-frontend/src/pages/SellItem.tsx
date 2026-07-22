@@ -111,21 +111,6 @@ function SellItem() {
 
   return (
     <div className="sell-page">
-      {/* Navigation */}
-      <div className="sell-header">
-        <div className="sell-nav">
-          <span className="nav-link">BROWSE</span>
-          <span className="nav-link active">LIST AN ITEM</span>
-          <span className="nav-link">JOURNAL</span>
-        </div>
-        <div className="nav-logo">chasel</div>
-        <div className="nav-right">
-          <span className="nav-link">Search</span>
-          <span className="nav-link">ACCOUNT</span>
-          <span className="nav-link">Saved (0)</span>
-        </div>
-      </div>
-
       <div className="sell-container">
         {/* Step Indicator */}
         <div className="step-indicator">

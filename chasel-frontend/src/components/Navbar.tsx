@@ -24,11 +24,26 @@ function Navbar() {
   const { token, logout } = useAuth();
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [notifications] = useState(0);
+  const [messages] = useState(0);
+  const [cart] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated) return;
     api.get<UserProfile>('/users/me').then((res) => setProfile(res.data));
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.navbar-account-menu')) {
+        setAccountOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -82,24 +97,113 @@ function Navbar() {
           />
         </div>
 
-        {/* Right: Account & Logout */}
+        {/* Right: Icons & Account */}
         <div className="navbar-right">
-          {profile && (
-            <div
-              className="navbar-avatar"
-              onClick={() => navigate('/profile')}
-              title="View profile"
-            >
-              {getInitials(profile)}
-            </div>
-          )}
+          {/* Messages Icon */}
           <button
-            className="nav-item nav-logout"
-            onClick={handleLogout}
-            title="Sign out"
+            className="navbar-icon-btn"
+            title="Messages"
+            onClick={() => navigate('/messages')}
           >
-            Logout
+            <span className="icon">💬</span>
+            {messages > 0 && <span className="badge">{messages}</span>}
           </button>
+
+          {/* Notifications Icon */}
+          <button
+            className="navbar-icon-btn"
+            title="Notifications"
+            onClick={() => navigate('/notifications')}
+          >
+            <span className="icon">🔔</span>
+            {notifications > 0 && <span className="badge">{notifications}</span>}
+          </button>
+
+          {/* Cart Icon */}
+          <button
+            className="navbar-icon-btn"
+            title="Cart"
+            onClick={() => navigate('/cart')}
+          >
+            <span className="icon">🛍️</span>
+            {cart > 0 && <span className="badge">{cart}</span>}
+          </button>
+
+          {/* Account Dropdown */}
+          <div className="navbar-account-menu">
+            {profile && (
+              <button
+                className="navbar-avatar"
+                onClick={() => setAccountOpen(!accountOpen)}
+                title="Account menu"
+              >
+                {getInitials(profile)}
+              </button>
+            )}
+
+            {accountOpen && (
+              <div className="account-dropdown">
+                <div className="dropdown-header">
+                  {profile?.firstName && profile?.lastName
+                    ? `${profile.firstName} ${profile.lastName}`
+                    : profile?.email}
+                </div>
+                <hr className="dropdown-divider" />
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate('/profile');
+                    setAccountOpen(false);
+                  }}
+                >
+                  👤 Profile
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate('/saved');
+                    setAccountOpen(false);
+                  }}
+                >
+                  ❤️ Saved Items
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate('/purchases');
+                    setAccountOpen(false);
+                  }}
+                >
+                  📦 Purchases
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate('/listings');
+                    setAccountOpen(false);
+                  }}
+                >
+                  📋 My Listings
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate('/settings');
+                    setAccountOpen(false);
+                  }}
+                >
+                  ⚙️ Settings
+                </button>
+                <hr className="dropdown-divider" />
+                <button
+                  className="dropdown-item logout-item"
+                  onClick={handleLogout}
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </nav>
