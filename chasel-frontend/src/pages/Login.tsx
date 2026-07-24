@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import React from 'react';
@@ -22,7 +22,9 @@ function Login() {
     try {
       const res = await api.post('/auth/login', { email, password });
       login(res.data.token);
-      navigate('/home');
+      navigate('/welcome', {
+      state: { type: 'login' },
+    });
     } catch (err) {
       setError('Invalid email or password');
     } finally {
@@ -56,7 +58,7 @@ function Login() {
             <label>
               <input type="checkbox" /> Remember me
             </label>
-            <a href="#">Forgot password</a>
+            <Link to="/forgot-password">Forgot password</Link>
           </div>
 
           {error && <p className="login-error">{error}</p>}
@@ -74,10 +76,25 @@ function Login() {
           <button className="social-btn" type="button" aria-label="Continue with Google">G</button>
           <button className="social-btn" type="button" aria-label="Continue with Twitter">𝕏</button>
         </div>
+
+        <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: '#AEA397' }}>
+          Don't have an account?{' '}
+          <Link to="/register" style={{ color: '#956F4C', fontWeight: 600 }}>
+            Create one
+          </Link>
+        </p>
       </div>
 
-      <div className="login-illustration">
-        <div className="illustration-shape" />
+      <div className="login-illustration login-video-panel">
+      <video
+        className="login-fashion-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+          >
+        <source src="/videos/login-fashion.mp4" type="video/mp4" />
+      </video>
       </div>
     </div>
   );

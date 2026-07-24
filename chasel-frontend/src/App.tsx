@@ -1,8 +1,20 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
+
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Welcome from './pages/Welcome';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyCode from './pages/VerifyCode';
+import ResetPassword from './pages/ResetPassword';
 import SellItem from './pages/SellItem';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
@@ -13,9 +25,41 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route
+            path="/"
+            element={<Navigate to="/home" replace />}
+          />
+
           <Route path="/login" element={<Login />} />
+
+          <Route path="/register" element={<Register />} />
+
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
+
+          <Route
+            path="/verify-code"
+            element={<VerifyCode />}
+          />
+
+          <Route
+            path="/reset-password"
+            element={<ResetPassword />}
+          />
+
+          <Route
+            path="/welcome"
+            element={
+              <ProtectedRoute>
+                <Welcome />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/home"
             element={
@@ -24,6 +68,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/sell-item"
             element={
@@ -32,6 +77,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -40,6 +86,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile/edit"
             element={
@@ -48,7 +95,11 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+
+          <Route
+            path="*"
+            element={<Navigate to="/home" replace />}
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
