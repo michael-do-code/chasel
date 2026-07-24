@@ -11,10 +11,9 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 40px;
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 32px;
   height: 64px;
 }
 
@@ -23,6 +22,7 @@
   display: flex;
   align-items: center;
   gap: 32px;
+  flex-shrink: 0;
 }
 
 .navbar-logo {
@@ -33,6 +33,7 @@
   transition: color 0.2s;
   white-space: nowrap;
   letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .navbar-logo:hover {
@@ -43,6 +44,7 @@
   display: flex;
   gap: 24px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .nav-item {
@@ -58,6 +60,7 @@
   background: none;
   padding: 0;
   font-family: inherit;
+  white-space: nowrap;
 }
 
 .nav-item:hover {
@@ -76,6 +79,10 @@
   color: #FEFDFB;
   border-radius: 4px;
   transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -87,11 +94,13 @@
 .navbar-search {
   display: flex;
   justify-content: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .search-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
   padding: 10px 14px;
   border: 1px solid #D2B499;
   border-radius: 4px;
@@ -118,7 +127,8 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 /* Icon buttons (Messages, Notifications, Cart) */
@@ -265,7 +275,6 @@
   .navbar-container {
     padding: 0 32px;
     gap: 24px;
-    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .navbar-links {
@@ -279,21 +288,30 @@
 
 @media (max-width: 991px) {
   .navbar-container {
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-    padding: 0 24px;
-    height: auto;
+    flex-wrap: wrap;
+    gap: 12px;
     padding: 12px 24px;
+    height: auto;
+  }
+
+  .navbar-left {
+    gap: 16px;
+  }
+
+  .navbar-search {
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
   }
 
   .navbar-right {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding-top: 12px;
+    order: 4;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
+    gap: 8px;
     border-top: 1px solid #D2B499;
-    gap: 12px;
-    flex-wrap: wrap;
+    padding-top: 8px;
   }
 
   .navbar-icon-btn {
