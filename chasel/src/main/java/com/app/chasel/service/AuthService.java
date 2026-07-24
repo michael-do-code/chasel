@@ -7,6 +7,12 @@ import com.app.chasel.repository.UserRepository;
 import com.app.chasel.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.app.chasel.dto.ForgotPasswordRequest;
+import com.app.chasel.dto.VerifyCodeRequest;
+import com.app.chasel.dto.ResetPasswordRequest;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Service
 public class AuthService {
@@ -27,10 +33,14 @@ public class AuthService {
         }
 
         Users user = new Users();
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setLocation(request.getLocation());
-        userRepository.save(user);
+
+userRepository.save(user);
 
         return jwtUtil.generateToken(user.getEmail());
     }
@@ -45,4 +55,79 @@ public class AuthService {
 
         return jwtUtil.generateToken(user.getEmail());
     }
+    public void forgotPassword(ForgotPasswordRequest request) {
+    Users user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("Email not found"));
+
+    String code = String.format(
+            "%06d",
+            new SecureRandom().nextInt(1_000_000)
+    );
+
+    user.setResetCode(passwordEncoder.encode(code));
+    user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+    user.setResetCodeVerified(false);
+
+    userRepository.save(user);
+
+    System.out.println(
+            "PASSWORD RESET CODE for "
+                    + user.getEmail()
+                    + ": "
+                    + code
+    );
+}
+
+public String verifyCode(VerifyCodeRequest request) {
+    Users user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("Email not found"));
+
+    if (user.getResetCode() == null
+            || user.getResetCodeExpiresAt() == null) {
+        throw new RuntimeException("No reset code requested");
+    }
+
+    if (LocalDateTime.now().isAfter(user.getResetCodeExpiresAt())) {
+        throw new RuntimeException("Verification code expired");
+    }
+
+    if (!passwordEncoder.matches(
+            request.getCode(),
+            user.getResetCode()
+    )) {
+        throw new RuntimeException("Invalid verification code");
+    }
+
+    user.setResetCodeVerified(true);
+    userRepository.save(user);
+    return jwtUtil.generateToken(user.getEmail());
+}
+
+public void resetPassword(ResetPasswordRequest request) {
+    Users user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("Email not found"));
+
+    if (!user.isResetCodeVerified()) {
+        throw new RuntimeException(
+                "Verification code has not been verified"
+        );
+    }
+
+    if (request.getNewPassword() == null
+            || request.getNewPassword().length() < 6) {
+        throw new RuntimeException(
+                "Password must have at least 6 characters"
+        );
+    }
+
+    user.setPassword(
+            passwordEncoder.encode(request.getNewPassword())
+    );
+
+    user.setResetCode(null);
+    user.setResetCodeExpiresAt(null);
+    user.setResetCodeVerified(false);
+
+    userRepository.save(user);
+}
 }
