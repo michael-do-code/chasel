@@ -26,6 +26,12 @@ public class Users {
 
     private String location;
 
+    private String resetCode;
+
+    private LocalDateTime resetCodeExpiresAt;
+
+    private boolean resetCodeVerified;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -90,4 +96,27 @@ public class Users {
     public void setLocation(String location) {
         this.location = location;
     }
+    public String getResetCode() {
+    return resetCode;
+}
+
+public void setResetCode(String resetCode) {
+    this.resetCode = resetCode;
+}
+
+public LocalDateTime getResetCodeExpiresAt() {
+    return resetCodeExpiresAt;
+}
+
+public void setResetCodeExpiresAt(LocalDateTime resetCodeExpiresAt) {
+    this.resetCodeExpiresAt = resetCodeExpiresAt;
+}
+
+public boolean isResetCodeVerified() {
+    return resetCodeVerified;
+}
+
+public void setResetCodeVerified(boolean resetCodeVerified) {
+    this.resetCodeVerified = resetCodeVerified;
+}
 }
