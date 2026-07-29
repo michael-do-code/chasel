@@ -91,6 +91,7 @@
 }
 
 .search-container {
+  position: relative;
   margin-bottom: 40px;
 }
 
@@ -114,6 +115,62 @@
   outline: none;
   border-color: #956F4C;
   box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
+}
+
+.search-suggestions {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  padding: 6px;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  background: #FEFDFB;
+  box-shadow: 0 14px 30px rgba(74, 43, 23, 0.14);
+}
+
+.search-suggestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #4A2B17;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-suggestion:hover,
+.search-suggestion.active {
+  background: #F2E7D9;
+}
+
+.search-suggestion span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-suggestion small {
+  color: #956F4C;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.search-empty {
+  padding: 48px 20px;
+  color: #7D6D60;
+  font-size: 16px;
+  text-align: center;
 }
 
 .category-filter {
@@ -909,4 +966,91 @@
 .wishlist-button:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+/* Product-card image carousel */
+.product-carousel {
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 34px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #4a2b17;
+  background: rgba(254, 253, 251, 0.88);
+  border: 1px solid rgba(149, 111, 76, 0.55);
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 27px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 160ms ease, background 160ms ease;
+}
+
+.product-carousel:hover .carousel-arrow,
+.carousel-arrow:focus-visible {
+  opacity: 1;
+}
+
+.carousel-arrow:hover {
+  background: #fefdfb;
+}
+
+.carousel-previous {
+  left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+.carousel-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+
+.carousel-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  background: rgba(254, 253, 251, 0.65);
+  border: 1px solid rgba(74, 43, 23, 0.55);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.carousel-dots button.active {
+  background: #956f4c;
+}
+
+.carousel-count {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  z-index: 3;
+  padding: 3px 7px;
+  color: #4a2b17;
+  background: rgba(254, 253, 251, 0.88);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (hover: none) {
+  .carousel-arrow {
+    opacity: 0.9;
+  }
 }

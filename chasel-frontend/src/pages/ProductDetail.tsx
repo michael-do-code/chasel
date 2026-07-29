@@ -26,6 +26,19 @@ const categories = [
   'Handbags',
 ];
 
+const createFormFromListing = (product: Listing) => ({
+  title: product.title,
+  brand: product.brand,
+  description: product.description ?? '',
+  category: product.category,
+  size: product.size ?? '',
+  condition: product.condition,
+  originalRetail: product.originalRetail?.toString() ?? '',
+  price: product.price.toString(),
+  location: product.location ?? '',
+  imageUrls: [...(product.imageUrls ?? [])],
+});
+
 function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -61,18 +74,7 @@ function ProductDetail() {
         setIsOwner(
           mineResponse.data.some((mine) => mine.id === product.id)
         );
-        setForm({
-          title: product.title,
-          brand: product.brand,
-          description: product.description ?? '',
-          category: product.category,
-          size: product.size ?? '',
-          condition: product.condition,
-          originalRetail: product.originalRetail?.toString() ?? '',
-          price: product.price.toString(),
-          location: product.location ?? '',
-          imageUrls: product.imageUrls ?? [],
-        });
+        setForm(createFormFromListing(product));
       } catch (error) {
         console.error('Failed to load product:', error);
       }
@@ -139,10 +141,7 @@ function ProductDetail() {
       );
 
       setListing(response.data);
-      setForm((current) => ({
-        ...current,
-        imageUrls: response.data.imageUrls ?? [],
-      }));
+      setForm(createFormFromListing(response.data));
       setNewImages([]);
       setSelectedImage(0);
       setEditing(false);
@@ -254,7 +253,15 @@ function ProductDetail() {
 
             {isOwner && (
               <div className="owner-actions">
-                <button type="button" onClick={() => setEditing(true)}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm(createFormFromListing(listing));
+                    setNewImages([]);
+                    setSelectedImage(0);
+                    setEditing(true);
+                  }}
+                >
                   Edit product
                 </button>
                 <button
@@ -410,8 +417,10 @@ function ProductDetail() {
               type="button"
               className="edit-cancel"
               onClick={() => {
+                setForm(createFormFromListing(listing));
                 setEditing(false);
                 setNewImages([]);
+                setSelectedImage(0);
               }}
             >
               Cancel

@@ -77,6 +77,7 @@
 }
 
 .product-copy {
+  min-width: 0;
   padding: 44px 38px;
 }
 
@@ -152,9 +153,13 @@
 }
 
 .product-description p {
+  max-width: 100%;
   color: #7c6c60;
   font-size: 14px;
   line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .owner-actions,

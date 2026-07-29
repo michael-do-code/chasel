@@ -32,9 +32,17 @@ function Navbar() {
   const [cart] = useState(0);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-    api.get<UserProfile>('/users/me').then((res) => setProfile(res.data));
-  }, [isAuthenticated]);
+    setProfile(null);
+    if (!token) return;
+
+    api
+      .get<UserProfile>('/users/me')
+      .then((res) => setProfile(res.data))
+      .catch((error) => {
+        console.error('Could not load navbar profile:', error);
+        setProfile(null);
+      });
+  }, [token]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -48,6 +56,7 @@ function Navbar() {
   }, []);
 
   const handleLogout = () => {
+    setProfile(null);
     logout();
     navigate('/login');
   };
@@ -133,22 +142,20 @@ function Navbar() {
 
           {/* Account Dropdown */}
           <div className="navbar-account-menu">
-            {profile && (
-              <button
-                className="navbar-avatar"
-                onClick={() => setAccountOpen(!accountOpen)}
-                title="Account menu"
-              >
-                {getInitials(profile)}
-              </button>
-            )}
+            <button
+              className="navbar-avatar"
+              onClick={() => setAccountOpen(!accountOpen)}
+              title="Account menu"
+            >
+              {profile ? getInitials(profile) : 'A'}
+            </button>
 
             {accountOpen && (
               <div className="account-dropdown">
                 <div className="dropdown-header">
                   {profile?.firstName && profile?.lastName
                     ? `${profile.firstName} ${profile.lastName}`
-                    : profile?.email}
+                    : profile?.email ?? 'Account'}
                 </div>
                 <hr className="dropdown-divider" />
                 <button
