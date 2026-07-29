@@ -20,3 +20,10 @@ target/
 
 # OS
 .DS_Store
+
+# Local runtime data
+/chasel/uploads/
+/chasel/data/
+
+# Accidental lockfile at repository root (frontend has its own lockfile)
+/package-lock.json

@@ -1,5 +1,4 @@
 package com.app.chasel.model;
-import com.app.chasel.model.Users;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

@@ -753,3 +753,160 @@
     font-size: 9px;
   }
 }
+.listing-image {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  padding: 0;
+  background: #d2b499;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listing-image .badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+}
+.listing-description-area {
+  margin-top: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px;
+  text-align: left;
+}
+
+.listing-description {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: calc(100% - 90px);
+  margin: 0;
+  color: #7c6c60;
+  font-size: 14px;
+  line-height: 1.5;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listing-description.expanded {
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+}
+
+.read-more-btn {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #956f4c;
+  font-weight: 600;
+  cursor: pointer;
+}
+.listings-grid {
+  align-items: start;
+}
+
+.listing-card {
+  align-self: start;
+  height: auto;
+}
+
+/* Compact product-card layout and actions */
+.listing-info {
+  padding: 15px 16px 16px;
+  text-align: left;
+}
+
+.listing-header {
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.listing-brand {
+  margin-bottom: 8px;
+}
+
+.listing-details {
+  margin-bottom: 8px;
+}
+
+.listing-description-area {
+  margin-top: 8px;
+}
+
+.listing-actions {
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.cart-add-button,
+.wishlist-button {
+  height: 42px;
+  border: 1px solid #956f4c;
+  cursor: pointer;
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.cart-add-button {
+  padding: 0 16px;
+  color: #fefdfb;
+  background: #956f4c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.cart-add-button:hover {
+  background: #4a2b17;
+  border-color: #4a2b17;
+}
+
+.wishlist-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #956f4c;
+  background: #fefdfb;
+  font-family: Georgia, serif;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.wishlist-button:hover,
+.wishlist-button.saved {
+  color: #fefdfb;
+  background: #956f4c;
+}
+
+.wishlist-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}

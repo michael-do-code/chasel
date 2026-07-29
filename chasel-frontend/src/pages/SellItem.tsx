@@ -40,31 +40,48 @@ function SellItem() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.currentTarget.files;
-    if (!files) return;
+const handleImageUpload = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const files = e.currentTarget.files;
+  if (!files) return;
 
-    const newImages = Array.from(files);
-    if (images.length + newImages.length > 4) {
-      setErrors({ ...errors, images: 'Maximum 4 images allowed' });
-      return;
-    }
+  const newImages = Array.from(files);
 
-    setImages([...images, ...newImages]);
+  if (images.length + newImages.length > 4) {
+    setErrors((current) => ({
+      ...current,
+      images: 'Maximum 4 images allowed',
+    }));
+    return;
+  }
 
-    // Create previews
-    newImages.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setImagePreviews((prev) => [...prev, event.target.result as string]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+  setImages((current) => [...current, ...newImages]);
 
-    setErrors({ ...errors, images: '' });
-  };
+  newImages.forEach((file) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const result = event.target?.result;
+
+      if (typeof result === 'string') {
+        setImagePreviews((current) => [
+          ...current,
+          result,
+        ]);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  setErrors((current) => ({
+    ...current,
+    images: '',
+  }));
+
+  e.currentTarget.value = '';
+};
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
@@ -72,43 +89,68 @@ function SellItem() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    setLoading(true);
-    setSuccess('');
+  setLoading(true);
+  setSuccess('');
 
-    try {
-      const payload = {
-        brand,
-        title,
-        description,
-        category,
-        size: size || null,
-        condition,
-        originalRetail: originalRetail ? parseFloat(originalRetail) : null,
-        price: parseFloat(price),
-        imageUrls: [],
-      };
+  try {
+    // Upload ảnh trước
+    const formData = new FormData();
 
-      console.log('Submitting listing with payload:', payload);
+    images.forEach((image) => {
+      formData.append('files', image);
+    });
 
-      const response = await api.post('/listings', payload);
-      console.log('Listing created successfully:', response.data);
+    let imageUrls: string[] = [];
 
-      setSuccess('Listing created! Redirecting...');
-      setTimeout(() => navigate('/home'), 1500);
-    } catch (err) {
-      console.error('Error creating listing:', err);
+    if (images.length > 0) {
+      const uploadResponse = await api.post<string[]>(
+        '/uploads',
+        formData
+      );
 
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create listing. Please try again.';
-      setErrors({ ...errors, submit: errorMessage });
-    } finally {
-      setLoading(false);
+      imageUrls = uploadResponse.data;
     }
-  };
 
+    const payload = {
+      brand,
+      title,
+      description,
+      category,
+      size: size || null,
+      condition,
+      originalRetail: originalRetail
+        ? parseFloat(originalRetail)
+        : null,
+      price: parseFloat(price),
+      imageUrls,
+    };
+
+    console.log('Submitting listing:', payload);
+
+    await api.post('/listings', payload);
+
+    setSuccess('Listing created! Redirecting...');
+    setTimeout(() => navigate('/home'), 1500);
+  } catch (err) {
+    console.error('Error creating listing:', err);
+
+    const errorMessage =
+      err instanceof Error
+        ? err.message
+        : 'Failed to create listing. Please try again.';
+
+    setErrors((current) => ({
+      ...current,
+      submit: errorMessage,
+    }));
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="sell-page">
       <div className="sell-container">
@@ -176,7 +218,7 @@ function SellItem() {
                     </div>
                   ))}
                   {imagePreviews.length < 4 && (
-                    <label htmlFor="image-input-additional" className="add-thumbnail">
+                    <label htmlFor="image-input" className="add-thumbnail">
                       <span>+ {4 - imagePreviews.length}</span>
                     </label>
                   )}

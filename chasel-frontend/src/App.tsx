@@ -19,6 +19,8 @@ import SellItem from './pages/SellItem';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import SavedItems from './pages/SavedItems';
+import ProductDetail from './pages/ProductDetail';
 
 function App() {
   return (
@@ -83,6 +85,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/saved"
+            element={
+              <ProtectedRoute>
+                <SavedItems />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/items/:id"
+            element={
+              <ProtectedRoute>
+                <ProductDetail />
               </ProtectedRoute>
             }
           />

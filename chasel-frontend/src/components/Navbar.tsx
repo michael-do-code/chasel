@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import Cart from '../pages/Cart';
 import './Navbar.css';
 
 interface UserProfile {
@@ -25,6 +26,7 @@ function Navbar() {
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [notifications] = useState(0);
   const [messages] = useState(0);
   const [cart] = useState(0);
@@ -123,7 +125,7 @@ function Navbar() {
           <button
             className="navbar-icon-btn"
             title="Cart"
-            onClick={() => navigate('/cart')}
+            onClick={() => setCartOpen(true)}
           >
             <span className="icon">🛍️</span>
             {cart > 0 && <span className="badge">{cart}</span>}
@@ -206,6 +208,7 @@ function Navbar() {
           </div>
         </div>
       </div>
+      <Cart open={cartOpen} onClose={() => setCartOpen(false)} />
     </nav>
   );
 }
