@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Cart from '../pages/Cart';
+import BookmarkIcon from './BookmarkIcon';
+import CartIcon from './CartIcon';
 import './Navbar.css';
 
 interface UserProfile {
@@ -43,6 +45,7 @@ function Navbar() {
         setProfile(null);
       });
   }, [token]);
+
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -130,13 +133,26 @@ function Navbar() {
             {notifications > 0 && <span className="badge">{notifications}</span>}
           </button>
 
+          {/* Saved Items Icon */}
+          <button
+            className="navbar-icon-btn"
+            title="Saved Items"
+            onClick={() => navigate('/saved')}
+          >
+            <span className="icon saved-icon">
+              <BookmarkIcon />
+            </span>
+          </button>
+
           {/* Cart Icon */}
           <button
             className="navbar-icon-btn"
             title="Cart"
             onClick={() => setCartOpen(true)}
           >
-            <span className="icon">🛍️</span>
+            <span className="icon cart-icon">
+              <CartIcon />
+            </span>
             {cart > 0 && <span className="badge">{cart}</span>}
           </button>
 

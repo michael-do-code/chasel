@@ -150,6 +150,11 @@
   justify-content: center;
 }
 
+.navbar-icon-btn .saved-icon,
+.navbar-icon-btn .cart-icon {
+  color: #956F4C;
+}
+
 /* Badge on icon buttons */
 .navbar-icon-btn .badge {
   position: absolute;

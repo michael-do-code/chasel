@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import BookmarkIcon from '../components/BookmarkIcon';
 import './SavedItems.css';
 
 interface SavedItem {
@@ -97,7 +98,7 @@ function SavedItems() {
                   disabled={removingId === item.productId}
                   onClick={() => removeSavedItem(item.productId)}
                 >
-                  ♥
+                  <BookmarkIcon />
                 </button>
               </div>
 

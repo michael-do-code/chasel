@@ -88,8 +88,6 @@
   border: 1px solid #956f4c;
   border-radius: 50%;
   cursor: pointer;
-  font-family: Georgia, serif;
-  font-size: 23px;
 }
 
 .saved-heart:hover {

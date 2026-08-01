@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import ProductImageCarousel from '../components/ProductImageCarousel';
+import BookmarkIcon from '../components/BookmarkIcon';
 import './Home.css';
 
 interface Listing {
@@ -444,7 +445,7 @@ function Home() {
                       toggleSaved(item.id);
                     }}
                   >
-                    {savedProductIds.includes(item.id) ? '♥' : '♡'}
+                    <BookmarkIcon />
                   </button>
                 </div>
               </div>
