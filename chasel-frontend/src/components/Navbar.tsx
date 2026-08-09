@@ -186,29 +186,11 @@ function Navbar() {
                 <button
                   className="dropdown-item"
                   onClick={() => {
-                    navigate('/saved');
-                    setAccountOpen(false);
-                  }}
-                >
-                  ❤️ Saved Items
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
                     navigate('/purchases');
                     setAccountOpen(false);
                   }}
                 >
                   📦 Purchases
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/listings');
-                    setAccountOpen(false);
-                  }}
-                >
-                  📋 My Listings
                 </button>
                 <button
                   className="dropdown-item"

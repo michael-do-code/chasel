@@ -21,6 +21,7 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import SavedItems from './pages/SavedItems';
 import ProductDetail from './pages/ProductDetail';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
@@ -103,6 +104,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
               </ProtectedRoute>
             }
           />

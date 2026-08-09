@@ -284,21 +284,29 @@
 
 @media (max-width: 991px) {
   .navbar-container {
-    grid-template-columns: auto 1fr;
-    gap: 16px;
-    padding: 0 24px;
-    height: auto;
+    grid-template-areas:
+      "left right"
+      "search search";
+    grid-template-columns: 1fr auto;
+    row-gap: 12px;
+    column-gap: 16px;
     padding: 12px 24px;
+    height: auto;
+  }
+
+  .navbar-left {
+    grid-area: left;
+  }
+
+  .navbar-search {
+    grid-area: search;
   }
 
   .navbar-right {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #D2B499;
+    grid-area: right;
+    justify-content: flex-end;
     gap: 12px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .navbar-icon-btn {
@@ -342,15 +350,19 @@
   }
 
   .navbar-container {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-areas:
+      "left right"
+      "search search";
+    grid-template-columns: 1fr auto;
+    row-gap: 12px;
+    column-gap: 12px;
     padding: 12px 16px;
     height: auto;
   }
 
   .navbar-left {
-    gap: 16px;
-    width: 100%;
+    grid-area: left;
+    gap: 12px;
   }
 
   .navbar-logo {
@@ -359,7 +371,6 @@
 
   .navbar-links {
     gap: 8px;
-    flex: 1;
   }
 
   .nav-item {
@@ -373,6 +384,7 @@
   }
 
   .navbar-search {
+    grid-area: search;
     width: 100%;
   }
 
@@ -382,11 +394,10 @@
   }
 
   .navbar-right {
-    grid-column: 1 / -1;
-    margin-top: 8px;
-    padding-top: 8px;
-    gap: 8px;
-    justify-content: flex-start;
+    grid-area: right;
+    gap: 6px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
   .navbar-icon-btn {
@@ -455,8 +466,6 @@
   }
 
   .navbar-right {
-    margin-top: 6px;
-    padding-top: 6px;
     gap: 6px;
   }
 
