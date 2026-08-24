@@ -24,6 +24,9 @@ const categories = [
   'Footwear',
   'Watches',
   'Handbags',
+  'Jewelry',
+  'Beauty',
+  'Home',
 ];
 
 const createFormFromListing = (product: Listing) => ({

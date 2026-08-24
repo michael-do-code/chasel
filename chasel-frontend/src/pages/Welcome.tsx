@@ -13,7 +13,7 @@ function Welcome() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/home', { replace: true });
+      navigate('/discover', { replace: true });
     }, 5000);
 
     return () => clearTimeout(timer);

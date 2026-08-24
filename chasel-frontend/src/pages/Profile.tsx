@@ -24,7 +24,16 @@ interface Listing {
   createdAt: string;
 }
 
-const listingCategories = ['Clothing', 'Accessories', 'Footwear', 'Watches', 'Handbags', 'Jewelry'];
+const listingCategories = [
+  'Clothing',
+  'Accessories',
+  'Footwear',
+  'Watches',
+  'Handbags',
+  'Jewelry',
+  'Beauty',
+  'Home',
+];
 
 const fallbackListingImages = [
   'linear-gradient(135deg, #D2B499, #956F4C)',

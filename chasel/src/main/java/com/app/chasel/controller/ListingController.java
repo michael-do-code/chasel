@@ -43,6 +43,11 @@ public class ListingController {
         return listingRepository.findAll();
     }
 
+    @GetMapping("/trending")
+    public List<Listing> getTrendingListings() {
+        return listingRepository.findTrendingBySaveCount();
+    }
+
     @GetMapping("/{id}")
     public Listing getListing(@PathVariable Long id) {
         return listingRepository.findById(id)
