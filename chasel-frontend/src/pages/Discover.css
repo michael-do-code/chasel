@@ -142,7 +142,7 @@
 .campaign-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-template-rows: 235px 225px;
+  grid-template-rows: 285px 285px;
   gap: 10px;
 }
 
@@ -152,7 +152,7 @@
 }
 
 .campaign-panel-large {
-  grid-column: span 3;
+  grid-column: span 6;
   grid-row: span 2;
 }
 
@@ -193,12 +193,72 @@
   scroll-snap-stop: always;
 }
 
+.category-carousel-slide::before {
+  background: linear-gradient(
+    90deg,
+    #F5F0E7 0%,
+    rgba(245, 240, 231, 0.98) 24%,
+    rgba(245, 240, 231, 0.82) 38%,
+    rgba(245, 240, 231, 0.36) 54%,
+    transparent 68%
+  );
+}
+
 .category-carousel-slide .campaign-copy {
   max-width: 56%;
 }
 
 .category-carousel-slide .campaign-copy h2 {
   max-width: 300px;
+}
+
+.category-slide-slogan {
+  position: relative;
+  width: min(100%, 430px);
+  margin: 20px 0 0;
+  padding: 0 16px;
+  color: #6a4937;
+  font-family: 'Snell Roundhand', 'Apple Chancery', 'Segoe Script', 'Brush Script MT', cursive;
+  font-size: clamp(17px, 1.45vw, 23px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: 0.008em;
+  text-wrap: balance;
+}
+
+.category-slide-slogan::before,
+.category-slide-slogan::after {
+  position: absolute;
+  color: rgba(141, 96, 59, 0.72);
+  font-family: 'Snell Roundhand', 'Apple Chancery', 'Brush Script MT', cursive;
+  font-size: clamp(38px, 3.4vw, 58px);
+  font-style: normal;
+  line-height: 1;
+}
+
+.category-slide-slogan::before {
+  content: '“';
+  top: -9px;
+  left: -7px;
+}
+
+.category-slide-slogan::after {
+  content: '”';
+  right: -6px;
+  bottom: -14px;
+}
+
+.category-slide-slogan span {
+  display: inline-block;
+}
+
+.category-slide-slogan span::first-letter {
+  font-size: 1.35em;
+}
+
+.category-slide-slogan + .category-slide-link {
+  margin-top: 22px;
 }
 
 .category-swipe-hint {
@@ -310,11 +370,38 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: 270px;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 12px;
+}
+
+.discover-marketplace-heading {
+  padding: 34px 2px 4px;
+}
+
+.discover-marketplace-heading h2 {
+  margin: 0;
+  color: #2f1c12;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(34px, 3.5vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.discover-marketplace-heading p {
+  margin: 8px 0 0;
+  color: #75675c;
+  font-size: 13px;
 }
 
 .marketplace-promo {
   min-height: 270px;
+  border: 1px solid rgba(141, 96, 59, 0.17);
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.marketplace-promo::before {
+  background: transparent;
 }
 
 .marketplace-promo-price {
@@ -435,7 +522,7 @@
 
 .marketplace-shell .listings-section {
   max-width: none;
-  padding: 42px 0 54px;
+  padding: 30px 0 14px;
 }
 
 .marketplace-transition {
@@ -477,13 +564,13 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .marketplace-shell .section-title {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 34px;
+  font-size: 30px;
   font-style: normal;
 }
 
@@ -552,11 +639,11 @@
 
 .marketplace-shell .highlight-listing-card .listing-image {
   height: auto;
-  aspect-ratio: 0.86;
+  aspect-ratio: 1.42;
 }
 
 .highlight-listing-info {
-  padding: 15px;
+  padding: 10px 12px 12px;
 }
 
 .highlight-listing-header {
@@ -600,29 +687,75 @@
 .campaign-lower {
   display: grid;
   gap: 12px;
-  padding-bottom: 54px;
-}
-
-.explore-more-heading {
-  padding: 0 0 26px;
-}
-
-.explore-more-heading .section-title {
-  margin: 0;
+  padding: 0 0 54px;
 }
 
 .campaign-panel-wide {
   min-height: 340px;
 }
 
-.campaign-lower-grid {
+.campaign-trust-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
-.campaign-panel-tile {
-  aspect-ratio: 1.35;
+.campaign-new-week .campaign-copy {
+  max-width: 45%;
+}
+
+.campaign-new-week {
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.campaign-new-week::before {
+  background: transparent;
+}
+
+.campaign-new-week .campaign-copy span,
+.campaign-trust-card .campaign-copy span {
+  display: block;
+  color: #66584c;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.campaign-new-week .campaign-copy button {
+  margin-top: 18px;
+}
+
+.campaign-trust-card {
+  min-height: 210px;
+  border: 1px solid rgba(141, 96, 59, 0.17);
+  background-position: center;
+  background-size: cover;
+}
+
+.campaign-trust-card::before {
+  background: transparent;
+}
+
+.campaign-trust-card .campaign-copy {
+  max-width: 58%;
+  padding: 20px 22px;
+}
+
+.campaign-trust-card .campaign-copy p {
+  margin-bottom: 10px;
+  font-size: 9px;
+}
+
+.campaign-trust-card .campaign-copy h3 {
+  margin-bottom: 7px;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1;
+}
+
+.campaign-trust-card .campaign-copy button {
+  margin-top: auto;
+  padding: 9px 13px;
+  font-size: 10px;
 }
 
 .marketplace-shell .philosophy {
@@ -806,7 +939,7 @@
 @media (max-width: 1000px) {
   .campaign-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: 260px 180px 180px;
+    grid-template-rows: 470px;
   }
 
   .category-campaign-grid {
@@ -823,6 +956,10 @@
 
   .marketplace-promo-fresh {
     grid-column: span 2;
+  }
+
+  .campaign-trust-grid {
+    grid-template-columns: 1fr;
   }
 
   .campaign-panel-large,
@@ -878,11 +1015,24 @@
   }
 
   .category-carousel {
-    min-height: 360px;
+    min-height: 390px;
   }
 
   .category-carousel-slide .campaign-copy {
     max-width: 68%;
+  }
+
+  .category-slide-slogan {
+    width: min(100%, 360px);
+    margin-top: 16px;
+    padding-inline: 14px;
+    font-size: clamp(15px, 4vw, 19px);
+    line-height: 1.25;
+  }
+
+  .category-slide-slogan::before,
+  .category-slide-slogan::after {
+    font-size: 36px;
   }
 
   .category-swipe-hint {
@@ -901,8 +1051,9 @@
     min-height: 260px;
   }
 
-  .campaign-lower-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .campaign-new-week .campaign-copy,
+  .campaign-trust-card .campaign-copy {
+    max-width: 68%;
   }
 
   .campaign-copy {

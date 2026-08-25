@@ -140,6 +140,20 @@ function Navbar() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!location.state?.scrollToTop) return;
+
+    const scrollFrame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(scrollFrame);
+    };
+  }, [location.key, location.state]);
+
   const handleLogout = () => {
     setProfile(null);
     logout();
@@ -149,10 +163,14 @@ function Navbar() {
   const handleLogoClick = () => {
     navigate('/discover', {
       replace: location.pathname === '/discover',
-      state: { refreshCommunity: Date.now() },
+      state: { refreshCommunity: Date.now(), scrollToTop: Date.now() },
     });
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  const handleBrowseClick = () => {
+    navigate('/home', {
+      replace: location.pathname === '/home',
+      state: { scrollToTop: Date.now() },
     });
   };
 
@@ -165,7 +183,12 @@ function Navbar() {
       <div className="navbar-container">
         {/* Left: Logo & Nav Links */}
         <div className="navbar-left">
-          <button type="button" className="navbar-logo" onClick={handleLogoClick}>
+          <button
+            type="button"
+            className="navbar-logo"
+            onClick={handleLogoClick}
+            aria-label="Go to Chasel home"
+          >
             chasel
           </button>
 
@@ -175,7 +198,7 @@ function Navbar() {
               className={`nav-item ${isActive('/home') ? 'active' : ''}`}
               onClick={(e) => {
                 e.preventDefault();
-                navigate('/home');
+                handleBrowseClick();
               }}
             >
               Browse

@@ -4,29 +4,22 @@ import api from '../api/axios';
 import BookmarkIcon from '../components/BookmarkIcon';
 import ProductImageCarousel from '../components/ProductImageCarousel';
 import { useSearch } from '../context/SearchContext';
-import promoAtlas from '../assets/promo-atlas.png';
-import discoverHero from '../assets/discover-hero.png';
-import discoverHeroFrame02 from '../assets/discover-hero-frame-02.png';
-import discoverHeroFrame03 from '../assets/discover-hero-frame-03.png';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
-import discoverHeroFrame05 from '../assets/discover-hero-frame-05.png';
-import discoverHeroFrame06 from '../assets/discover-hero-frame-06.png';
-import discoverHeroFrame07 from '../assets/discover-hero-frame-07.png';
-import discoverHeroFrame08 from '../assets/discover-hero-frame-08.png';
-import discoverHeroFrame09 from '../assets/discover-hero-frame-09.png';
-import discoverHeroFrame10 from '../assets/discover-hero-frame-10.png';
-import promoDesigner from '../assets/promo-designer.png';
-import promoCategoryClothing from '../assets/promo-category-clothing.png';
-import promoCategoryFootwear from '../assets/promo-category-footwear.png';
-import promoCategoryAccessories from '../assets/promo-category-accessories.png';
-import promoCategoryJewelry from '../assets/promo-category-jewelry.png';
-import promoCategoryWatches from '../assets/promo-category-watches.png';
+import promoDesigner from '../assets/promo-category-handbags-wide.png';
+import promoCategoryClothing from '../assets/promo-category-clothing-wide.png';
+import promoCategoryFootwear from '../assets/promo-category-footwear-wide.png';
+import promoCategoryAccessories from '../assets/promo-category-accessories-wide.png';
+import promoCategoryJewelry from '../assets/promo-category-jewelry-wide.png';
+import promoCategoryWatches from '../assets/promo-category-watches-wide.png';
 import promoHome from '../assets/promo-home.png';
 import promoBeauty from '../assets/promo-beauty.png';
-import promoNewWeek from '../assets/promo-new-week.png';
-import promoPriceDrops from '../assets/promo-price-drops-model-light.png';
-import promoTrendingNow from '../assets/promo-trending-outfit-v2.png';
-import promoLuxuryBrands from '../assets/promo-luxury-brands.png';
+import promoPriceDrops from '../assets/promo-price-drops-symbols.png';
+import promoTrendingNow from '../assets/promo-trending-model-green-purse.png';
+import promoUnder100 from '../assets/promo-under-100-price-line.png';
+import promoNewWeek from '../assets/promo-new-week-refined.png';
+import promoMostSaved from '../assets/promo-most-saved-refined.png';
+import promoAuthenticated from '../assets/promo-authenticated-refined.png';
+import promoCompleteLook from '../assets/promo-complete-look-refined.png';
 import './Discover.css';
 
 interface Listing {
@@ -45,27 +38,19 @@ interface SavedItem {
   productId: number;
 }
 
-const heroFrames = [
-  discoverHeroFrame04,
-  discoverHeroFrame08,
-  discoverHeroFrame05,
-  discoverHeroFrame02,
-  discoverHeroFrame03,
-  discoverHeroFrame10,
-  discoverHeroFrame06,
-  discoverHeroFrame07,
-  discoverHeroFrame09,
-  discoverHero,
+const categorySlides = [
+  { category: 'Seasonal Edit', kicker: 'THE SEASONAL EDIT', title: 'Considered pieces. Loved for longer.', slogan: 'Chosen with care, worn with purpose, and loved through every chapter.', sloganStyle: 'editorial', button: 'Shop the collection', href: '/home?category=All%20Items', image: discoverHeroFrame04, position: 'center top' },
+  { category: 'Home', kicker: 'NEW CATEGORY', title: 'Home Refresh', slogan: 'A beautiful life begins in the rooms that hold your quietest, happiest moments.', sloganStyle: 'graceful', button: 'Shop home', href: '/home?category=Home', image: promoHome },
+  { category: 'Handbags', kicker: 'ICONIC CARRYALLS', title: 'Designer Spotlight', slogan: 'Carry what matters, and let every thoughtful detail speak before you do.', sloganStyle: 'signature', button: 'Explore handbags', href: '/home?category=Handbags', image: promoDesigner },
+  { category: 'Clothing', kicker: 'EVERYDAY EXPRESSION', title: 'Clothing Edit', slogan: 'Dress for the life you live, with pieces that feel effortless and entirely your own.', sloganStyle: 'modern', button: 'Explore clothing', href: '/home?category=Clothing', image: promoCategoryClothing },
+  { category: 'Footwear', kicker: 'STEP INTO STYLE', title: 'Footwear Focus', slogan: 'Move with purpose, step with confidence, and arrive in unmistakable style.', sloganStyle: 'dynamic', button: 'Explore footwear', href: '/home?category=Footwear', image: promoCategoryFootwear },
+  { category: 'Accessories', kicker: 'DETAILS THAT DEFINE', title: 'Finishing Touches', slogan: 'The smallest details have a beautiful way of leaving the strongest impression.', sloganStyle: 'flourish', button: 'Explore accessories', href: '/home?category=Accessories', image: promoCategoryAccessories },
+  { category: 'Beauty', kicker: 'SEALED & SELECTED', title: 'Beauty Essentials', slogan: 'Honor the quiet rituals that reveal your natural light and lasting confidence.', sloganStyle: 'soft', button: 'Discover beauty', href: '/home?category=Beauty', image: promoBeauty },
+  { category: 'Jewelry', kicker: 'LIGHT TO TREASURE', title: 'Jewelry Selection', slogan: 'Wear a little light close to you, made to shimmer through every chapter.', sloganStyle: 'luminous', button: 'Explore jewelry', href: '/home?category=Jewelry', image: promoCategoryJewelry },
+  { category: 'Watches', kicker: 'TIMELESS CRAFT', title: 'Timeless Watches', slogan: 'Time moves forward, while true craftsmanship and personal style remain.', sloganStyle: 'precision', button: 'Explore watches', href: '/home?category=Watches', image: promoCategoryWatches },
 ];
 
-const categorySlides = [
-  { category: 'Handbags', title: 'Designer Spotlight', button: 'Explore handbags', href: '/home?category=Handbags', image: promoDesigner },
-  { category: 'Clothing', title: 'Clothing Edit', button: 'Explore clothing', href: '/home?category=Clothing', image: promoCategoryClothing },
-  { category: 'Footwear', title: 'Footwear Focus', button: 'Explore footwear', href: '/home?category=Footwear', image: promoCategoryFootwear },
-  { category: 'Accessories', title: 'Finishing Touches', button: 'Explore accessories', href: '/home?category=Accessories', image: promoCategoryAccessories },
-  { category: 'Jewelry', title: 'Jewelry Selection', button: 'Explore jewelry', href: '/home?category=Jewelry', image: promoCategoryJewelry },
-  { category: 'Watches', title: 'Timeless Watches', button: 'Explore watches', href: '/home?category=Watches', image: promoCategoryWatches },
-];
+const carouselSlides = [...categorySlides, categorySlides[0]];
 
 const getRandomListings = (items: Listing[], count: number) => {
   const shuffled = [...items];
@@ -78,40 +63,25 @@ const getRandomListings = (items: Listing[], count: number) => {
   return shuffled.slice(0, count);
 };
 
-const promoStyle = (column: 0 | 1 | 2, row: 0 | 1 | 2) => ({
-  backgroundImage: `url(${promoAtlas})`,
-  backgroundSize: '300% auto',
-  backgroundPosition: `${column * 50}% ${row * 50}%`,
-});
-
-const fullPanelStyle = (image: string) => ({
+const fullPanelStyle = (image: string, position = 'center') => ({
   backgroundImage: `url(${image})`,
-  backgroundPosition: 'center',
+  backgroundPosition: position,
   backgroundSize: 'cover',
 });
 
 function Discover() {
   const [highlightedListings, setHighlightedListings] = useState<Listing[]>([]);
-  const [heroFrameIndex, setHeroFrameIndex] = useState(0);
   const [activeCategorySlide, setActiveCategorySlide] = useState(0);
+  const [isCategoryCarouselPaused, setIsCategoryCarouselPaused] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [savedProductIds, setSavedProductIds] = useState<number[]>([]);
   const [savingProductId, setSavingProductId] = useState<number | null>(null);
   const { setSearchItems } = useSearch();
   const categoryCarouselRef = useRef<HTMLDivElement>(null);
+  const categoryScrollEndTimerRef = useRef<number | undefined>(undefined);
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const timer = window.setInterval(() => {
-      setHeroFrameIndex((current) => (current + 1) % heroFrames.length);
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const carousel = categoryCarouselRef.current;
@@ -132,6 +102,26 @@ function Discover() {
       window.clearTimeout(hintTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (isCategoryCarouselPaused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const timer = window.setInterval(() => {
+      setActiveCategorySlide((current) => {
+        const nextIndex = current + 1;
+        const carousel = categoryCarouselRef.current;
+        carousel?.scrollTo({ left: nextIndex * carousel.clientWidth, behavior: 'smooth' });
+
+        if (nextIndex === categorySlides.length) {
+          return 0;
+        }
+
+        return nextIndex;
+      });
+    }, 2500);
+
+    return () => window.clearInterval(timer);
+  }, [isCategoryCarouselPaused]);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -182,60 +172,54 @@ function Discover() {
   return (
     <div className="home">
       <main className="marketplace-shell">
-        {/* Large campaign panel */}
-        <section className="campaign-hero">
-          {heroFrames.map((frame, index) => (
-            <div
-              key={frame}
-              className={`campaign-hero-frame ${index === heroFrameIndex ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${frame})` }}
-              aria-hidden="true"
-            />
-          ))}
-          <div className="campaign-overlay">
-            <p className="campaign-kicker">THE SEASONAL EDIT</p>
-            <h1>Considered pieces.<br />Loved for longer.</h1>
-            <button
-              className="campaign-action"
-              onClick={() => navigate('/home?category=All%20Items')}
-            >
-              Shop the collection
-            </button>
-          </div>
-          <span className="sponsored-label">Sponsored</span>
-        </section>
-
-        <section className="marketplace-transition" aria-labelledby="marketplace-transition-title">
-          <p className="marketplace-transition-kicker">CHOSEN AGAIN</p>
-          <h2 id="marketplace-transition-title">Ready for a new chapter.</h2>
-          <p>
-            Distinctive pieces from individual wardrobes, waiting to become part of yours.
-          </p>
-        </section>
-
-        {/* Mixed-size advertising panels */}
+        {/* All primary advertisements share one top carousel. */}
         <section className="campaign-grid" aria-label="Featured promotions">
-          <article className="category-carousel campaign-panel-large" aria-label="Shop featured categories">
+          <article
+            className="category-carousel campaign-panel-large"
+            aria-label="Shop featured categories"
+            onMouseEnter={() => setIsCategoryCarouselPaused(true)}
+            onMouseLeave={() => setIsCategoryCarouselPaused(false)}
+          >
             <div
               className="category-carousel-track"
               ref={categoryCarouselRef}
               onScroll={(event) => {
                 const track = event.currentTarget;
                 const nextIndex = Math.round(track.scrollLeft / track.clientWidth);
-                setActiveCategorySlide(nextIndex);
+                setActiveCategorySlide(nextIndex % categorySlides.length);
                 if (nextIndex > 0) setShowSwipeHint(false);
+
+                window.clearTimeout(categoryScrollEndTimerRef.current);
+                categoryScrollEndTimerRef.current = window.setTimeout(() => {
+                  const settledIndex = Math.round(track.scrollLeft / track.clientWidth);
+                  if (settledIndex !== categorySlides.length) return;
+
+                  track.style.scrollBehavior = 'auto';
+                  track.style.scrollSnapType = 'none';
+                  track.scrollLeft = 0;
+
+                  window.requestAnimationFrame(() => {
+                    window.requestAnimationFrame(() => {
+                      track.style.scrollBehavior = '';
+                      track.style.scrollSnapType = '';
+                    });
+                  });
+                }, 100);
               }}
             >
-              {categorySlides.map((slide) => (
+              {carouselSlides.map((slide, index) => (
                 <section
                   className="campaign-panel category-carousel-slide"
-                  key={slide.category}
-                  style={fullPanelStyle(slide.image)}
+                  key={`${slide.category}-${index}`}
+                  style={fullPanelStyle(slide.image, 'position' in slide ? slide.position : undefined)}
                   aria-label={slide.category}
                 >
                   <div className="campaign-copy campaign-copy-light">
-                    <p>CURATED FOR YOU</p>
+                    <p>{slide.kicker}</p>
                     <h2>{slide.title}</h2>
+                    <blockquote className={`category-slide-slogan slogan-${slide.sloganStyle}`}>
+                      <span>{slide.slogan}</span>
+                    </blockquote>
                     <button
                       className="category-slide-link"
                       onClick={() => navigate(slide.href)}
@@ -285,25 +269,12 @@ function Discover() {
             </div>
           </article>
 
-          <article className="campaign-panel campaign-panel-medium campaign-home" style={fullPanelStyle(promoHome)}>
-            <div className="campaign-copy">
-              <p>NEW CATEGORY</p>
-              <h2>Home Refresh</h2>
-              <button onClick={() => navigate('/home?category=Home')}>Shop home</button>
-            </div>
-            <span className="sponsored-label">Sponsored</span>
-          </article>
-
-          <article className="campaign-panel campaign-panel-medium campaign-beauty" style={fullPanelStyle(promoBeauty)}>
-            <div className="campaign-copy">
-              <p>SEALED &amp; SELECTED</p>
-              <h2>Beauty Essentials</h2>
-              <button onClick={() => navigate('/home?category=Beauty')}>Discover beauty</button>
-            </div>
-            <span className="sponsored-label">Sponsored</span>
-          </article>
-
         </section>
+
+        <header className="discover-marketplace-heading">
+          <h2>Discover what’s moving</h2>
+          <p>Curated finds from the community and beyond.</p>
+        </header>
 
         <section className="category-campaign-grid" aria-label="Marketplace highlights">
           <article
@@ -328,22 +299,22 @@ function Discover() {
             style={fullPanelStyle(promoTrendingNow)}
           >
             <div className="campaign-copy">
-              <p>COMMUNITY FAVORITES</p>
+              <p>WHAT’S RISING</p>
               <h2>Trending Now</h2>
-              <span>The pieces everyone is watching</span>
-              <button onClick={() => navigate('/home?collection=trending')}>Explore highlights</button>
+              <span>The pieces gaining attention fastest right now</span>
+              <button onClick={() => navigate('/home?collection=trending')}>Explore trending</button>
             </div>
           </article>
 
           <article
             className="campaign-panel marketplace-promo marketplace-promo-fresh"
-            style={fullPanelStyle(promoLuxuryBrands)}
+            style={fullPanelStyle(promoUnder100)}
           >
             <div className="campaign-copy">
-              <p>ICONIC DESIGNERS</p>
-              <h2>Luxury Brands</h2>
-              <span>Gucci, Prada, Dior &amp; more</span>
-              <button onClick={() => navigate('/home?collection=luxury-brands')}>Shop luxury</button>
+              <p>GREAT FINDS, SMALLER PRICES</p>
+              <h2>Under $100</h2>
+              <span>Designer style, always within reach</span>
+              <button onClick={() => navigate('/home?maxPrice=100')}>Shop under $100</button>
             </div>
           </article>
 
@@ -409,50 +380,42 @@ function Discover() {
           </div>
         </section>
 
-        <div className="explore-more-heading">
-          <h2 className="section-title">Explore more</h2>
-        </div>
-
-        {/* Second advertising group keeps campaigns present down the page */}
+        {/* Supporting campaigns keep the page useful without competing with listings. */}
         <section className="campaign-lower" aria-label="More featured promotions">
           <article className="campaign-panel campaign-panel-wide campaign-new-week" style={fullPanelStyle(promoNewWeek)}>
             <div className="campaign-copy">
               <p>FRESHLY LISTED</p>
               <h2>New This Week</h2>
+              <span>Handpicked arrivals from our community.</span>
               <button onClick={() => navigate('/home?collection=new-this-week')}>Browse new arrivals</button>
             </div>
             <span className="sponsored-label">Sponsored</span>
           </article>
-          <div className="campaign-lower-grid">
-            {[
-              ['Rare Finds', promoStyle(1, 1)],
-              ['Under $100', promoStyle(2, 1)],
-              ["Editor's Picks", promoStyle(2, 2)],
-              ['Sustainable Style', promoStyle(0, 0)],
-            ].map(([title, style]) => (
-              <article
-                className="campaign-panel campaign-panel-tile"
-                style={style as ReturnType<typeof promoStyle>}
-                key={title as string}
-                role={title === 'Sustainable Style' || title === 'Rare Finds' ? 'link' : undefined}
-                tabIndex={title === 'Sustainable Style' || title === 'Rare Finds' ? 0 : undefined}
-                aria-label={title === 'Rare Finds' ? 'Browse rare finds' : undefined}
-                onClick={title === 'Sustainable Style'
-                  ? () => navigate('/home?collection=sustainable')
-                  : title === 'Rare Finds'
-                    ? () => navigate('/home?collection=rare-finds')
-                    : undefined}
-                onKeyDown={title === 'Sustainable Style' || title === 'Rare Finds' ? (event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    navigate(title === 'Rare Finds' ? '/home?collection=rare-finds' : '/home?collection=sustainable');
-                  }
-                } : undefined}
-              >
-                <div className="campaign-copy campaign-copy-bottom"><h3>{title as string}</h3></div>
-                <span className="sponsored-label">Sponsored</span>
-              </article>
-            ))}
+          <div className="campaign-trust-grid">
+            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoMostSaved)}>
+              <div className="campaign-copy">
+                <p>COMMUNITY SIGNAL</p>
+                <h3>Most Saved</h3>
+                <span>The pieces shoppers keep coming back to.</span>
+                <button onClick={() => navigate('/home?collection=most-saved')}>See most saved</button>
+              </div>
+            </article>
+            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoAuthenticated)}>
+              <div className="campaign-copy">
+                <p>BUY WITH CONFIDENCE</p>
+                <h3>Authenticated Icons</h3>
+                <span>Recognizable designs, checked with care.</span>
+                <button onClick={() => navigate('/home?collection=authenticated')}>Explore authenticated</button>
+              </div>
+            </article>
+            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoCompleteLook)}>
+              <div className="campaign-copy">
+                <p>STYLE IT TOGETHER</p>
+                <h3>Complete the Look</h3>
+                <span>Thoughtful pairings across every category.</span>
+                <button onClick={() => navigate('/home?collection=complete-the-look')}>Build your look</button>
+              </div>
+            </article>
           </div>
         </section>
 
