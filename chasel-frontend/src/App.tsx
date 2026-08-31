@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import { AuthProvider } from './context/AuthContext';
+import { SearchProvider } from './context/SearchProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 
@@ -17,6 +18,7 @@ import VerifyCode from './pages/VerifyCode';
 import ResetPassword from './pages/ResetPassword';
 import SellItem from './pages/SellItem';
 import Home from './pages/Home';
+import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import SavedItems from './pages/SavedItems';
@@ -26,13 +28,14 @@ import Notifications from './pages/Notifications';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Navbar />
+      <SearchProvider>
+        <BrowserRouter>
+          <Navbar />
 
         <Routes>
           <Route
             path="/"
-            element={<Navigate to="/home" replace />}
+            element={<Navigate to="/discover" replace />}
           />
 
           <Route path="/login" element={<Login />} />
@@ -59,6 +62,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Welcome />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/discover"
+            element={
+              <ProtectedRoute>
+                <Discover />
               </ProtectedRoute>
             }
           />
@@ -130,8 +142,9 @@ function App() {
             path="*"
             element={<Navigate to="/home" replace />}
           />
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </SearchProvider>
     </AuthProvider>
   );
 }

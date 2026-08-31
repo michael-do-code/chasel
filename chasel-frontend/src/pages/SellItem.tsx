@@ -278,6 +278,8 @@ const handleImageUpload = (
                     <option value="Watches">Watches</option>
                     <option value="Handbags">Handbags</option>
                     <option value="Jewelry">Jewelry</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Home">Home</option>
                   </select>
                   {errors.category && <p className="field-error">{errors.category}</p>}
                 </div>

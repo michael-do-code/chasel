@@ -4,7 +4,7 @@ Chasel has a React/Vite frontend and a Spring Boot backend.
 
 ## Requirements
 
-- Java 17
+- Java 25
 - Node.js 20 or newer
 
 ## Run locally after cloning

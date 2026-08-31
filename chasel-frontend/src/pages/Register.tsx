@@ -30,10 +30,9 @@ function Register() {
       });
 
       login(res.data.token);
-
-        navigate('/welcome', {
+      navigate('/welcome', {
         state: { type: 'register' },
-    });
+      });
     } catch {
       setError('Could not create account. Please try again.');
     } finally {

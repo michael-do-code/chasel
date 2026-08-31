@@ -23,8 +23,8 @@ function Login() {
       const res = await api.post('/auth/login', { email, password });
       login(res.data.token);
       navigate('/welcome', {
-      state: { type: 'login' },
-    });
+        state: { type: 'login' },
+      });
     } catch (err) {
       setError('Invalid email or password');
     } finally {
