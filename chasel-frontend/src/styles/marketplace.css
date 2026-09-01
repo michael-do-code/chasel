@@ -1,3 +1,15 @@
+/*
+ * Shared marketplace styles (formerly Home.css).
+ *
+ * Owns the campaign panels used by Discover, the legacy `.listing-card` used
+ * by Discover and Profile, and the `.listing-image` / `.carousel-*` chrome
+ * that ProductImageCarousel renders. Imported by ProductImageCarousel,
+ * Discover, and Profile.
+ *
+ * The redesigned Browsing page does NOT build on these classes — it uses the
+ * tokens in `theme.css` plus the `ed-*` primitives in `components/editorial`.
+ */
+
 * {
   box-sizing: border-box;
 }
@@ -95,29 +107,6 @@
   color: white;
   font-size: 9px;
   letter-spacing: 0.02em;
-}
-
-.marketplace-shell .search-section {
-  max-width: none;
-  margin: 0;
-  padding: 18px 0;
-}
-
-.marketplace-shell .category-filter {
-  display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 4px;
-}
-
-.marketplace-shell .category-btn {
-  min-width: 0;
-  padding: 11px 5px;
-  border: 0;
-  font-size: 11px;
-}
-
-.marketplace-shell .category-btn.active {
-  border-radius: 3px;
 }
 
 .campaign-grid {
@@ -229,11 +218,6 @@
   aspect-ratio: 1.35;
 }
 
-.marketplace-shell .philosophy {
-  max-width: none;
-  border-radius: 7px;
-}
-
 @media (max-width: 1000px) {
   .marketplace-shell .category-filter {
     display: flex;
@@ -323,22 +307,6 @@
 }
 
 /* Hero Section */
-.hero {
-  background: linear-gradient(135deg, #F5F0E7 0%, #E6C9AC 100%);
-  padding: 80px 40px;
-  text-align: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.hero-content h1 {
-  font-size: 56px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 24px;
-  font-style: italic;
-  letter-spacing: -0.5px;
-}
 
 .hero-content .highlight {
   font-style: italic;
@@ -346,93 +314,7 @@
   font-weight: 500;
 }
 
-.hero-subtitle {
-  font-size: 16px;
-  color: #4A2B17;
-  max-width: 600px;
-  margin: 0 auto 40px;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 14px 32px;
-  border: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-}
-
-.btn-primary {
-  background: #956F4C;
-  color: #FEFDFB;
-}
-
-.btn-primary:hover {
-  background: #4A2B17;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: #4A2B17;
-  border: 1px solid #956F4C;
-}
-
-.btn-secondary:hover {
-  background: #956F4C;
-  color: #FEFDFB;
-  transform: translateY(-2px);
-}
-
 /* Search & Filter Section */
-.search-section {
-  max-width: 1200px;
-  margin: 60px auto;
-  padding: 0 40px;
-}
-
-.category-filter {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.category-btn {
-  padding: 10px 18px;
-  border: 1px solid #D2B499;
-  background: transparent;
-  color: #4A2B17;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.category-btn:hover {
-  border-color: #956F4C;
-  color: #956F4C;
-}
-
-.category-btn.active {
-  background: #956F4C;
-  border-color: #956F4C;
-  color: #FEFDFB;
-}
 
 /* Listings Section */
 .listings-section {
@@ -543,64 +425,7 @@
   color: #AEA397;
 }
 
-.detail {
-  display: inline-block;
-}
-
 /* Philosophy Section */
-.philosophy {
-  background: #FEFDFB;
-  padding: 80px 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.philosophy-content {
-  margin-bottom: 60px;
-  max-width: 700px;
-}
-
-.philosophy-content h2 {
-  font-size: 32px;
-  font-style: italic;
-  font-weight: 400;
-  margin-bottom: 24px;
-  color: #4A2B17;
-}
-
-.philosophy-content p {
-  font-size: 16px;
-  line-height: 1.8;
-  color: #4A2B17;
-}
-
-.philosophy-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 40px;
-  margin-top: 60px;
-}
-
-.feature {
-  text-align: left;
-}
-
-.feature h4 {
-  font-size: 28px;
-  font-family: 'JetBrains Mono', monospace;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: #4A2B17;
-}
-
-.feature p {
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  color: #956F4C;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin: 0;
-}
 
 /* Ultra-wide monitors (1920px+) */
 @media (min-width: 1920px) {
@@ -1071,45 +896,7 @@
   left: 16px;
   z-index: 2;
 }
-.listing-description-area {
-  margin-top: 16px;
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 4px;
-  text-align: left;
-}
 
-.listing-description {
-  flex: 0 1 auto;
-  min-width: 0;
-  max-width: calc(100% - 90px);
-  margin: 0;
-  color: #7c6c60;
-  font-size: 14px;
-  line-height: 1.5;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.listing-description.expanded {
-  max-width: none;
-  white-space: normal;
-  overflow: visible;
-}
-
-.read-more-btn {
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: #956f4c;
-  font-weight: 600;
-  cursor: pointer;
-}
 .listings-grid {
   align-items: start;
 }
@@ -1136,63 +923,6 @@
 
 .listing-details {
   margin-bottom: 8px;
-}
-
-.listing-description-area {
-  margin-top: 8px;
-}
-
-.listing-actions {
-  display: grid;
-  grid-template-columns: 1fr 44px;
-  gap: 8px;
-  margin-top: 13px;
-}
-
-.cart-add-button,
-.wishlist-button {
-  height: 42px;
-  border: 1px solid #956f4c;
-  cursor: pointer;
-  transition:
-    color 180ms ease,
-    background 180ms ease,
-    border-color 180ms ease;
-}
-
-.cart-add-button {
-  padding: 0 16px;
-  color: #fefdfb;
-  background: #956f4c;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.cart-add-button:hover {
-  background: #4a2b17;
-  border-color: #4a2b17;
-}
-
-.wishlist-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  color: #956f4c;
-  background: #fefdfb;
-}
-
-.wishlist-button:hover,
-.wishlist-button.saved {
-  color: #fefdfb;
-  background: #956f4c;
-}
-
-.wishlist-button:disabled {
-  cursor: wait;
-  opacity: 0.65;
 }
 
 /* Product-card image carousel */

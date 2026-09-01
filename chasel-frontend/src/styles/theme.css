@@ -1,0 +1,164 @@
+/*
+ * Chasel editorial theme.
+ *
+ * Single source of truth for the palette, type ramp, and the small set of
+ * primitives (kicker / display / rule / meta / buttons) that the editorial
+ * pages share. Page stylesheets should consume these tokens rather than
+ * re-declaring hex values.
+ */
+
+:root {
+  /* Surfaces — warm paper, from the page ground up to raised cards. */
+  --paper: #f4f0e7;
+  --paper-sunk: #ede7db;
+  --paper-raised: #faf7f1;
+  --surface: #fefdfb;
+
+  /* Ink — the near-black display colour down to muted metadata. */
+  --ink: #141210;
+  --ink-soft: #4a2b17;
+  --ink-muted: #8a8177;
+  --ink-faint: #a9a094;
+
+  /* Accents — tan for the legacy marketplace, rust for editorial signals. */
+  --tan: #956f4c;
+  --accent: #b4491f;
+
+  /* Rules and hairlines. */
+  --rule: #d8d1c4;
+  --rule-soft: #e7e1d5;
+
+  /* Inverted (dark) blocks: solid ink buttons, outgoing message bubbles. */
+  --ink-on-dark: #f4f0e7;
+
+  /* Type. */
+  --font-serif: 'Didot', 'Bodoni MT', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Layout. */
+  --shell-width: 1500px;
+  --shell-gutter: 40px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Primitives
+ * ------------------------------------------------------------------ */
+
+/* Small uppercase mono label above a heading, e.g. "THE ARCHIVE · 6 PIECES". */
+.ed-kicker {
+  margin: 0;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Italic serif display heading. */
+.ed-display {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+}
+
+/* Muted metadata: sizes, conditions, timestamps. */
+.ed-meta {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+/* Mono figure — prices, times, counts. */
+.ed-figure {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-rule {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--rule);
+}
+
+/* Screen-reader-only text. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ *
+ * Buttons
+ * ------------------------------------------------------------------ */
+
+.ed-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.ed-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ed-btn-solid {
+  background: var(--ink);
+  color: var(--ink-on-dark);
+}
+
+.ed-btn-solid:hover:not(:disabled) {
+  background: var(--ink-soft);
+  border-color: var(--ink-soft);
+}
+
+.ed-btn-outline:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--ink-on-dark);
+}
+
+/* Text-only tertiary action, e.g. "DECLINE". */
+.ed-btn-quiet {
+  border-color: transparent;
+  color: var(--ink-muted);
+}
+
+.ed-btn-quiet:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+/* Shared focus treatment — the design has no rounded corners, so a square
+   offset outline reads as part of the system rather than a browser default. */
+.ed-btn:focus-visible,
+.ed-tab:focus-visible,
+.ed-tile:focus-visible,
+.ed-conversation:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 2px;
+}

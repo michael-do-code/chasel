@@ -74,7 +74,7 @@ function SavedItems() {
           <div className="saved-empty-heart">♡</div>
           <h2>Nothing saved yet</h2>
           <p>Tap the heart on a product to keep it here.</p>
-          <button type="button" onClick={() => navigate('/home')}>
+          <button type="button" onClick={() => navigate('/browsing')}>
             Browse items
           </button>
         </section>

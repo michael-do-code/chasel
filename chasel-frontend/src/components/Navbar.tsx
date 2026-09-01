@@ -113,7 +113,7 @@ function Navbar() {
     setSearchQuery(suggestion.value);
     setShowSuggestions(false);
     setActiveSuggestion(-1);
-    if (location.pathname !== '/home') navigate('/home');
+    if (location.pathname !== '/browsing') navigate('/browsing');
   };
 
   useEffect(() => {
@@ -168,8 +168,8 @@ function Navbar() {
   };
 
   const handleBrowseClick = () => {
-    navigate('/home', {
-      replace: location.pathname === '/home',
+    navigate('/browsing', {
+      replace: location.pathname === '/browsing',
       state: { scrollToTop: Date.now() },
     });
   };
@@ -195,7 +195,7 @@ function Navbar() {
           <div className="navbar-links">
             <a
               href="#browse"
-              className={`nav-item ${isActive('/home') ? 'active' : ''}`}
+              className={`nav-item ${isActive('/browsing') ? 'active' : ''}`}
               onClick={(e) => {
                 e.preventDefault();
                 handleBrowseClick();
@@ -223,7 +223,7 @@ function Navbar() {
               setSearchQuery(event.target.value);
               setShowSuggestions(true);
               setActiveSuggestion(-1);
-              if (location.pathname !== '/home') navigate('/home');
+              if (location.pathname !== '/browsing') navigate('/browsing');
             }}
             onFocus={() => setShowSuggestions(true)}
             onBlur={() => setShowSuggestions(false)}
@@ -233,8 +233,8 @@ function Navbar() {
                 return;
               }
               if (!showSuggestions || searchSuggestions.length === 0) {
-                if (event.key === 'Enter' && location.pathname !== '/home') {
-                  navigate('/home');
+                if (event.key === 'Enter' && location.pathname !== '/browsing') {
+                  navigate('/browsing');
                 }
                 return;
               }

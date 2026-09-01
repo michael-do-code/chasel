@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
+// The carousel's own chrome (.listing-image, .product-image, .carousel-*,
+// .badge) lives in the shared marketplace stylesheet. Import it here so any
+// page using this component gets those styles, rather than relying on some
+// other page happening to pull them in.
+import '../styles/marketplace.css';
 
 interface ProductImageCarouselProps {
   title: string;

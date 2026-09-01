@@ -165,7 +165,7 @@ function ProductDetail() {
 
     try {
       await api.delete(`/listings/${id}`);
-      navigate('/home');
+      navigate('/browsing');
     } catch (error) {
       console.error('Failed to delete product:', error);
       alert('Could not delete this product.');
@@ -183,7 +183,7 @@ function ProductDetail() {
       <button
         type="button"
         className="product-back"
-        onClick={() => navigate('/home')}
+        onClick={() => navigate('/browsing')}
       >
         ← Back to browse
       </button>
