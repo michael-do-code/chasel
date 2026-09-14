@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Notifications.css';
 
 type NotificationType = 'order' | 'rating' | 'general';
@@ -71,22 +71,35 @@ const initialNotifications: Notification[] = [
   },
 ];
 
-const filters: { label: string; value: 'all' | NotificationType }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Orders', value: 'order' },
-  { label: 'Reviews', value: 'rating' },
-  { label: 'Other', value: 'general' },
-];
-
 function typeIcon(type: NotificationType): string {
   if (type === 'order') return '📦';
   if (type === 'rating') return '★';
   return '🔔';
 }
 
-function Notifications() {
+interface NotificationsProps {
+  open: boolean;
+  onClose: () => void;
+  onUnreadCountChange: (count: number) => void;
+}
+
+function Notifications({ open, onClose, onUnreadCountChange }: NotificationsProps) {
   const [notifications, setNotifications] = useState(initialNotifications);
-  const [activeFilter, setActiveFilter] = useState<'all' | NotificationType>('all');
+
+  useEffect(() => {
+    onUnreadCountChange(notifications.filter((n) => !n.read).length);
+  }, [notifications, onUnreadCountChange]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [open, onClose]);
 
   const markAsRead = (id: number) => {
     setNotifications((current) =>
@@ -98,21 +111,14 @@ function Notifications() {
     setNotifications((current) => current.map((n) => ({ ...n, read: true })));
   };
 
-  const visibleNotifications = notifications.filter(
-    (n) => activeFilter === 'all' || n.type === activeFilter
-  );
-
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return (
-    <main className="notifications-page">
-      <header className="notifications-header">
-        <div>
-          <span>YOUR ACTIVITY</span>
-          <h1>Notifications</h1>
-          <p>Order updates, reviews, and everything else in one place.</p>
-        </div>
+  if (!open) return null;
 
+  return (
+    <div className="notifications-dropdown" aria-label="Notifications">
+      <header className="notifications-dropdown-header">
+        <h2>Notifications</h2>
         {unreadCount > 0 && (
           <button type="button" className="mark-all-btn" onClick={markAllAsRead}>
             Mark all as read
@@ -120,28 +126,14 @@ function Notifications() {
         )}
       </header>
 
-      <div className="notifications-filters">
-        {filters.map((filter) => (
-          <button
-            key={filter.value}
-            type="button"
-            className={`filter-btn ${activeFilter === filter.value ? 'active' : ''}`}
-            onClick={() => setActiveFilter(filter.value)}
-          >
-            {filter.label}
-          </button>
-        ))}
-      </div>
-
-      {visibleNotifications.length === 0 ? (
-        <section className="notifications-empty">
-          <div className="notifications-empty-icon">🔔</div>
-          <h2>Nothing here</h2>
-          <p>You're all caught up.</p>
-        </section>
-      ) : (
-        <section className="notifications-list">
-          {visibleNotifications.map((notification) => (
+      <div className="notifications-dropdown-list">
+        {notifications.length === 0 ? (
+          <div className="notifications-empty">
+            <div className="notifications-empty-icon">🔔</div>
+            <p>You're all caught up.</p>
+          </div>
+        ) : (
+          notifications.map((notification) => (
             <article
               key={notification.id}
               className={`notification-card ${notification.read ? '' : 'unread'}`}
@@ -153,7 +145,7 @@ function Notifications() {
 
               <div className="notification-body">
                 <div className="notification-title-row">
-                  <h2>{notification.title}</h2>
+                  <h3>{notification.title}</h3>
                   <span className="notification-time">{notification.time}</span>
                 </div>
                 <p>{notification.message}</p>
@@ -161,10 +153,10 @@ function Notifications() {
 
               {!notification.read && <span className="unread-dot" />}
             </article>
-          ))}
-        </section>
-      )}
-    </main>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 
