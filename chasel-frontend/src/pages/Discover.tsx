@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import BookmarkIcon from '../components/BookmarkIcon';
 import ProductImageCarousel from '../components/ProductImageCarousel';
+import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
 import promoDesigner from '../assets/promo-category-handbags-wide.png';
@@ -82,6 +83,7 @@ function Discover() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const carousel = categoryCarouselRef.current;
@@ -126,12 +128,13 @@ function Discover() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
+        // Guests can browse listings, but saved items are per-account.
         const [listingsResponse, savedResponse] = await Promise.all([
           api.get<Listing[]>('/listings'),
-          api.get<SavedItem[]>('/saved-items'),
+          isAuthenticated ? api.get<SavedItem[]>('/saved-items') : Promise.resolve(null),
         ]);
         setHighlightedListings(getRandomListings(listingsResponse.data, 5));
-        setSavedProductIds(savedResponse.data.map((item) => item.productId));
+        setSavedProductIds(savedResponse ? savedResponse.data.map((item) => item.productId) : []);
         setSearchItems(listingsResponse.data);
       } catch (err) {
         console.error('Error fetching home data:', err);
@@ -139,9 +142,14 @@ function Discover() {
     };
 
     fetchHomeData();
-  }, [location.key, setSearchItems]);
+  }, [location.key, setSearchItems, isAuthenticated]);
 
   const toggleSaved = async (productId: number) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     const isSaved = savedProductIds.includes(productId);
     setSavingProductId(productId);
 
@@ -434,6 +442,7 @@ function Discover() {
               <h4>Here when you need us.</h4>
               <p>Guidance for buying, selling, delivery, and every step in between.</p>
               <div className="footer-link-grid">
+                <button type="button" onClick={() => navigate('/about')}>About us</button>
                 <span>Contact support</span>
                 <span>Shipping &amp; returns</span>
                 <span>Authentication</span>
@@ -448,8 +457,8 @@ function Discover() {
               <h4>Clear, considered standards.</h4>
               <p>How we protect the marketplace, your information, and our community.</p>
               <div className="footer-link-grid">
-                <span>Privacy policy</span>
-                <span>Terms of use</span>
+                <button type="button" onClick={() => navigate('/privacy-policy')}>Privacy policy</button>
+                <button type="button" onClick={() => navigate('/terms-of-use')}>Terms of use</button>
                 <span>Community guidelines</span>
                 <span>Cookie policy</span>
                 <span>Accessibility</span>

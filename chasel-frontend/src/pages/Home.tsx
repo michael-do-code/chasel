@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
 import ProductImageCarousel from '../components/ProductImageCarousel';
 import BookmarkIcon from '../components/BookmarkIcon';
+import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import './Home.css';
 
@@ -36,6 +37,7 @@ function Home() {
   const [savingProductId, setSavingProductId] = useState<number | null>(null);
   const { searchQuery, setSearchItems } = useSearch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
   const requestedCategory = searchParams.get('category');
   const isSustainableCollection = searchParams.get('collection') === 'sustainable';
@@ -53,19 +55,20 @@ function Home() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
+        // Guests can browse listings, but saved items are per-account.
         const [listingsResponse, savedResponse] = await Promise.all([
           api.get<Listing[]>(isTrendingCollection ? '/listings/trending' : '/listings'),
-          api.get<SavedItem[]>('/saved-items'),
+          isAuthenticated ? api.get<SavedItem[]>('/saved-items') : Promise.resolve(null),
         ]);
         setListings(listingsResponse.data);
         setSearchItems(listingsResponse.data);
-        setSavedProductIds(savedResponse.data.map((item) => item.productId));
+        setSavedProductIds(savedResponse ? savedResponse.data.map((item) => item.productId) : []);
       } catch (error) {
         console.error('Error fetching home data:', error);
       }
     };
     fetchHomeData();
-  }, [isTrendingCollection, setSearchItems]);
+  }, [isTrendingCollection, setSearchItems, isAuthenticated]);
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const sustainableCategories = ['Clothing', 'Footwear', 'Handbags', 'Accessories'];
@@ -130,6 +133,11 @@ function Home() {
   };
 
   const addToCart = async (productId: number) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     try {
       await api.post(`/cart/items/${productId}`);
       alert('Added to cart!');
@@ -140,6 +148,11 @@ function Home() {
   };
 
   const toggleSaved = async (productId: number) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     const isSaved = savedProductIds.includes(productId);
     setSavingProductId(productId);
     try {
