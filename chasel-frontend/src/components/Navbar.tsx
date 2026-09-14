@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import api from '../api/axios';
 import Cart from '../pages/Cart';
+import Notifications from '../pages/Notifications';
 import BookmarkIcon from './BookmarkIcon';
 import CartIcon from './CartIcon';
 import './Navbar.css';
@@ -57,13 +58,13 @@ function getInitials(profile: UserProfile): string {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { token, logout } = useAuth();
+  const { token } = useAuth();
   const { searchQuery, setSearchQuery, searchItems } = useSearch();
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [notifications] = useState(0);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [messages] = useState(0);
   const [cart] = useState(0);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -132,8 +133,8 @@ function Navbar() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.navbar-account-menu')) {
-        setAccountOpen(false);
+      if (!target.closest('.navbar-notifications-menu')) {
+        setNotificationsOpen(false);
       }
     };
     document.addEventListener('click', handleClickOutside);
@@ -154,12 +155,6 @@ function Navbar() {
     };
   }, [location.key, location.state]);
 
-  const handleLogout = () => {
-    setProfile(null);
-    logout();
-    navigate('/login');
-  };
-
   const handleLogoClick = () => {
     navigate('/discover', {
       replace: location.pathname === '/discover',
@@ -176,7 +171,25 @@ function Navbar() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  if (!isAuthenticated) return null;
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setCartOpen(true);
+  };
+
+  const handleMessagesClick = () => {
+    navigate(isAuthenticated ? '/messages' : '/login');
+  };
+
+  const handleNotificationsClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setNotificationsOpen((current) => !current);
+  };
 
   return (
     <nav className="navbar">
@@ -295,21 +308,29 @@ function Navbar() {
           <button
             className="navbar-icon-btn"
             title="Messages"
-            onClick={() => navigate('/messages')}
+            onClick={handleMessagesClick}
           >
             <span className="icon">💬</span>
             {messages > 0 && <span className="badge">{messages}</span>}
           </button>
 
           {/* Notifications Icon */}
-          <button
-            className="navbar-icon-btn"
-            title="Notifications"
-            onClick={() => navigate('/notifications')}
-          >
-            <span className="icon">🔔</span>
-            {notifications > 0 && <span className="badge">{notifications}</span>}
-          </button>
+          <div className="navbar-notifications-menu">
+            <button
+              className="navbar-icon-btn"
+              title="Notifications"
+              onClick={handleNotificationsClick}
+            >
+              <span className="icon">🔔</span>
+              {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+            </button>
+
+            <Notifications
+              open={notificationsOpen}
+              onClose={() => setNotificationsOpen(false)}
+              onUnreadCountChange={setUnreadCount}
+            />
+          </div>
 
           {/* Saved Items Icon */}
           <button
@@ -326,7 +347,7 @@ function Navbar() {
           <button
             className="navbar-icon-btn"
             title="Cart"
-            onClick={() => setCartOpen(true)}
+            onClick={handleCartClick}
           >
             <span className="icon cart-icon">
               <CartIcon />
@@ -334,61 +355,20 @@ function Navbar() {
             {cart > 0 && <span className="badge">{cart}</span>}
           </button>
 
-          {/* Account Dropdown */}
-          <div className="navbar-account-menu">
+          {/* Account avatar (logged in, links straight to Profile) or Login button (guest) */}
+          {isAuthenticated ? (
             <button
               className="navbar-avatar"
-              onClick={() => setAccountOpen(!accountOpen)}
-              title="Account menu"
+              onClick={() => navigate('/profile')}
+              title="Go to your profile"
             >
               {profile ? getInitials(profile) : 'A'}
             </button>
-
-            {accountOpen && (
-              <div className="account-dropdown">
-                <div className="dropdown-header">
-                  {profile?.firstName && profile?.lastName
-                    ? `${profile.firstName} ${profile.lastName}`
-                    : profile?.email ?? 'Account'}
-                </div>
-                <hr className="dropdown-divider" />
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/profile');
-                    setAccountOpen(false);
-                  }}
-                >
-                  👤 Profile
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/purchases');
-                    setAccountOpen(false);
-                  }}
-                >
-                  📦 Purchases
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/settings');
-                    setAccountOpen(false);
-                  }}
-                >
-                  ⚙️ Settings
-                </button>
-                <hr className="dropdown-divider" />
-                <button
-                  className="dropdown-item logout-item"
-                  onClick={handleLogout}
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            )}
-          </div>
+          ) : (
+            <button className="nav-item nav-btn" onClick={() => navigate('/login')}>
+              Login
+            </button>
+          )}
         </div>
       </div>
       <Cart open={cartOpen} onClose={() => setCartOpen(false)} />

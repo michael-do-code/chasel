@@ -23,7 +23,9 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import SavedItems from './pages/SavedItems';
 import ProductDetail from './pages/ProductDetail';
-import Notifications from './pages/Notifications';
+import AboutUs from './pages/AboutUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 
 function App() {
   return (
@@ -66,23 +68,15 @@ function App() {
             }
           />
 
-          <Route
-            path="/discover"
-            element={
-              <ProtectedRoute>
-                <Discover />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/discover" element={<Discover />} />
 
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/about" element={<AboutUs />} />
+
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
+
+          <Route path="/home" element={<Home />} />
 
           <Route
             path="/sell-item"
@@ -111,23 +105,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/items/:id"
-            element={
-              <ProtectedRoute>
-                <ProductDetail />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <Notifications />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/items/:id" element={<ProductDetail />} />
 
           <Route
             path="/profile/edit"
