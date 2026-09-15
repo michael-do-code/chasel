@@ -10,11 +10,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.chasel.model.Listing;
 import com.app.chasel.model.ListingStatus;
+import com.app.chasel.model.Notification;
+import com.app.chasel.model.SavedItem;
 import com.app.chasel.model.Users;
 import com.app.chasel.repository.ListingRepository;
+import com.app.chasel.repository.NotificationRepository;
+import com.app.chasel.repository.SavedItemRepository;
 import com.app.chasel.repository.UserRepository;
 import com.app.chasel.security.JwtUtil;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +43,12 @@ class ListingPriceDropTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SavedItemRepository savedItemRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -111,5 +124,30 @@ class ListingPriceDropTest {
                         .content(updatePayload(100.0)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.previousPrice").doesNotExist());
+    }
+
+    @Test
+    void loweringPriceNotifiesUsersWhoSavedTheListing() throws Exception {
+        Users watcher = new Users();
+        watcher.setEmail("watcher-" + System.nanoTime() + "@example.com");
+        watcher.setPassword("irrelevant-hash");
+        watcher = userRepository.save(watcher);
+
+        Listing listing = listingRepository.findById(listingId).orElseThrow();
+        SavedItem savedItem = new SavedItem();
+        savedItem.setUser(watcher);
+        savedItem.setProduct(listing);
+        savedItemRepository.save(savedItem);
+
+        mockMvc.perform(put("/api/listings/" + listingId)
+                        .header("Authorization", "Bearer " + sellerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatePayload(80.0)))
+                .andExpect(status().isOk());
+
+        List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(watcher);
+        assertEquals(1, notifications.size());
+        assertEquals("Price drop", notifications.get(0).getTitle());
+        assertEquals(listingId, notifications.get(0).getRelatedListingId());
     }
 }
