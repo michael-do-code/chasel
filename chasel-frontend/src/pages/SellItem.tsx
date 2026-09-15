@@ -134,7 +134,7 @@ const handleImageUpload = (
     await api.post('/listings', payload);
 
     setSuccess('Listing created! Redirecting...');
-    setTimeout(() => navigate('/home'), 1500);
+    setTimeout(() => navigate('/browsing'), 1500);
   } catch (err) {
     console.error('Error creating listing:', err);
 

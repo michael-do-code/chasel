@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import './Profile.css';
-import './Home.css';
+import '../styles/marketplace.css';
 
 interface UserProfile {
   email: string;

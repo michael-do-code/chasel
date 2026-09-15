@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from 'react-router-dom';
 
 import { AuthProvider } from './context/AuthContext';
@@ -17,7 +18,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyCode from './pages/VerifyCode';
 import ResetPassword from './pages/ResetPassword';
 import SellItem from './pages/SellItem';
-import Home from './pages/Home';
+import Browsing from './pages/Browsing';
+import Messages from './pages/Messages';
 import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
@@ -26,6 +28,15 @@ import ProductDetail from './pages/ProductDetail';
 import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
+
+/**
+ * `/home` was renamed to `/browsing`. Redirect, keeping any `?category=` or
+ * `?collection=` params that older links carry.
+ */
+function LegacyHomeRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/browsing${search}`} replace />;
+}
 
 function App() {
   return (
@@ -76,7 +87,19 @@ function App() {
 
           <Route path="/terms-of-use" element={<TermsOfUse />} />
 
-          <Route path="/home" element={<Home />} />
+          <Route path="/browsing" element={<Browsing />} />
+
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Keep old links and bookmarks working after the Home → Browsing rename. */}
+          <Route path="/home" element={<LegacyHomeRedirect />} />
 
           <Route
             path="/sell-item"
@@ -118,7 +141,7 @@ function App() {
 
           <Route
             path="*"
-            element={<Navigate to="/home" replace />}
+            element={<Navigate to="/browsing" replace />}
           />
           </Routes>
         </BrowserRouter>

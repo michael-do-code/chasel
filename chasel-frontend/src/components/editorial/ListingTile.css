@@ -1,0 +1,148 @@
+.ed-tile {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.ed-tile-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Reshape the shared carousel for the editorial grid: taller crop, paper
+   ground, no card chrome. Scoped to .ed-tile so the legacy cards on Profile
+   and Discover keep their own sizing. */
+.ed-tile .listing-image {
+  height: auto;
+  aspect-ratio: 3 / 4;
+  background: var(--paper-sunk);
+}
+
+/* Three classes deep so this always beats `.listing-image .badge` in the
+   shared marketplace stylesheet, whatever order the bundler emits them in. */
+.ed-tile .listing-image .badge,
+.ed-tile .listing-image .badge-sale {
+  top: 20px;
+  left: 20px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 0;
+  background: rgba(250, 247, 241, 0.92);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+}
+
+/* --- Overlay actions ------------------------------------------------ *
+ * Both controls are hidden at rest so the grid stays editorial, and fade
+ * in on hover or keyboard focus. A saved bookmark is the one exception:
+ * it stays lit because it reports state rather than offering an action.
+ * ------------------------------------------------------------------- */
+
+.ed-tile-cart,
+.ed-tile-save {
+  position: absolute;
+  z-index: 4;
+  border: 0;
+  border-radius: 0;
+  background: rgba(250, 247, 241, 0.94);
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 180ms ease, background 160ms ease, color 160ms ease;
+}
+
+.ed-tile:hover .ed-tile-cart,
+.ed-tile:hover .ed-tile-save,
+.ed-tile-cart:focus-visible,
+.ed-tile-save:focus-visible,
+.ed-tile-save.saved {
+  opacity: 1;
+}
+
+.ed-tile-cart {
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  height: 40px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ed-tile-cart:hover {
+  background: var(--ink);
+  color: var(--ink-on-dark);
+}
+
+.ed-tile-save {
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.ed-tile-save:hover,
+.ed-tile-save.saved {
+  background: var(--ink);
+  color: var(--ink-on-dark);
+}
+
+.ed-tile-save:disabled {
+  cursor: wait;
+}
+
+/* --- Meta ----------------------------------------------------------- */
+
+.ed-tile-body {
+  padding-top: 18px;
+}
+
+.ed-tile-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ed-tile-brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-tile-title {
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.ed-tile-meta {
+  margin: 7px 0 0;
+}
+
+@media (max-width: 640px) {
+  .ed-tile-title {
+    font-size: 14px;
+  }
+
+}
+
+/* Touch devices never hover, so keep the actions reachable. */
+@media (hover: none) {
+  .ed-tile-cart,
+  .ed-tile-save {
+    opacity: 1;
+  }
+}

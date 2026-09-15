@@ -21,6 +21,7 @@ import promoNewWeek from '../assets/promo-new-week-refined.png';
 import promoMostSaved from '../assets/promo-most-saved-refined.png';
 import promoAuthenticated from '../assets/promo-authenticated-refined.png';
 import promoCompleteLook from '../assets/promo-complete-look-refined.png';
+import '../styles/marketplace.css';
 import './Discover.css';
 
 interface Listing {
@@ -40,15 +41,15 @@ interface SavedItem {
 }
 
 const categorySlides = [
-  { category: 'Seasonal Edit', kicker: 'THE SEASONAL EDIT', title: 'Considered pieces. Loved for longer.', slogan: 'Chosen with care, worn with purpose, and loved through every chapter.', sloganStyle: 'editorial', button: 'Shop the collection', href: '/home?category=All%20Items', image: discoverHeroFrame04, position: 'center top' },
-  { category: 'Home', kicker: 'NEW CATEGORY', title: 'Home Refresh', slogan: 'A beautiful life begins in the rooms that hold your quietest, happiest moments.', sloganStyle: 'graceful', button: 'Shop home', href: '/home?category=Home', image: promoHome },
-  { category: 'Handbags', kicker: 'ICONIC CARRYALLS', title: 'Designer Spotlight', slogan: 'Carry what matters, and let every thoughtful detail speak before you do.', sloganStyle: 'signature', button: 'Explore handbags', href: '/home?category=Handbags', image: promoDesigner },
-  { category: 'Clothing', kicker: 'EVERYDAY EXPRESSION', title: 'Clothing Edit', slogan: 'Dress for the life you live, with pieces that feel effortless and entirely your own.', sloganStyle: 'modern', button: 'Explore clothing', href: '/home?category=Clothing', image: promoCategoryClothing },
-  { category: 'Footwear', kicker: 'STEP INTO STYLE', title: 'Footwear Focus', slogan: 'Move with purpose, step with confidence, and arrive in unmistakable style.', sloganStyle: 'dynamic', button: 'Explore footwear', href: '/home?category=Footwear', image: promoCategoryFootwear },
-  { category: 'Accessories', kicker: 'DETAILS THAT DEFINE', title: 'Finishing Touches', slogan: 'The smallest details have a beautiful way of leaving the strongest impression.', sloganStyle: 'flourish', button: 'Explore accessories', href: '/home?category=Accessories', image: promoCategoryAccessories },
-  { category: 'Beauty', kicker: 'SEALED & SELECTED', title: 'Beauty Essentials', slogan: 'Honor the quiet rituals that reveal your natural light and lasting confidence.', sloganStyle: 'soft', button: 'Discover beauty', href: '/home?category=Beauty', image: promoBeauty },
-  { category: 'Jewelry', kicker: 'LIGHT TO TREASURE', title: 'Jewelry Selection', slogan: 'Wear a little light close to you, made to shimmer through every chapter.', sloganStyle: 'luminous', button: 'Explore jewelry', href: '/home?category=Jewelry', image: promoCategoryJewelry },
-  { category: 'Watches', kicker: 'TIMELESS CRAFT', title: 'Timeless Watches', slogan: 'Time moves forward, while true craftsmanship and personal style remain.', sloganStyle: 'precision', button: 'Explore watches', href: '/home?category=Watches', image: promoCategoryWatches },
+  { category: 'Seasonal Edit', kicker: 'THE SEASONAL EDIT', title: 'Considered pieces. Loved for longer.', slogan: 'Chosen with care, worn with purpose, and loved through every chapter.', sloganStyle: 'editorial', button: 'Shop the collection', href: '/browsing?category=All%20Items', image: discoverHeroFrame04, position: 'center top' },
+  { category: 'Home', kicker: 'NEW CATEGORY', title: 'Home Refresh', slogan: 'A beautiful life begins in the rooms that hold your quietest, happiest moments.', sloganStyle: 'graceful', button: 'Shop home', href: '/browsing?category=Home', image: promoHome },
+  { category: 'Handbags', kicker: 'ICONIC CARRYALLS', title: 'Designer Spotlight', slogan: 'Carry what matters, and let every thoughtful detail speak before you do.', sloganStyle: 'signature', button: 'Explore handbags', href: '/browsing?category=Handbags', image: promoDesigner },
+  { category: 'Clothing', kicker: 'EVERYDAY EXPRESSION', title: 'Clothing Edit', slogan: 'Dress for the life you live, with pieces that feel effortless and entirely your own.', sloganStyle: 'modern', button: 'Explore clothing', href: '/browsing?category=Clothing', image: promoCategoryClothing },
+  { category: 'Footwear', kicker: 'STEP INTO STYLE', title: 'Footwear Focus', slogan: 'Move with purpose, step with confidence, and arrive in unmistakable style.', sloganStyle: 'dynamic', button: 'Explore footwear', href: '/browsing?category=Footwear', image: promoCategoryFootwear },
+  { category: 'Accessories', kicker: 'DETAILS THAT DEFINE', title: 'Finishing Touches', slogan: 'The smallest details have a beautiful way of leaving the strongest impression.', sloganStyle: 'flourish', button: 'Explore accessories', href: '/browsing?category=Accessories', image: promoCategoryAccessories },
+  { category: 'Beauty', kicker: 'SEALED & SELECTED', title: 'Beauty Essentials', slogan: 'Honor the quiet rituals that reveal your natural light and lasting confidence.', sloganStyle: 'soft', button: 'Discover beauty', href: '/browsing?category=Beauty', image: promoBeauty },
+  { category: 'Jewelry', kicker: 'LIGHT TO TREASURE', title: 'Jewelry Selection', slogan: 'Wear a little light close to you, made to shimmer through every chapter.', sloganStyle: 'luminous', button: 'Explore jewelry', href: '/browsing?category=Jewelry', image: promoCategoryJewelry },
+  { category: 'Watches', kicker: 'TIMELESS CRAFT', title: 'Timeless Watches', slogan: 'Time moves forward, while true craftsmanship and personal style remain.', sloganStyle: 'precision', button: 'Explore watches', href: '/browsing?category=Watches', image: promoCategoryWatches },
 ];
 
 const carouselSlides = [...categorySlides, categorySlides[0]];
@@ -298,7 +299,7 @@ function Discover() {
                   <del>Old price</del><span aria-hidden="true">→</span><strong>New price</strong>
                 </div>
               </div>
-              <button onClick={() => navigate('/home')}>See new prices</button>
+              <button onClick={() => navigate('/browsing')}>See new prices</button>
             </div>
           </article>
 
@@ -310,7 +311,7 @@ function Discover() {
               <p>WHAT’S RISING</p>
               <h2>Trending Now</h2>
               <span>The pieces gaining attention fastest right now</span>
-              <button onClick={() => navigate('/home?collection=trending')}>Explore trending</button>
+              <button onClick={() => navigate('/browsing?collection=trending')}>Explore trending</button>
             </div>
           </article>
 
@@ -322,7 +323,7 @@ function Discover() {
               <p>GREAT FINDS, SMALLER PRICES</p>
               <h2>Under $100</h2>
               <span>Designer style, always within reach</span>
-              <button onClick={() => navigate('/home?maxPrice=100')}>Shop under $100</button>
+              <button onClick={() => navigate('/browsing?maxPrice=100')}>Shop under $100</button>
             </div>
           </article>
 
@@ -332,7 +333,7 @@ function Discover() {
         <section className="listings-section">
           <div className="section-heading-row">
             <h2 className="section-title">From the community</h2>
-            <button className="view-all-button" onClick={() => navigate('/home')}>
+            <button className="view-all-button" onClick={() => navigate('/browsing')}>
               View all <span aria-hidden="true">→</span>
             </button>
           </div>
@@ -395,7 +396,7 @@ function Discover() {
               <p>FRESHLY LISTED</p>
               <h2>New This Week</h2>
               <span>Handpicked arrivals from our community.</span>
-              <button onClick={() => navigate('/home?collection=new-this-week')}>Browse new arrivals</button>
+              <button onClick={() => navigate('/browsing?collection=new-this-week')}>Browse new arrivals</button>
             </div>
             <span className="sponsored-label">Sponsored</span>
           </article>
@@ -405,7 +406,7 @@ function Discover() {
                 <p>COMMUNITY SIGNAL</p>
                 <h3>Most Saved</h3>
                 <span>The pieces shoppers keep coming back to.</span>
-                <button onClick={() => navigate('/home?collection=most-saved')}>See most saved</button>
+                <button onClick={() => navigate('/browsing?collection=most-saved')}>See most saved</button>
               </div>
             </article>
             <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoAuthenticated)}>
@@ -413,7 +414,7 @@ function Discover() {
                 <p>BUY WITH CONFIDENCE</p>
                 <h3>Authenticated Icons</h3>
                 <span>Recognizable designs, checked with care.</span>
-                <button onClick={() => navigate('/home?collection=authenticated')}>Explore authenticated</button>
+                <button onClick={() => navigate('/browsing?collection=authenticated')}>Explore authenticated</button>
               </div>
             </article>
             <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoCompleteLook)}>
@@ -421,7 +422,7 @@ function Discover() {
                 <p>STYLE IT TOGETHER</p>
                 <h3>Complete the Look</h3>
                 <span>Thoughtful pairings across every category.</span>
-                <button onClick={() => navigate('/home?collection=complete-the-look')}>Build your look</button>
+                <button onClick={() => navigate('/browsing?collection=complete-the-look')}>Build your look</button>
               </div>
             </article>
           </div>
