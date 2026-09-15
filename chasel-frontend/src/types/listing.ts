@@ -4,6 +4,8 @@ export interface Listing {
   title: string;
   brand: string;
   price: number;
+  /** Set when the seller has lowered the price; absent otherwise. */
+  previousPrice?: number;
   condition: string;
   size?: string;
   category: string;

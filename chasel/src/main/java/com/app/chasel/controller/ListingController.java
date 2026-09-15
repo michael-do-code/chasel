@@ -103,7 +103,16 @@ public class ListingController {
         listing.setSize(request.getSize());
         listing.setCondition(request.getCondition());
         listing.setOriginalRetail(request.getOriginalRetail());
+
+        // Track price drops so the frontend can show "was $X". A price that
+        // goes back up (or stays the same) is no longer a markdown.
+        if (request.getPrice() < listing.getPrice()) {
+            listing.setPreviousPrice(listing.getPrice());
+        } else {
+            listing.setPreviousPrice(null);
+        }
         listing.setPrice(request.getPrice());
+
         if (request.getImageUrls() != null) {
             listing.setImageUrls(request.getImageUrls());
         }

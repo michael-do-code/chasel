@@ -110,6 +110,16 @@
   font-size: 22px;
 }
 
+.product-title-row strong.product-price-drop {
+  color: #b4491f;
+}
+
+.product-price-drop-caption {
+  margin: 6px 0 0;
+  color: #b4491f;
+  font-size: 13px;
+}
+
 .product-brand {
   margin: 10px 0 30px;
   color: #956f4c;

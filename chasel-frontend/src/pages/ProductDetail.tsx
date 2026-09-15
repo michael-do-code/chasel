@@ -15,6 +15,7 @@ interface Listing {
   condition: string;
   originalRetail?: number;
   price: number;
+  previousPrice?: number;
   imageUrls?: string[];
   location?: string;
 }
@@ -225,8 +226,16 @@ function ProductDetail() {
             <span className="product-category">{listing.category}</span>
             <div className="product-title-row">
               <h1>{listing.title}</h1>
-              <strong>${listing.price.toFixed(2)}</strong>
+              <strong className={listing.previousPrice ? 'product-price-drop' : undefined}>
+                ${listing.price.toFixed(2)}
+              </strong>
             </div>
+            {listing.previousPrice && (
+              <p className="product-price-drop-caption">
+                Reduced from ${listing.previousPrice.toFixed(2)} · $
+                {(listing.previousPrice - listing.price).toFixed(2)} off
+              </p>
+            )}
             <p className="product-brand">{listing.brand}</p>
 
             <dl className="product-facts">

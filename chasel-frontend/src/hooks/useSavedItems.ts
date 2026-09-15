@@ -21,10 +21,10 @@ export function useSavedItems() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setSavedProductIds([]);
-      return;
-    }
+    // Every logout flow navigates to /login right away, which unmounts
+    // whatever was using this hook — so there's no stale state to clear,
+    // just nothing left to fetch.
+    if (!isAuthenticated) return;
 
     let active = true;
 

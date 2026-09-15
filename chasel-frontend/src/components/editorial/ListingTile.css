@@ -119,6 +119,19 @@
   white-space: nowrap;
 }
 
+.ed-tile-price-drop {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--accent);
+}
+
+.ed-tile-previous-price {
+  color: var(--ink-faint);
+  font-size: 0.8em;
+  font-weight: 400;
+}
+
 .ed-tile-title {
   margin: 10px 0 0;
   color: var(--ink);
