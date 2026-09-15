@@ -25,6 +25,11 @@ public class NotificationService {
     }
 
     public void notifyPriceDrop(Listing listing) {
+        // Guard: previousPrice is only set when a price drop occurs; safe to call without precondition check
+        if (listing.getPreviousPrice() == null) {
+            return;
+        }
+
         List<SavedItem> watchers = savedItemRepository.findByProduct(listing);
 
         for (SavedItem watcher : watchers) {

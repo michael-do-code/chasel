@@ -160,4 +160,21 @@ class NotificationServiceTest {
         assertTrue(notificationService.getNotifications(watcherOne).get(0).isRead());
         assertFalse(notificationService.getNotifications(watcherTwo).get(0).isRead());
     }
+
+    @Test
+    void notifyPriceDropWithNoPreviousPriceDoesNotThrowAndCreatesNoNotifications() {
+        Users seller = createUser("seller");
+        Listing listing = createListing(seller, 80.0);
+        // previousPrice is not set, remains null
+        listingRepository.save(listing);
+
+        Users watcher = createUser("watcher");
+        saveForUser(watcher, listing);
+
+        // Should not throw NullPointerException
+        notificationService.notifyPriceDrop(listing);
+
+        // Should create no notifications
+        assertTrue(notificationService.getNotifications(watcher).isEmpty());
+    }
 }
