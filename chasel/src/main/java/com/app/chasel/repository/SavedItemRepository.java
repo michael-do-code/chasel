@@ -19,4 +19,6 @@ public interface SavedItemRepository
     );
 
     void deleteByProduct(Listing product);
+
+    List<SavedItem> findByProduct(Listing product);
 }
