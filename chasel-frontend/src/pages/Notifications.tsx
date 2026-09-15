@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -37,8 +37,10 @@ interface NotificationsProps {
 
 function Notifications({ open, onClose, onUnreadCountChange }: NotificationsProps) {
   const [notifications, setNotifications] = useState<ApiNotification[]>([]);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const previousOpenRef = useRef(open);
 
   // Fires on mount (so the bell badge is right without opening the
   // dropdown) and again every time the dropdown opens, since there's no
@@ -49,10 +51,24 @@ function Notifications({ open, onClose, onUnreadCountChange }: NotificationsProp
   useEffect(() => {
     if (!isAuthenticated) return;
 
+    const wasOpen = previousOpenRef.current;
+    previousOpenRef.current = open;
+
+    // Skip refetching on the closing transition — it can race an
+    // in-flight mark-as-read PATCH and stomp the optimistic update.
+    if (wasOpen && !open) return;
+
+    setStatus('loading');
     api
       .get<ApiNotification[]>('/notifications')
-      .then((res) => setNotifications(res.data))
-      .catch((error) => console.error('Could not load notifications:', error));
+      .then((res) => {
+        setNotifications(res.data);
+        setStatus('ready');
+      })
+      .catch((error) => {
+        console.error('Could not load notifications:', error);
+        setStatus('error');
+      });
   }, [open, isAuthenticated]);
 
   useEffect(() => {
@@ -110,7 +126,17 @@ function Notifications({ open, onClose, onUnreadCountChange }: NotificationsProp
       </header>
 
       <div className="notifications-dropdown-list">
-        {notifications.length === 0 ? (
+        {status === 'loading' ? (
+          <div className="notifications-empty">
+            <div className="notifications-empty-icon">🔔</div>
+            <p>Loading…</p>
+          </div>
+        ) : status === 'error' ? (
+          <div className="notifications-empty">
+            <div className="notifications-empty-icon">🔔</div>
+            <p>Couldn't load notifications. Try again.</p>
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="notifications-empty">
             <div className="notifications-empty-icon">🔔</div>
             <p>You're all caught up.</p>
