@@ -16,8 +16,12 @@ interface UserProfile {
 interface Listing {
   id: number;
   title: string;
+  brand: string;
   description: string | null;
   category: string;
+  size: string | null;
+  condition: string;
+  originalRetail: number | null;
   price: number | null;
   imageUrls: string[] | null;
   location: string | null;
@@ -175,13 +179,14 @@ function Profile() {
     setEditError('');
 
     try {
+      // Send the full listing back, overriding only the fields this modal
+      // actually edits — otherwise fields this form doesn't expose (brand,
+      // size, condition, ...) get silently dropped/nulled on every save.
       const res = await api.put<Listing>(`/listings/${editingListing.id}`, {
+        ...editingListing,
         title: editTitle,
-        description: editingListing.description,
         category: editCategory,
         price: editPrice ? parseFloat(editPrice) : null,
-        imageUrls: editingListing.imageUrls,
-        location: editingListing.location,
       });
 
       setMyListings((prev) => prev.map((l) => (l.id === res.data.id ? res.data : l)));
