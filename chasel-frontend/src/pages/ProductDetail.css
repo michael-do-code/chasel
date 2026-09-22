@@ -1,6 +1,6 @@
 .product-detail-page,
 .product-loading {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - var(--navbar-height));
   padding: 36px 40px 80px;
   color: #4a2b17;
   background: #f5f0e7;

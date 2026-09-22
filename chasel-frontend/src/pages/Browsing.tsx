@@ -7,6 +7,7 @@ import ListingTile from '../components/editorial/ListingTile';
 import { useSavedItems } from '../hooks/useSavedItems';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
+import { useCart } from '../context/CartContext';
 import type { Listing } from '../types/listing';
 import { DEFAULT_HEADING, getCollection } from './browsing/collections';
 import {
@@ -34,6 +35,7 @@ function Browsing() {
 
   const { searchQuery, setSearchItems } = useSearch();
   const { isSaved, savingProductId, toggleSaved } = useSavedItems();
+  const { addItem } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -90,7 +92,7 @@ function Browsing() {
     }
 
     try {
-      await api.post(`/cart/items/${productId}`);
+      await addItem(productId);
       alert('Added to cart!');
     } catch (error) {
       console.error('Failed to add product:', error);

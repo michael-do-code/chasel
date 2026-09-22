@@ -1,5 +1,6 @@
 package com.app.chasel.controller;
 
+import com.app.chasel.dto.SavedItemCountResponse;
 import com.app.chasel.dto.SavedItemResponse;
 import com.app.chasel.model.SavedItem;
 import com.app.chasel.model.Users;
@@ -34,6 +35,13 @@ public class SavedItemController {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @GetMapping("/count")
+    public SavedItemCountResponse getSavedItemCount(Authentication authentication) {
+        return new SavedItemCountResponse(
+                savedItemService.countSavedItems(getUserId(authentication))
+        );
     }
 
     @PostMapping("/{productId}")

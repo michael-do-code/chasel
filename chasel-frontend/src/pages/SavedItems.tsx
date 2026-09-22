@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import BookmarkIcon from '../components/BookmarkIcon';
+import { useCart } from '../context/CartContext';
+import { useSavedCount } from '../context/SavedItemsContext';
 import './SavedItems.css';
 
 interface SavedItem {
@@ -17,6 +19,8 @@ function SavedItems() {
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState<number | null>(null);
   const navigate = useNavigate();
+  const { addItem } = useCart();
+  const { refresh: refreshSavedCount } = useSavedCount();
 
   useEffect(() => {
     const loadSavedItems = async () => {
@@ -41,6 +45,7 @@ function SavedItems() {
       setItems((current) =>
         current.filter((item) => item.productId !== productId)
       );
+      await refreshSavedCount();
     } catch (error) {
       console.error('Failed to remove saved item:', error);
       alert('Could not remove this item.');
@@ -51,7 +56,7 @@ function SavedItems() {
 
   const addToCart = async (productId: number) => {
     try {
-      await api.post(`/cart/items/${productId}`);
+      await addItem(productId);
       alert('Added to cart!');
     } catch (error) {
       console.error('Failed to add product to cart:', error);

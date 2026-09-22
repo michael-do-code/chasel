@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useSavedCount } from '../context/SavedItemsContext';
 import type { SavedItem } from '../types/listing';
 
 /**
@@ -18,6 +19,7 @@ export function useSavedItems() {
   const [savedProductIds, setSavedProductIds] = useState<number[]>([]);
   const [savingProductId, setSavingProductId] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
+  const { refresh: refreshSavedCount } = useSavedCount();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,6 +65,9 @@ export function useSavedItems() {
           await api.post(`/saved-items/${productId}`);
           setSavedProductIds((current) => [...current, productId]);
         }
+
+        // Keeps the navbar badge in step with the bookmark just toggled.
+        await refreshSavedCount();
       } catch (error) {
         console.error('Failed to update saved item:', error);
         alert('Could not update your wishlist.');
@@ -70,7 +75,7 @@ export function useSavedItems() {
         setSavingProductId(null);
       }
     },
-    [savedProductIds, isAuthenticated, navigate]
+    [savedProductIds, isAuthenticated, navigate, refreshSavedCount]
   );
 
   return { savedProductIds, savingProductId, isSaved, toggleSaved };

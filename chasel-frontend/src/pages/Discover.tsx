@@ -5,6 +5,7 @@ import BookmarkIcon from '../components/BookmarkIcon';
 import ProductImageCarousel from '../components/ProductImageCarousel';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
+import { useSavedCount } from '../context/SavedItemsContext';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
 import promoDesigner from '../assets/promo-category-handbags-wide.png';
 import promoCategoryClothing from '../assets/promo-category-clothing-wide.png';
@@ -85,6 +86,7 @@ function Discover() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { refresh: refreshSavedCount } = useSavedCount();
 
   useEffect(() => {
     const carousel = categoryCarouselRef.current;
@@ -162,6 +164,8 @@ function Discover() {
         await api.post(`/saved-items/${productId}`);
         setSavedProductIds((current) => [...current, productId]);
       }
+
+      await refreshSavedCount();
     } catch (error) {
       console.error('Failed to update saved item:', error);
       alert('Could not update your saved items.');

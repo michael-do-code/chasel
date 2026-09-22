@@ -8,6 +8,8 @@ import {
 
 import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchProvider';
+import { CartProvider } from './context/CartProvider';
+import { SavedItemsProvider } from './context/SavedItemsProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 
@@ -42,6 +44,8 @@ function App() {
   return (
     <AuthProvider>
       <SearchProvider>
+        <CartProvider>
+        <SavedItemsProvider>
         <BrowserRouter>
           <Navbar />
 
@@ -145,6 +149,8 @@ function App() {
           />
           </Routes>
         </BrowserRouter>
+        </SavedItemsProvider>
+        </CartProvider>
       </SearchProvider>
     </AuthProvider>
   );
