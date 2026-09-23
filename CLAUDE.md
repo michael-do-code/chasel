@@ -22,7 +22,7 @@ They communicate only over HTTP; there is no shared build, no shared types, and 
 ./mvnw clean package                           # build a jar
 ```
 
-The H2 console is enabled at `/h2-console` (jdbc url `jdbc:h2:mem:taskdb`) — the database is in-memory and resets on every restart.
+The H2 console is enabled at `/h2-console` for local database inspection.
 
 ### Frontend (`chasel-frontend/`)
 
@@ -44,7 +44,6 @@ Standard Spring Boot layering under `com.app.chasel`: `controller` → `service`
 - **Auth is stateless JWT, not sessions.** `SecurityConfig` sets `SessionCreationPolicy.STATELESS`, disables CSRF, permits `/api/auth/**` unauthenticated, and requires authentication for everything else. `JwtAuthFilter` (in `security/`) runs before `UsernamePasswordAuthenticationFilter`, reads the `Bearer` token, and if valid sets a `SecurityContext` whose principal is the user's **email** (there are no roles/authorities — `Collections.emptyList()`).
 - **`JwtUtil`** signs/verifies tokens with an HS256 key generated at process startup (`Keys.secretKeyFor(...)`) — the signing key is not persisted or read from config, so tokens do not survive an application restart, and every instance in a multi-instance deployment would need its own key reconciled.
 - **`AuthService`** owns registration/login logic (email uniqueness check, BCrypt password hashing/verification, token issuance) and is the only thing that touches `UserRepository`. `AuthController` is a thin wrapper.
-- **`TaskController` talks directly to `TaskRepository`** — there is no service layer for tasks (`TaskService` is an empty stub class). Task endpoints are not scoped by user; any authenticated user can read/modify all tasks.
 - CORS (`CorsConfig`) is hardcoded to allow only `http://localhost:5173` — update this if the frontend origin changes.
 
 ## Frontend architecture

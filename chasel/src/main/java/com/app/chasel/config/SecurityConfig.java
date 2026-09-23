@@ -40,9 +40,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**", "/api/options/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-                // browsing listings (including trending) is public; "mine" still needs a user
-                .requestMatchers(HttpMethod.GET, "/api/listings/mine").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/listings", "/api/listings/trending", "/api/listings/*").permitAll()
                 .anyRequest().authenticated()
             )
             // needed for H2 console to render
@@ -61,7 +58,7 @@ public class SecurityConfig {
         );
 
         configuration.setAllowedMethods(
-            Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+            Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")
         );
 
         configuration.setAllowedHeaders(Arrays.asList("*"));

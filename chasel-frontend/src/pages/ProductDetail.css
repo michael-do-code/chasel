@@ -1,6 +1,6 @@
 .product-detail-page,
 .product-loading {
-  min-height: calc(100vh - var(--navbar-height));
+  min-height: calc(100vh - 64px);
   padding: 36px 40px 80px;
   color: #4a2b17;
   background: #f5f0e7;
@@ -108,16 +108,6 @@
 .product-title-row strong {
   color: #956f4c;
   font-size: 22px;
-}
-
-.product-title-row strong.product-price-drop {
-  color: #b4491f;
-}
-
-.product-price-drop-caption {
-  margin: 6px 0 0;
-  color: #b4491f;
-  font-size: 13px;
 }
 
 .product-brand {

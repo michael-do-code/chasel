@@ -13,15 +13,10 @@ public interface SavedItemRepository
 
     List<SavedItem> findByUser(Users user);
 
-    /** Counted in the database so the navbar badge does not load every listing. */
-    long countByUser(Users user);
-
     Optional<SavedItem> findByUserAndProduct(
         Users user,
         Listing product
     );
 
     void deleteByProduct(Listing product);
-
-    List<SavedItem> findByProduct(Listing product);
 }

@@ -1,6 +1,5 @@
 package com.app.chasel.controller;
 
-import com.app.chasel.dto.CartCountResponse;
 import com.app.chasel.dto.CartItemResponse;
 import com.app.chasel.model.CartItem;
 import com.app.chasel.model.Users;
@@ -33,11 +32,6 @@ public class CartController {
                 .stream()
                 .map(this::toResponse)
                 .toList();
-    }
-
-    @GetMapping("/count")
-    public CartCountResponse getCartCount(Authentication authentication) {
-        return new CartCountResponse(cartService.countItems(getUserId(authentication)));
     }
 
     @PostMapping("/items/{productId}")

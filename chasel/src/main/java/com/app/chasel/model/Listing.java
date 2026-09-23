@@ -37,11 +37,7 @@ public class Listing {
 
     @Column(nullable = false)
     // Price is always required (no trade-only listings)
-    private Double price;
-
-    // Set automatically when a seller lowers the price; cleared if it goes
-    // back up. Lets the frontend show "was $X" next to a markdown.
-    private Double previousPrice;
+    private Double price; 
 
     @ElementCollection
     private List<String> imageUrls;
@@ -138,14 +134,6 @@ public class Listing {
 
     public void setPrice(Double price) {
         this.price = price;
-    }
-
-    public Double getPreviousPrice() {
-        return previousPrice;
-    }
-
-    public void setPreviousPrice(Double previousPrice) {
-        this.previousPrice = previousPrice;
     }
 
 

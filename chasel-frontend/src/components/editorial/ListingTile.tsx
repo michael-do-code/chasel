@@ -34,11 +34,7 @@ function ListingTile({
       className="ed-tile"
       role="link"
       tabIndex={0}
-      aria-label={
-        listing.previousPrice
-          ? `${listing.brand} ${listing.title}, ${formatPrice(listing.price)}, reduced from ${formatPrice(listing.previousPrice)}`
-          : `${listing.brand} ${listing.title}, ${formatPrice(listing.price)}`
-      }
+      aria-label={`${listing.brand} ${listing.title}, ${formatPrice(listing.price)}`}
       onClick={() => onOpen(listing.id)}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -81,14 +77,7 @@ function ListingTile({
       <div className="ed-tile-body">
         <div className="ed-tile-line">
           <p className="ed-kicker ed-tile-brand">{listing.brand}</p>
-          {listing.previousPrice ? (
-            <span className="ed-figure ed-tile-price-drop">
-              {formatPrice(listing.price)}
-              <del className="ed-tile-previous-price">{formatPrice(listing.previousPrice)}</del>
-            </span>
-          ) : (
-            <span className="ed-figure">{formatPrice(listing.price)}</span>
-          )}
+          <span className="ed-figure">{formatPrice(listing.price)}</span>
         </div>
         <h3 className="ed-tile-title">{listing.title}</h3>
         <p className="ed-meta ed-tile-meta">{formatListingMeta(listing)}</p>

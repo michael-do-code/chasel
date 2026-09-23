@@ -129,8 +129,6 @@ const handleImageUpload = (
       imageUrls,
     };
 
-    console.log('Submitting listing:', payload);
-
     await api.post('/listings', payload);
 
     setSuccess('Listing created! Redirecting...');

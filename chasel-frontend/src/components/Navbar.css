@@ -1,202 +1,161 @@
-/*
- * The navbar sits a shade lighter than the page beneath it (pages use the
- * #F5F0E7 paper tone), so the bar reads as a surface floating above the
- * content rather than a heavy band across the top. Type and icons use soft
- * browns rather than near-black for the same reason.
- */
 .navbar {
-  --nav-surface: #FFFDFA;
-  --nav-border: #F0E8DC;
-  --nav-ink: #4A2B17;
-  --nav-ink-soft: #7D6E60;
-  --nav-ink-faint: #A9998C;
-  --nav-accent: #A9825C;
-  --nav-accent-deep: #956F4C;
-  --nav-tint: #FAF4EA;
-
+  background: #FEFDFB;
+  border-bottom: 1px solid #D2B499;
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--nav-surface);
-  border-bottom: 1px solid var(--nav-border);
+  box-shadow: 0 2px 8px rgba(74, 43, 23, 0.05);
 }
 
-/*
- * Layout: wordmark + links on the left, a flexible search field in the
- * middle, and icons / avatar / call-to-action pinned right.
- */
 .navbar-container {
-  max-width: 1600px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 40px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   gap: 40px;
-  height: var(--navbar-height);
+  height: 64px;
 }
 
-/* ---------------------------------------------------------------- *
- * Left: wordmark & nav links
- * ---------------------------------------------------------------- */
-
+/* Left: Logo & Nav Links */
 .navbar-left {
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 44px;
-  height: 100%;
+  gap: 32px;
 }
 
 .navbar-logo {
-  display: flex;
-  align-items: baseline;
   padding: 0;
   border: 0;
   background: transparent;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--nav-ink);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: #956F4C;
   cursor: pointer;
-  white-space: nowrap;
   transition: color 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
 }
 
 .navbar-logo:hover {
-  color: var(--nav-accent-deep);
+  color: #4A2B17;
 }
 
 .navbar-links {
   display: flex;
+  gap: 24px;
   align-items: center;
-  gap: 34px;
-  height: 100%;
 }
 
-/* Links sit full-height so the active underline can hug the navbar's
-   bottom edge, as in the design. */
 .nav-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--nav-ink-soft);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #4A2B17;
   text-decoration: none;
-  white-space: nowrap;
+  text-transform: uppercase;
   cursor: pointer;
   transition: color 0.2s;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
 }
 
 .nav-item:hover {
-  color: var(--nav-ink);
+  color: #956F4C;
 }
 
 .nav-item.active {
-  color: var(--nav-ink);
-  font-weight: 600;
+  color: #956F4C;
+  border-bottom: 2px solid #956F4C;
+  padding-bottom: 2px;
 }
 
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 2px;
-  background: var(--nav-accent);
+.nav-btn {
+  padding: 8px 16px;
+  background: #956F4C;
+  color: #FEFDFB;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
-/* ---------------------------------------------------------------- *
- * Centre: search
- * ---------------------------------------------------------------- */
+.nav-btn:hover {
+  background: #4A2B17;
+  color: #FEFDFB;
+}
 
+/* Center: Search */
 .navbar-search {
+  display: flex;
+  justify-content: center;
   position: relative;
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 560px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 46px;
-  padding: 0 8px 0 16px;
-  border: 1px solid var(--nav-border);
-  border-radius: 12px;
-  background: var(--nav-tint);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.navbar-search:focus-within {
-  border-color: var(--nav-accent);
-  box-shadow: 0 0 0 3px rgba(169, 130, 92, 0.1);
-}
-
-.navbar-search-icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  color: var(--nav-ink-faint);
-  pointer-events: none;
 }
 
 .search-box {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--nav-ink);
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #F5F0E7;
+  color: #4A2B17;
   font-family: inherit;
-  font-size: 15px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.navbar-search-icon {
+  position: absolute;
+  top: 50%;
+  right: max(calc((100% - 400px) / 2 + 14px), 14px);
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border: 2px solid #956F4C;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.navbar-search-icon::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 2px;
+  right: -6px;
+  bottom: -3px;
+  border-radius: 2px;
+  background: #956F4C;
+  transform: rotate(45deg);
+  transform-origin: left center;
 }
 
 .search-box::placeholder {
-  color: var(--nav-ink-faint);
+  color: #AEA397;
 }
 
 .search-box:focus {
   outline: none;
+  border-color: #956F4C;
+  background: #FEFDFB;
+  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
 }
 
-.navbar-search-submit {
-  flex-shrink: 0;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--nav-ink);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.navbar-search-submit:hover {
-  background: #F2E7D9;
-}
-
-/* Suggestion dropdown */
 .navbar-search-suggestions {
   position: absolute;
   z-index: 1000;
   top: calc(100% + 8px);
-  right: 0;
-  left: 0;
+  left: 50%;
+  width: min(100%, 400px);
+  transform: translateX(-50%);
   overflow: hidden;
   padding: 6px;
-  border: 1px solid var(--nav-border);
-  border-radius: 12px;
-  background: var(--nav-surface);
-  box-shadow: 0 14px 30px rgba(74, 43, 23, 0.12);
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  background: #FEFDFB;
+  box-shadow: 0 14px 30px rgba(74, 43, 23, 0.14);
 }
 
 .navbar-search-suggestion {
@@ -207,9 +166,9 @@
   gap: 20px;
   padding: 12px 14px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 3px;
   background: transparent;
-  color: var(--nav-ink);
+  color: #4A2B17;
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -217,7 +176,7 @@
 
 .navbar-search-suggestion:hover,
 .navbar-search-suggestion.active {
-  background: #F5EDE1;
+  background: #F2E7D9;
 }
 
 .navbar-search-suggestion span {
@@ -228,7 +187,7 @@
 
 .navbar-search-suggestion small {
   flex-shrink: 0;
-  color: var(--nav-accent-deep);
+  color: #956F4C;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -238,243 +197,251 @@
 .navbar-search-empty {
   margin: 0;
   padding: 14px;
-  color: var(--nav-ink-soft);
+  color: #7D6D60;
   font-size: 12px;
   line-height: 1.5;
   text-align: left;
 }
 
-/* ---------------------------------------------------------------- *
- * Right: icons, account, call to action
- * ---------------------------------------------------------------- */
-
+/* Right: Icons & Account */
 .navbar-right {
-  flex: 0 0 auto;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
-.navbar-icons {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-/* Bare line-art icons — no button chrome, per the design. */
+/* Icon buttons (Messages, Notifications, Cart) */
 .navbar-icon-btn {
   position: relative;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid #E6C9AC;
+  border-radius: 4px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--nav-ink-soft);
-  cursor: pointer;
-  transition: color 0.2s;
+  font-size: 18px;
+  transition: all 0.2s;
   flex-shrink: 0;
 }
 
 .navbar-icon-btn:hover {
-  color: var(--nav-ink);
+  border-color: #956F4C;
+  background: #F5F0E7;
 }
 
-/* Small unread indicator (messages, notifications). */
-.navbar-dot {
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #C8862F;
-  border: 1.5px solid var(--nav-surface);
-}
-
-/*
- * Counted badge (cart, saved items).
- *
- * Sized at 15px against the 24px icon so the disc stays clearly smaller than
- * the glyph it annotates. "9+" is the widest it ever gets: min-width holds a
- * circle for single digits, and the padding lets two characters breathe
- * without the disc growing past the icon.
- */
-.navbar-badge {
-  position: absolute;
-  top: -5px;
-  right: -6px;
-  box-sizing: content-box;
-  min-width: 15px;
-  height: 15px;
-  padding: 0 3px;
+.navbar-icon-btn .icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  background: #C73E1D;
-  color: #FFFDFA;
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-  border: 1.5px solid var(--nav-surface);
-  pointer-events: none;
 }
 
-.navbar-notifications-menu {
-  position: relative;
-  flex-shrink: 0;
+.navbar-icon-btn .saved-icon,
+.navbar-icon-btn .cart-icon {
+  color: #956F4C;
+}
+
+/* Badge on icon buttons */
+.navbar-icon-btn .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #C73E1D;
+  color: #FEFDFB;
+  font-size: 11px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border: 2px solid #FEFDFB;
+}
+
+/* Account menu wrapper */
+.navbar-account-menu {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .navbar-avatar {
-  width: 38px;
-  height: 38px;
-  padding: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #956F4C;
+  color: #FEFDFB;
+  font-size: 13px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  border: 1px solid #E8D5C0;
-  background: var(--nav-accent);
-  color: var(--nav-surface);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  flex-shrink: 0;
+  border: 1px solid #956F4C;
+  transition: all 0.2s;
+  padding: 0;
 }
 
 .navbar-avatar:hover {
-  background: var(--nav-accent-deep);
-  border-color: var(--nav-accent-deep);
+  background: #4A2B17;
+  border-color: #4A2B17;
+  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
 }
 
-.navbar-login {
-  padding: 10px 18px;
-  border: 1px solid #E0CDB6;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--nav-ink);
-  font-family: inherit;
-  font-size: 14px;
+/* Dropdown menu */
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #FEFDFB;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(74, 43, 23, 0.12);
+  min-width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  padding: 12px 16px;
+  font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
+  color: #4A2B17;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.2s;
+  overflow: hidden;
 }
 
-.navbar-login:hover {
-  background: var(--nav-tint);
+.dropdown-divider {
+  height: 1px;
+  border: none;
+  background: #E6C9AC;
+  margin: 0;
+  padding: 0;
 }
 
-.navbar-cta {
-  display: inline-flex;
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 13px;
+  color: #4A2B17;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 12px 22px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--nav-accent);
-  color: #FFFDFA;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s;
+  gap: 8px;
 }
 
-.navbar-cta:hover {
-  background: var(--nav-accent-deep);
+.dropdown-item:hover {
+  background: #F5F0E7;
+  color: #956F4C;
 }
 
-/* The "+" stand-in only appears once the label is hidden. */
-.navbar-cta-icon {
-  display: none;
-  font-size: 20px;
-  line-height: 1;
+.dropdown-item.logout-item {
+  color: #C73E1D;
 }
 
-/* ---------------------------------------------------------------- *
- * Responsive
- *
- * Desktop  — one row.
- * Tablet   — search drops to its own row beneath the bar.
- * Mobile   — three rows: wordmark + actions, search, then the links.
- * ---------------------------------------------------------------- */
+.dropdown-item.logout-item:hover {
+  background: #FFF5F0;
+  color: #A02F17;
+}
 
-@media (max-width: 1299px) {
+/* Responsive Design */
+@media (max-width: 1199px) {
   .navbar-container {
+    padding: 0 32px;
     gap: 24px;
-    padding: 0 28px;
-  }
-
-  .navbar-left {
-    gap: 28px;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .navbar-links {
-    gap: 24px;
+    gap: 16px;
   }
 
-  .navbar-right,
-  .navbar-icons {
-    gap: 14px;
+  .search-box {
+    max-width: 300px;
+  }
+
+  .navbar-search-icon {
+    right: max(calc((100% - 300px) / 2 + 14px), 14px);
   }
 }
 
-@media (max-width: 1099px) {
+@media (max-width: 991px) {
   .navbar-container {
-    display: grid;
     grid-template-areas:
       "left right"
       "search search";
     grid-template-columns: 1fr auto;
     row-gap: 12px;
     column-gap: 16px;
-    height: auto;
     padding: 12px 24px;
+    height: auto;
   }
 
   .navbar-left {
     grid-area: left;
-    height: auto;
-  }
-
-  .navbar-links {
-    height: auto;
-  }
-
-  /* Without full-height links the underline needs its own offset. */
-  .nav-item {
-    height: auto;
-    padding-bottom: 6px;
-  }
-
-  .nav-item.active::after {
-    bottom: 0;
   }
 
   .navbar-search {
     grid-area: search;
-    max-width: none;
   }
 
   .navbar-right {
     grid-area: right;
     justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  .navbar-icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .navbar-icon-btn .badge {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .navbar-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .account-dropdown {
+    min-width: 180px;
+  }
+
+  .navbar-logo {
+    font-size: 16px;
+  }
+
+  .nav-item {
+    font-size: 11px;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .navbar-search-icon {
+    right: 14px;
   }
 }
 
-/* Phones: the wordmark and the actions share the top row, the search gets a
-   full-width row, and the links move to their own scrollable row. */
 @media (max-width: 767px) {
   .navbar {
     position: relative;
@@ -482,135 +449,161 @@
 
   .navbar-container {
     grid-template-areas:
-      "logo actions"
-      "search search"
-      "links links";
-    grid-template-columns: auto 1fr;
-    row-gap: 10px;
+      "left right"
+      "search search";
+    grid-template-columns: 1fr auto;
+    row-gap: 12px;
     column-gap: 12px;
-    padding: 10px 16px;
+    padding: 12px 16px;
+    height: auto;
   }
 
-  /* Lets the wordmark and the link row become grid items in their own right. */
   .navbar-left {
-    display: contents;
+    grid-area: left;
+    gap: 12px;
   }
 
   .navbar-logo {
-    grid-area: logo;
-    align-self: center;
-    font-size: 19px;
+    font-size: 14px;
   }
 
   .navbar-links {
-    grid-area: links;
-    gap: 20px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .navbar-links::-webkit-scrollbar {
-    display: none;
+    gap: 8px;
   }
 
   .nav-item {
-    font-size: 14px;
-    padding-bottom: 4px;
+    font-size: 10px;
+    padding: 6px 10px;
   }
 
-  .navbar-right {
-    grid-area: actions;
-    gap: 14px;
-  }
-
-  .navbar-icons {
-    gap: 16px;
+  .nav-btn {
+    padding: 6px 12px;
+    font-size: 10px;
   }
 
   .navbar-search {
-    height: 42px;
-    padding-left: 14px;
+    grid-area: search;
+    width: 100%;
+  }
+
+  .navbar-search-suggestions {
+    width: 100%;
   }
 
   .search-box {
-    font-size: 16px; /* 16px keeps iOS Safari from zooming on focus. */
-  }
-
-  .navbar-avatar {
-    width: 34px;
-    height: 34px;
     font-size: 12px;
-  }
-
-  .navbar-cta {
-    padding: 9px 16px;
-    font-size: 13px;
-  }
-
-  .navbar-login {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-}
-
-/* Small phones: the call to action collapses to a "+" so the top row fits. */
-@media (max-width: 479px) {
-  .navbar-container {
-    padding: 10px 12px;
-    column-gap: 10px;
-  }
-
-  .navbar-logo {
-    font-size: 18px;
+    padding: 9px 38px 9px 12px;
   }
 
   .navbar-right {
-    gap: 12px;
+    grid-area: right;
+    gap: 6px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
-  .navbar-icons {
-    gap: 14px;
+  .navbar-icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
   }
 
-  .navbar-cta {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border-radius: 50%;
-  }
-
-  .navbar-cta-label {
-    display: none;
-  }
-
-  .navbar-cta-icon {
-    display: block;
-  }
-
-  .navbar-login {
-    padding: 7px 12px;
-    font-size: 12px;
-  }
-
-  .navbar-search-submit {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-}
-
-/* Very small phones: tighten the action row so it still fits at 320px. */
-@media (max-width: 359px) {
-  .navbar-icons {
-    gap: 12px;
+  .navbar-icon-btn .badge {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+    top: -6px;
+    right: -6px;
   }
 
   .navbar-avatar {
     width: 30px;
     height: 30px;
+    font-size: 11px;
   }
 
-  .navbar-cta {
-    width: 32px;
-    height: 32px;
+  .account-dropdown {
+    min-width: 160px;
+  }
+
+  .dropdown-item {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .dropdown-header {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 479px) {
+  .navbar-container {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .navbar-logo {
+    font-size: 12px;
+  }
+
+  .navbar-links {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .nav-item {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+
+  .nav-btn {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  .search-box {
+    font-size: 11px;
+    padding: 8px 36px 8px 10px;
+  }
+
+  .navbar-right {
+    gap: 6px;
+  }
+
+  .navbar-icon-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .navbar-icon-btn .badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -4px;
+    right: -4px;
+  }
+
+  .navbar-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .account-dropdown {
+    min-width: 140px;
+    right: -8px;
+  }
+
+  .dropdown-item {
+    padding: 8px 10px;
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .dropdown-header {
+    padding: 8px 10px;
+    font-size: 11px;
   }
 }

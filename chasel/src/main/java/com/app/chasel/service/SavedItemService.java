@@ -33,11 +33,6 @@ public class SavedItemService {
         return savedItemRepository.findByUser(user);
     }
 
-    /** How many pieces the member has saved, for the navbar badge. */
-    public int countSavedItems(Long userId) {
-        return (int) savedItemRepository.countByUser(getUser(userId));
-    }
-
     @Transactional
     public SavedItem saveProduct(Long userId, Long productId) {
         Users user = getUser(userId);

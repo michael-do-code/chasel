@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
 import './ProductDetail.css';
 
 interface Listing {
@@ -15,7 +14,6 @@ interface Listing {
   condition: string;
   originalRetail?: number;
   price: number;
-  previousPrice?: number;
   imageUrls?: string[];
   location?: string;
 }
@@ -47,7 +45,6 @@ const createFormFromListing = (product: Listing) => ({
 function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const [listing, setListing] = useState<Listing | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -70,16 +67,15 @@ function ProductDetail() {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        // Guests can view a listing, but ownership (for edit/delete) requires an account.
         const [listingResponse, mineResponse] = await Promise.all([
           api.get<Listing>(`/listings/${id}`),
-          isAuthenticated ? api.get<Listing[]>('/listings/mine') : Promise.resolve(null),
+          api.get<Listing[]>('/listings/mine'),
         ]);
 
         const product = listingResponse.data;
         setListing(product);
         setIsOwner(
-          mineResponse ? mineResponse.data.some((mine) => mine.id === product.id) : false
+          mineResponse.data.some((mine) => mine.id === product.id)
         );
         setForm(createFormFromListing(product));
       } catch (error) {
@@ -88,7 +84,7 @@ function ProductDetail() {
     };
 
     loadProduct();
-  }, [id, isAuthenticated]);
+  }, [id]);
 
   const updateField = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -226,16 +222,8 @@ function ProductDetail() {
             <span className="product-category">{listing.category}</span>
             <div className="product-title-row">
               <h1>{listing.title}</h1>
-              <strong className={listing.previousPrice ? 'product-price-drop' : undefined}>
-                ${listing.price.toFixed(2)}
-              </strong>
+              <strong>${listing.price.toFixed(2)}</strong>
             </div>
-            {listing.previousPrice && (
-              <p className="product-price-drop-caption">
-                Reduced from ${listing.previousPrice.toFixed(2)} · $
-                {(listing.previousPrice - listing.price).toFixed(2)} off
-              </p>
-            )}
             <p className="product-brand">{listing.brand}</p>
 
             <dl className="product-facts">

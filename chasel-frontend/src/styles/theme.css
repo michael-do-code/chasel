@@ -39,8 +39,6 @@
   /* Layout. */
   --shell-width: 1500px;
   --shell-gutter: 40px;
-  /* Height of the sticky navbar; pages that fill the viewport subtract it. */
-  --navbar-height: 72px;
 }
 
 /* ------------------------------------------------------------------ *
