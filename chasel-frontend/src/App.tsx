@@ -8,6 +8,8 @@ import {
 
 import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchProvider';
+import { CartProvider } from './context/CartProvider';
+import { SavedItemsProvider } from './context/SavedItemsProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 
@@ -25,7 +27,9 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import SavedItems from './pages/SavedItems';
 import ProductDetail from './pages/ProductDetail';
-import Notifications from './pages/Notifications';
+import AboutUs from './pages/AboutUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 
 /**
  * `/home` was renamed to `/browsing`. Redirect, keeping any `?category=` or
@@ -40,6 +44,8 @@ function App() {
   return (
     <AuthProvider>
       <SearchProvider>
+        <CartProvider>
+        <SavedItemsProvider>
         <BrowserRouter>
           <Navbar />
 
@@ -77,23 +83,15 @@ function App() {
             }
           />
 
-          <Route
-            path="/discover"
-            element={
-              <ProtectedRoute>
-                <Discover />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/discover" element={<Discover />} />
 
-          <Route
-            path="/browsing"
-            element={
-              <ProtectedRoute>
-                <Browsing />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/about" element={<AboutUs />} />
+
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
+
+          <Route path="/browsing" element={<Browsing />} />
 
           <Route
             path="/messages"
@@ -134,23 +132,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/items/:id"
-            element={
-              <ProtectedRoute>
-                <ProductDetail />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <Notifications />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/items/:id" element={<ProductDetail />} />
 
           <Route
             path="/profile/edit"
@@ -167,6 +149,8 @@ function App() {
           />
           </Routes>
         </BrowserRouter>
+        </SavedItemsProvider>
+        </CartProvider>
       </SearchProvider>
     </AuthProvider>
   );

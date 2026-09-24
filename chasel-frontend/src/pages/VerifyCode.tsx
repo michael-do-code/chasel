@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import api from '../api/axios';
 import './Login.css';
-import { useAuth } from '../context/auth-context';
+import { useAuth } from '../context/AuthContext';
 
 function VerifyCode() {
   const [code, setCode] = useState('');

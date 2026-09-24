@@ -1,12 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/auth-context';
+import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
+import { useCart } from '../context/CartContext';
+import { useSavedCount } from '../context/SavedItemsContext';
+
+/** Badges stay a small disc, so anything past 9 collapses to "9+". */
+const formatBadge = (value: number) => (value > 9 ? '9+' : String(value));
 import api from '../api/axios';
 import Cart from '../pages/Cart';
+import Notifications from '../pages/Notifications';
 import BookmarkIcon from './BookmarkIcon';
 import CartIcon from './CartIcon';
+import MessageIcon from './MessageIcon';
+import BellIcon from './BellIcon';
+import SearchIcon from './SearchIcon';
 import './Navbar.css';
+
+/** "New" is Browse pre-filtered to the new-this-week collection. */
+const NEW_ARRIVALS_PATH = '/browsing?collection=new-this-week';
 
 interface UserProfile {
   email: string;
@@ -57,15 +69,16 @@ function getInitials(profile: UserProfile): string {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { token, logout } = useAuth();
+  const { token } = useAuth();
   const { searchQuery, setSearchQuery, searchItems } = useSearch();
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [notifications] = useState(0);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [messages] = useState(0);
-  const [cart] = useState(0);
+  const { count: cartCount } = useCart();
+  const { count: savedCount } = useSavedCount();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
 
@@ -132,8 +145,8 @@ function Navbar() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.navbar-account-menu')) {
-        setAccountOpen(false);
+      if (!target.closest('.navbar-notifications-menu')) {
+        setNotificationsOpen(false);
       }
     };
     document.addEventListener('click', handleClickOutside);
@@ -154,12 +167,6 @@ function Navbar() {
     };
   }, [location.key, location.state]);
 
-  const handleLogout = () => {
-    setProfile(null);
-    logout();
-    navigate('/login');
-  };
-
   const handleLogoClick = () => {
     navigate('/discover', {
       replace: location.pathname === '/discover',
@@ -174,14 +181,43 @@ function Navbar() {
     });
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  // Browse and New share /browsing, so the collection param decides which of
+  // the two carries the active underline.
+  const isNewArrivals =
+    location.pathname === '/browsing' &&
+    new URLSearchParams(location.search).get('collection') === 'new-this-week';
+  const isBrowseActive = location.pathname === '/browsing' && !isNewArrivals;
 
-  if (!isAuthenticated) return null;
+  const submitSearch = () => {
+    setShowSuggestions(false);
+    setActiveSuggestion(-1);
+    if (location.pathname !== '/browsing') navigate('/browsing');
+  };
+
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setCartOpen(true);
+  };
+
+  const handleMessagesClick = () => {
+    navigate(isAuthenticated ? '/messages' : '/login');
+  };
+
+  const handleNotificationsClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setNotificationsOpen((current) => !current);
+  };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Left: Logo & Nav Links */}
+        {/* Left: Wordmark & Nav Links */}
         <div className="navbar-left">
           <button
             type="button"
@@ -195,7 +231,7 @@ function Navbar() {
           <div className="navbar-links">
             <a
               href="#browse"
-              className={`nav-item ${isActive('/browsing') ? 'active' : ''}`}
+              className={`nav-item ${isBrowseActive ? 'active' : ''}`}
               onClick={(e) => {
                 e.preventDefault();
                 handleBrowseClick();
@@ -203,20 +239,34 @@ function Navbar() {
             >
               Browse
             </a>
-            <button
-              className="nav-item nav-btn"
-              onClick={() => navigate('/sell-item')}
+            <a
+              href="#new"
+              className={`nav-item ${isNewArrivals ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(NEW_ARRIVALS_PATH, { state: { scrollToTop: Date.now() } });
+              }}
             >
-              List an Item
-            </button>
+              New
+            </a>
           </div>
         </div>
 
         {/* Center: Search */}
-        <div className="navbar-search">
+        <form
+          className="navbar-search"
+          role="search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            submitSearch();
+          }}
+        >
+          <span className="navbar-search-icon" aria-hidden="true">
+            <SearchIcon />
+          </span>
           <input
             type="text"
-            placeholder="Search items or brands..."
+            placeholder="Search brands or pieces"
             className="search-box"
             value={searchQuery}
             onChange={(event) => {
@@ -258,7 +308,10 @@ function Navbar() {
             aria-expanded={showSuggestions && Boolean(normalizedSearch)}
             aria-autocomplete="list"
           />
-          <span className="navbar-search-icon" aria-hidden="true" />
+          <button type="submit" className="navbar-search-submit">
+            Search
+          </button>
+
           {showSuggestions && normalizedSearch && (
             <div className="navbar-search-suggestions" role="listbox">
               {searchSuggestions.map((suggestion, index) => (
@@ -287,108 +340,100 @@ function Navbar() {
               )}
             </div>
           )}
-        </div>
+        </form>
 
-        {/* Right: Icons & Account */}
+        {/* Right: Icons, account, and the primary call to action */}
         <div className="navbar-right">
-          {/* Messages Icon */}
-          <button
-            className="navbar-icon-btn"
-            title="Messages"
-            onClick={() => navigate('/messages')}
-          >
-            <span className="icon">💬</span>
-            {messages > 0 && <span className="badge">{messages}</span>}
-          </button>
+          <div className="navbar-icons">
+            {/* Messages */}
+            <button
+              className="navbar-icon-btn"
+              title="Messages"
+              aria-label="Messages"
+              onClick={handleMessagesClick}
+            >
+              <MessageIcon />
+              {messages > 0 && <span className="navbar-dot" aria-hidden="true" />}
+            </button>
 
-          {/* Notifications Icon */}
-          <button
-            className="navbar-icon-btn"
-            title="Notifications"
-            onClick={() => navigate('/notifications')}
-          >
-            <span className="icon">🔔</span>
-            {notifications > 0 && <span className="badge">{notifications}</span>}
-          </button>
+            {/* Notifications */}
+            <div className="navbar-notifications-menu">
+              <button
+                className="navbar-icon-btn"
+                title="Notifications"
+                aria-label="Notifications"
+                onClick={handleNotificationsClick}
+              >
+                <BellIcon />
+                {unreadCount > 0 && <span className="navbar-dot" aria-hidden="true" />}
+              </button>
 
-          {/* Saved Items Icon */}
-          <button
-            className="navbar-icon-btn"
-            title="Saved Items"
-            onClick={() => navigate('/saved')}
-          >
-            <span className="icon saved-icon">
-              <BookmarkIcon />
-            </span>
-          </button>
+              <Notifications
+                open={notificationsOpen}
+                onClose={() => setNotificationsOpen(false)}
+                onUnreadCountChange={setUnreadCount}
+              />
+            </div>
 
-          {/* Cart Icon */}
-          <button
-            className="navbar-icon-btn"
-            title="Cart"
-            onClick={() => setCartOpen(true)}
-          >
-            <span className="icon cart-icon">
+            {/* Saved Items */}
+            <button
+              className="navbar-icon-btn"
+              title="Saved Items"
+              aria-label={
+                savedCount > 0 ? `Saved items, ${savedCount} saved` : 'Saved items'
+              }
+              onClick={() => navigate('/saved')}
+            >
+              <BookmarkIcon variant="outline" />
+              {savedCount > 0 && (
+                <span className="navbar-badge" aria-hidden="true">
+                  {formatBadge(savedCount)}
+                </span>
+              )}
+            </button>
+
+            {/* Cart — the badge caps at "9+" so it stays a small disc. */}
+            <button
+              className="navbar-icon-btn"
+              title="Cart"
+              aria-label={
+                cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'
+              }
+              onClick={handleCartClick}
+            >
               <CartIcon />
-            </span>
-            {cart > 0 && <span className="badge">{cart}</span>}
-          </button>
+              {cartCount > 0 && (
+                <span className="navbar-badge" aria-hidden="true">
+                  {formatBadge(cartCount)}
+                </span>
+              )}
+            </button>
+          </div>
 
-          {/* Account Dropdown */}
-          <div className="navbar-account-menu">
+          {/* Account avatar (logged in, links straight to Profile) or Login button (guest) */}
+          {isAuthenticated ? (
             <button
               className="navbar-avatar"
-              onClick={() => setAccountOpen(!accountOpen)}
-              title="Account menu"
+              onClick={() => navigate('/profile')}
+              title="Go to your profile"
             >
               {profile ? getInitials(profile) : 'A'}
             </button>
+          ) : (
+            <button className="navbar-login" onClick={() => navigate('/login')}>
+              Login
+            </button>
+          )}
 
-            {accountOpen && (
-              <div className="account-dropdown">
-                <div className="dropdown-header">
-                  {profile?.firstName && profile?.lastName
-                    ? `${profile.firstName} ${profile.lastName}`
-                    : profile?.email ?? 'Account'}
-                </div>
-                <hr className="dropdown-divider" />
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/profile');
-                    setAccountOpen(false);
-                  }}
-                >
-                  👤 Profile
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/purchases');
-                    setAccountOpen(false);
-                  }}
-                >
-                  📦 Purchases
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    navigate('/settings');
-                    setAccountOpen(false);
-                  }}
-                >
-                  ⚙️ Settings
-                </button>
-                <hr className="dropdown-divider" />
-                <button
-                  className="dropdown-item logout-item"
-                  onClick={handleLogout}
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Collapses to a "+" on narrow screens so the row still fits. */}
+          <button
+            className="navbar-cta"
+            aria-label="List an item"
+            onClick={() => navigate('/sell-item')}
+          >
+            <span className="navbar-cta-label">List an item</span>
+            <span className="navbar-cta-icon" aria-hidden="true">+</span>
+          </button>
         </div>
       </div>
       <Cart open={cartOpen} onClose={() => setCartOpen(false)} />

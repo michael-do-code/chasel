@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
-import { useAuth } from '../context/auth-context';
+import { useAuth } from '../context/AuthContext';
 import React from 'react';
 import './Login.css';
 
@@ -25,7 +25,7 @@ function Login() {
       navigate('/welcome', {
         state: { type: 'login' },
       });
-    } catch {
+    } catch (err) {
       setError('Invalid email or password');
     } finally {
       setLoading(false);

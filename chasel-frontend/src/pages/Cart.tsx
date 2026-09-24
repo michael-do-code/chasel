@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { useCart } from '../context/CartContext';
 import './Cart.css';
 
 interface CartItem {
@@ -19,6 +20,7 @@ interface CartProps {
 function Cart({ open, onClose }: CartProps) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const { removeItem: removeFromCart } = useCart();
 
   const loadCart = async () => {
     setLoading(true);
@@ -33,7 +35,7 @@ function Cart({ open, onClose }: CartProps) {
   useEffect(() => {
     if (!open) return;
 
-    const loadTimer = window.setTimeout(() => void loadCart(), 0);
+    loadCart();
     document.body.style.overflow = 'hidden';
 
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -43,14 +45,14 @@ function Cart({ open, onClose }: CartProps) {
     document.addEventListener('keydown', closeOnEscape);
 
     return () => {
-      window.clearTimeout(loadTimer);
       document.body.style.overflow = '';
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [open, onClose]);
 
   const removeItem = async (productId: number) => {
-    await api.delete(`/cart/items/${productId}`);
+    // Goes through the provider so the navbar badge drops with the line.
+    await removeFromCart(productId);
     setItems((current) =>
       current.filter((item) => item.productId !== productId)
     );

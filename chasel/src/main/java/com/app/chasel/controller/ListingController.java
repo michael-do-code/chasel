@@ -9,6 +9,7 @@ import com.app.chasel.repository.CartItemRepository;
 import com.app.chasel.repository.ProductImageRepository;
 import com.app.chasel.repository.SavedItemRepository;
 import com.app.chasel.repository.UserRepository;
+import com.app.chasel.service.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -24,18 +25,21 @@ public class ListingController {
     private final CartItemRepository cartItemRepository;
     private final SavedItemRepository savedItemRepository;
     private final ProductImageRepository productImageRepository;
+    private final NotificationService notificationService;
 
     public ListingController(
             ListingRepository listingRepository,
             UserRepository userRepository,
             CartItemRepository cartItemRepository,
             SavedItemRepository savedItemRepository,
-            ProductImageRepository productImageRepository) {
+            ProductImageRepository productImageRepository,
+            NotificationService notificationService) {
         this.listingRepository = listingRepository;
         this.userRepository = userRepository;
         this.cartItemRepository = cartItemRepository;
         this.savedItemRepository = savedItemRepository;
         this.productImageRepository = productImageRepository;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -103,7 +107,18 @@ public class ListingController {
         listing.setSize(request.getSize());
         listing.setCondition(request.getCondition());
         listing.setOriginalRetail(request.getOriginalRetail());
+
+        // Track price drops so the frontend can show "was $X", and notify
+        // anyone watching this listing. A price that goes back up (or
+        // stays the same) is no longer a markdown.
+        boolean priceDropped = request.getPrice() < listing.getPrice();
+        if (priceDropped) {
+            listing.setPreviousPrice(listing.getPrice());
+        } else {
+            listing.setPreviousPrice(null);
+        }
         listing.setPrice(request.getPrice());
+
         if (request.getImageUrls() != null) {
             listing.setImageUrls(request.getImageUrls());
         }
@@ -111,7 +126,13 @@ public class ListingController {
             listing.setLocation(request.getLocation());
         }
 
-        return listingRepository.save(listing);
+        Listing saved = listingRepository.save(listing);
+
+        if (priceDropped) {
+            notificationService.notifyPriceDrop(saved);
+        }
+
+        return saved;
     }
 
     @DeleteMapping("/{id}")
