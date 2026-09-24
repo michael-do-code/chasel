@@ -30,6 +30,7 @@ import ProductDetail from './pages/ProductDetail';
 import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
+import Purchases from './pages/Purchases';
 
 /**
  * `/home` was renamed to `/browsing`. Redirect, keeping any `?category=` or
@@ -133,6 +134,16 @@ function App() {
           />
 
           <Route path="/items/:id" element={<ProductDetail />} />
+
+          <Route
+            path="/purchases"
+            element={
+              <ProtectedRoute>
+                <Purchases />
+              </ProtectedRoute>
+            }
+          />
+
 
           <Route
             path="/profile/edit"

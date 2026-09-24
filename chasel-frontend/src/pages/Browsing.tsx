@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import { useCart } from '../context/CartContext';
 import type { Listing } from '../types/listing';
+import { addCuratedListingToCart } from '../utils/curatedCart';
 import { DEFAULT_HEADING, getCollection } from './browsing/collections';
 import {
   ALL_CATEGORIES,
@@ -88,6 +89,15 @@ function Browsing() {
   const addToCart = async (productId: number) => {
     if (!isAuthenticated) {
       navigate('/login');
+      return;
+    }
+
+    if (productId < 0) {
+      const listing = listings.find((item) => item.id === productId);
+      if (!listing) return;
+
+      addCuratedListingToCart(listing);
+      alert('Added to cart!');
       return;
     }
 
