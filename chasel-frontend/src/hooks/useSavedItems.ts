@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
+import { useSavedCount } from '../context/SavedItemsContext';
 import type { SavedItem } from '../types/listing';
 
 /**
@@ -8,12 +11,23 @@ import type { SavedItem } from '../types/listing';
  * Both Browsing and Discover previously kept their own copy of this state plus
  * a near-identical toggle handler; keeping it here means the wishlist rules
  * (in-flight guard, rollback on failure) only exist once.
+ *
+ * Saved items are account-specific, so guests skip the fetch entirely and
+ * get redirected to /login if they try to toggle a save.
  */
 export function useSavedItems() {
   const [savedProductIds, setSavedProductIds] = useState<number[]>([]);
   const [savingProductId, setSavingProductId] = useState<number | null>(null);
+  const { isAuthenticated } = useAuth();
+  const { refresh: refreshSavedCount } = useSavedCount();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // Every logout flow navigates to /login right away, which unmounts
+    // whatever was using this hook — so there's no stale state to clear,
+    // just nothing left to fetch.
+    if (!isAuthenticated) return;
+
     let active = true;
 
     api
@@ -26,7 +40,7 @@ export function useSavedItems() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [isAuthenticated]);
 
   const isSaved = useCallback(
     (productId: number) => savedProductIds.includes(productId),
@@ -35,6 +49,11 @@ export function useSavedItems() {
 
   const toggleSaved = useCallback(
     async (productId: number) => {
+      if (!isAuthenticated) {
+        navigate('/login');
+        return;
+      }
+
       const wasSaved = savedProductIds.includes(productId);
       setSavingProductId(productId);
 
@@ -46,6 +65,9 @@ export function useSavedItems() {
           await api.post(`/saved-items/${productId}`);
           setSavedProductIds((current) => [...current, productId]);
         }
+
+        // Keeps the navbar badge in step with the bookmark just toggled.
+        await refreshSavedCount();
       } catch (error) {
         console.error('Failed to update saved item:', error);
         alert('Could not update your wishlist.');
@@ -53,7 +75,7 @@ export function useSavedItems() {
         setSavingProductId(null);
       }
     },
-    [savedProductIds]
+    [savedProductIds, isAuthenticated, navigate, refreshSavedCount]
   );
 
   return { savedProductIds, savingProductId, isSaved, toggleSaved };

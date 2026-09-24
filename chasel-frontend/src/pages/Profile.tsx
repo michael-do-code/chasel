@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
-import { useAuth } from '../context/auth-context';
+import { useAuth } from '../context/AuthContext';
 import './Profile.css';
 import '../styles/marketplace.css';
 
@@ -16,8 +16,12 @@ interface UserProfile {
 interface Listing {
   id: number;
   title: string;
+  brand: string;
   description: string | null;
   category: string;
+  size: string | null;
+  condition: string;
+  originalRetail: number | null;
   price: number | null;
   imageUrls: string[] | null;
   location: string | null;
@@ -133,22 +137,22 @@ function Profile() {
   };
 
   useEffect(() => {
-    const loadProfile = async () => {
-      const res = await api.get<UserProfile>('/users/me');
-      setProfile(res.data);
-    };
-
-    const loadListings = async () => {
-      const res = await api.get<Listing[]>('/listings/mine');
-      const sorted = [...res.data].sort(
-        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-      setMyListings(sorted);
-    };
-
-    void loadProfile();
-    void loadListings();
+    fetchProfile();
+    fetchMyListings();
   }, []);
+
+  const fetchProfile = async () => {
+    const res = await api.get<UserProfile>('/users/me');
+    setProfile(res.data);
+  };
+
+  const fetchMyListings = async () => {
+    const res = await api.get<Listing[]>('/listings/mine');
+    const sorted = [...res.data].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    setMyListings(sorted);
+  };
 
   const handleLogout = () => {
     logout();
@@ -175,18 +179,19 @@ function Profile() {
     setEditError('');
 
     try {
+      // Send the full listing back, overriding only the fields this modal
+      // actually edits — otherwise fields this form doesn't expose (brand,
+      // size, condition, ...) get silently dropped/nulled on every save.
       const res = await api.put<Listing>(`/listings/${editingListing.id}`, {
+        ...editingListing,
         title: editTitle,
-        description: editingListing.description,
         category: editCategory,
         price: editPrice ? parseFloat(editPrice) : null,
-        imageUrls: editingListing.imageUrls,
-        location: editingListing.location,
       });
 
       setMyListings((prev) => prev.map((l) => (l.id === res.data.id ? res.data : l)));
       setEditingListing(null);
-    } catch {
+    } catch (err) {
       setEditError('Failed to save changes. Please try again.');
     } finally {
       setSavingEdit(false);
@@ -202,7 +207,7 @@ function Profile() {
       await api.delete(`/listings/${deletingListing.id}`);
       setMyListings((prev) => prev.filter((l) => l.id !== deletingListing.id));
       setDeletingListing(null);
-    } catch {
+    } catch (err) {
       // keep the confirm dialog open so the user can retry
     } finally {
       setDeleting(false);

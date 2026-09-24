@@ -25,23 +25,23 @@ function EditProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadProfile = async () => {
-      const res = await api.get<UserProfile>('/users/me');
-      setProfile(res.data);
-      setFirstName(res.data.firstName ?? '');
-      setLastName(res.data.lastName ?? '');
-      setPhone(res.data.phone ?? '');
-      setLocation(res.data.location ?? '');
-    };
-
-    const loadStates = async () => {
-      const res = await api.get<string[]>('/options/states');
-      setStates(res.data);
-    };
-
-    void loadProfile();
-    void loadStates();
+    fetchProfile();
+    fetchStates();
   }, []);
+
+  const fetchProfile = async () => {
+    const res = await api.get<UserProfile>('/users/me');
+    setProfile(res.data);
+    setFirstName(res.data.firstName ?? '');
+    setLastName(res.data.lastName ?? '');
+    setPhone(res.data.phone ?? '');
+    setLocation(res.data.location ?? '');
+  };
+
+  const fetchStates = async () => {
+    const res = await api.get<string[]>('/options/states');
+    setStates(res.data);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ function EditProfile() {
       const res = await api.put<UserProfile>('/users/me', { firstName, lastName, phone, location });
       setProfile(res.data);
       setMessage('Profile updated.');
-    } catch {
+    } catch (err) {
       setError('Failed to update profile.');
     } finally {
       setSaving(false);

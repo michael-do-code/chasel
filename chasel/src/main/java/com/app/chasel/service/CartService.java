@@ -68,6 +68,21 @@ public class CartService {
         return cartItemRepository.findByCart(cart);
     }
 
+    /**
+     * Total quantity in the member's bag, for the navbar badge.
+     *
+     * Unlike the other reads this does not create a cart as a side effect —
+     * a member who has never added anything simply has a count of zero.
+     */
+    public int countItems(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return cartRepository.findByUser(user)
+                .map(cart -> cartItemRepository.sumQuantityByCart(cart).intValue())
+                .orElse(0);
+    }
+
     @Transactional
     public void removeProduct(Long userId, Long productId) {
         Cart cart = getOrCreateCart(userId);
