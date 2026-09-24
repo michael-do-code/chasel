@@ -293,16 +293,91 @@
   transition-delay: 180ms;
 }
 
+/* Replay the collage reveal automatically every three seconds instead of
+   requiring the visitor to hover over the panel. */
+.marketplace-promo-trending .trending-card-layer {
+  --trending-rest-transform: translate3d(0, 0, 0);
+  animation: trending-card-cycle 3s cubic-bezier(0.2, 0.78, 0.22, 1) infinite;
+}
+
+.marketplace-promo-trending .trending-card-01 {
+  --trending-rest-transform: translate3d(-1%, 0, 0);
+  animation-delay: 360ms;
+}
+
+.marketplace-promo-trending .trending-card-02 {
+  --trending-rest-transform: translate3d(2%, 0, 0);
+  animation-delay: 180ms;
+}
+
+.marketplace-promo-trending .trending-card-03 {
+  --trending-rest-transform: translate3d(-1.5%, 0, 0);
+}
+
+.marketplace-promo-trending .trending-tape-scrap {
+  animation: trending-tape-cycle 3s ease infinite 360ms;
+}
+
+@keyframes trending-card-cycle {
+  0%, 8% {
+    opacity: 0;
+    transform: translate3d(-105%, 0, 0);
+  }
+
+  34%, 82% {
+    opacity: 1;
+    transform: var(--trending-rest-transform);
+  }
+
+  94%, 100% {
+    opacity: 0;
+    transform: var(--trending-rest-transform);
+  }
+}
+
+@keyframes trending-tape-cycle {
+  0%, 28% {
+    opacity: 0;
+    transform: translateY(-12px) rotate(var(--tape-angle));
+  }
+
+  42%, 82% {
+    opacity: 0.88;
+    transform: translateY(0) rotate(var(--tape-angle));
+  }
+
+  94%, 100% {
+    opacity: 0;
+    transform: translateY(0) rotate(var(--tape-angle));
+  }
+}
+
+@media (max-aspect-ratio: 3 / 2) {
+  .marketplace-promo-trending .trending-card-01 {
+    --trending-rest-transform: translate3d(4%, 0, 0) scale(0.8);
+  }
+
+  .marketplace-promo-trending .trending-card-02 {
+    --trending-rest-transform: translate3d(1.5%, 0, 0) scale(0.8);
+  }
+
+  .marketplace-promo-trending .trending-card-03 {
+    --trending-rest-transform: translate3d(-4%, 0, 0) scale(0.8);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marketplace-promo-trending .trending-tape-scrap {
     opacity: 0.88;
     transform: rotate(var(--tape-angle));
     transition: none;
+    animation: none;
   }
 
   .marketplace-promo-trending .trending-card-layer {
     opacity: 1;
     transition: none;
+    animation: none;
   }
 
   .marketplace-promo-trending .trending-card-01 {
