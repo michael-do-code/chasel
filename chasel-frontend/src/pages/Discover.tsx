@@ -461,8 +461,8 @@ function Discover() {
 
         </section>
 
-        {/* Only show real listings returned by the same API used by Browse. */}
-        {highlightedListings.length > 0 && <section className="listings-section">
+        {/* Keep the community heading visible, but never invent demo listings. */}
+        <section className={`listings-section${highlightedListings.length === 0 ? ' is-empty' : ''}`}>
           <div className="section-heading-row">
             <h2 className="section-title">From the community</h2>
             <button className="view-all-button" onClick={() => navigate('/browsing')}>
@@ -470,7 +470,7 @@ function Discover() {
             </button>
           </div>
 
-          <div className="listings-grid">
+          {highlightedListings.length > 0 ? <div className="listings-grid">
             {highlightedListings.map((item) => (
               <div
                 className="highlight-listing-card"
@@ -522,8 +522,14 @@ function Discover() {
                 </div>
               </div>
             ))}
-          </div>
-        </section>}
+          </div> : (
+            <div
+              className="community-empty-space"
+              role="status"
+              aria-label="No community listings available"
+            />
+          )}
+        </section>
 
         <section className="campaign-lower" aria-label="More featured promotions">
           <article

@@ -4,6 +4,20 @@
   font-style: italic;
 }
 
+/* Keep the community area compact when the marketplace has no real listings. */
+.marketplace-shell .listings-section.is-empty {
+  min-height: auto;
+  padding-block: clamp(28px, 4vw, 56px);
+}
+
+.marketplace-shell .community-empty-space {
+  width: 100%;
+  height: clamp(72px, 7vw, 112px);
+  border: 1px solid #e3d5c8;
+  border-radius: 7px;
+  background: #fff;
+}
+
 /* Keep product-card controls compact so the photography stays visible. */
 .marketplace-shell .highlight-listing-card .listing-image .badge {
   top: 10px;
