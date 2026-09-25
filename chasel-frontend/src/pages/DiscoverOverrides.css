@@ -645,12 +645,12 @@
 }
 
 .campaign-new-week .new-week-copy h2 {
-  color: var(--ink-soft);
+  color: #111;
 }
 
 .campaign-new-week .new-week-copy h2 em {
   background: var(--tan);
-  color: var(--paper-raised);
+  color: #111;
 }
 
 .campaign-new-week .new-week-copy > span {
