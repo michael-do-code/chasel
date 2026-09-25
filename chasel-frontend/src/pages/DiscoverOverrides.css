@@ -12,10 +12,7 @@
 
 .marketplace-shell .community-empty-space {
   width: 100%;
-  height: clamp(72px, 7vw, 112px);
-  border: 1px solid #e3d5c8;
-  border-radius: 7px;
-  background: #fff;
+  height: clamp(40px, 5vw, 72px);
 }
 
 /* Keep product-card controls compact so the photography stays visible. */
