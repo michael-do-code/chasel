@@ -5,7 +5,6 @@ import BookmarkIcon from '../components/BookmarkIcon';
 import ProductImageCarousel from '../components/ProductImageCarousel';
 import { useAuth } from '../context/AuthContext';
 import { useSavedCount } from '../context/SavedItemsContext';
-import { curatedListings } from '../data/curatedListings';
 import { useSearch } from '../context/SearchContext';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
 import promoDesigner from '../assets/promo-category-handbags-wide.png';
@@ -102,9 +101,7 @@ const fullPanelStyle = (image: string, position = 'center') => ({
 });
 
 function Discover() {
-  const [highlightedListings, setHighlightedListings] = useState<Listing[]>(
-    curatedListings,
-  );
+  const [highlightedListings, setHighlightedListings] = useState<Listing[]>([]);
   const [activeCategorySlide, setActiveCategorySlide] = useState(0);
   const [isCategoryCarouselPaused, setIsCategoryCarouselPaused] = useState(false);
   const [activeUnder100Slide, setActiveUnder100Slide] = useState(0);
@@ -203,16 +200,14 @@ function Discover() {
           api.get<Listing[]>('/listings'),
           isAuthenticated ? api.get<SavedItem[]>('/saved-items') : Promise.resolve(null),
         ]);
-        const availableListings = listingsResponse.data.length >= 10
-          ? listingsResponse.data
-          : [...listingsResponse.data, ...curatedListings].slice(0, 10);
-        setHighlightedListings(getRandomListings(availableListings, 10));
+        const communityListings = listingsResponse.data;
+        setHighlightedListings(getRandomListings(communityListings, 10));
         setSavedProductIds(savedResponse ? savedResponse.data.map((item) => item.productId) : []);
-        setSearchItems(availableListings);
+        setSearchItems(communityListings);
       } catch (err) {
         console.error('Error fetching home data:', err);
-        setHighlightedListings(curatedListings);
-        setSearchItems(curatedListings);
+        setHighlightedListings([]);
+        setSearchItems([]);
       }
     };
 
@@ -466,8 +461,8 @@ function Discover() {
 
         </section>
 
-        {/* Listings Section */}
-        <section className="listings-section">
+        {/* Only show real listings returned by the same API used by Browse. */}
+        {highlightedListings.length > 0 && <section className="listings-section">
           <div className="section-heading-row">
             <h2 className="section-title">From the community</h2>
             <button className="view-all-button" onClick={() => navigate('/browsing')}>
@@ -528,7 +523,7 @@ function Discover() {
               </div>
             ))}
           </div>
-        </section>
+        </section>}
 
         <section className="campaign-lower" aria-label="More featured promotions">
           <article
