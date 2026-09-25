@@ -1,6 +1,7 @@
 /* Final layout refinements loaded after the legacy Discover stylesheet. */
 
 .marketplace-shell .listings-section .section-title {
+  color: #111;
   font-style: italic;
 }
 
