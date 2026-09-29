@@ -3,6 +3,8 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import SellerLink from '../components/SellerLink';
+import type { SellerSummary } from '../types/seller';
 import './ProductDetail.css';
 
 interface Listing {
@@ -18,6 +20,7 @@ interface Listing {
   previousPrice?: number;
   imageUrls?: string[];
   location?: string;
+  seller?: SellerSummary;
 }
 
 const categories = [
@@ -237,6 +240,12 @@ function ProductDetail() {
               </p>
             )}
             <p className="product-brand">{listing.brand}</p>
+
+            {listing.seller && (
+              <div className="product-seller">
+                <SellerLink seller={listing.seller} isSelf={isOwner} />
+              </div>
+            )}
 
             <dl className="product-facts">
               <div>

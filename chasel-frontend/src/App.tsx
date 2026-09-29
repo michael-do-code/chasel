@@ -28,6 +28,7 @@ import EditProfile from './pages/EditProfile';
 import MyListings from './pages/MyListings';
 import SavedItems from './pages/SavedItems';
 import ProductDetail from './pages/ProductDetail';
+import SellerProfile from './pages/SellerProfile';
 import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
@@ -135,6 +136,8 @@ function App() {
           />
 
           <Route path="/items/:id" element={<ProductDetail />} />
+
+          <Route path="/sellers/:id" element={<SellerProfile />} />
 
           <Route
             path="/purchases"
