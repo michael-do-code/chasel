@@ -24,7 +24,18 @@ public class Users {
 
     private String phone;
 
-    private String location;
+    private String address;
+
+    private String city;
+
+    // Stored in the legacy "location" column, which always held a US state name.
+    @Column(name = "location")
+    private String state;
+
+    private String zipCode;
+
+    @Column(length = 500)
+    private String avatarUrl;
 
     private String resetCode;
 
@@ -89,12 +100,44 @@ public class Users {
         return createdAt;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
     public String getResetCode() {
     return resetCode;

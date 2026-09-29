@@ -30,6 +30,13 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.dashboard-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .dashboard-info-main {
@@ -159,6 +166,48 @@
   margin: 0 auto;
 }
 
+.dashboard-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-view-all {
+  flex-shrink: 0;
+  color: #4A2B17;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid #D2B499;
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.dashboard-view-all:hover {
+  color: #956F4C;
+  border-color: #956F4C;
+}
+
+/* Exactly the three newest listings, side by side. */
+.dashboard-listings-panel .owner-listing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .dashboard-listings-panel .owner-listing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-listings-panel .owner-listing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dashboard-reviews-panel {
   width: 100%;
   max-width: 1200px;
@@ -253,67 +302,6 @@
   background: #FEFDFB;
 }
 
-.dashboard-carousel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.dashboard-listings-track {
-  display: flex;
-  gap: 32px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  flex: 1;
-  min-width: 0;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.dashboard-listings-track::-webkit-scrollbar {
-  display: none;
-}
-
-.dashboard-listings-track .listing-card {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-}
-
-.dashboard-carousel-arrow {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid #D2B499;
-  background: #FEFDFB;
-  color: #4A2B17;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
-}
-
-.dashboard-carousel-arrow:hover {
-  background: #956F4C;
-  color: #FEFDFB;
-  border-color: #956F4C;
-}
-
-@media (max-width: 767px) {
-  .dashboard-listings-track .listing-card {
-    flex-basis: 220px;
-  }
-
-  .dashboard-carousel-arrow {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
-  }
-}
 
 @media (max-width: 767px) {
   .dashboard-info-panel {
@@ -330,187 +318,4 @@
   .dashboard-info-actions button {
     flex: 1;
   }
-}
-
-.listing-owner-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.listing-owner-actions button {
-  flex: 1;
-  background: transparent;
-  border: 1px solid #D2B499;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #4A2B17;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.listing-owner-actions button:hover {
-  background: #956F4C;
-  color: #FEFDFB;
-  border-color: #956F4C;
-}
-
-.listing-owner-actions .listing-delete-btn:hover {
-  background: #c1393f;
-  border-color: #c1393f;
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(74, 43, 23, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 200;
-}
-
-.modal-panel {
-  background: #FEFDFB;
-  width: 100%;
-  max-width: 440px;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(74, 43, 23, 0.2);
-}
-
-.modal-panel-small {
-  max-width: 380px;
-}
-
-.modal-panel h2 {
-  font-size: 20px;
-  font-weight: 400;
-  font-style: italic;
-  color: #4A2B17;
-  margin: 0 0 20px;
-}
-
-.modal-panel .form-group {
-  margin-bottom: 18px;
-}
-
-.modal-panel .form-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #4A2B17;
-  margin-bottom: 8px;
-}
-
-.modal-panel .form-input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #D2B499;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: inherit;
-  color: #4A2B17;
-  background: #FEFDFB;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.modal-panel .form-input:focus {
-  outline: none;
-  border-color: #956F4C;
-  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
-}
-
-.form-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #4A2B17;
-  cursor: pointer;
-}
-
-.modal-confirm-text {
-  font-size: 14px;
-  color: #4A2B17;
-  line-height: 1.6;
-  margin: 0 0 24px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.modal-cancel-btn {
-  background: transparent;
-  border: 1px solid #D2B499;
-  border-radius: 4px;
-  padding: 12px 24px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #4A2B17;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.modal-cancel-btn:hover {
-  background: #E6C9AC;
-}
-
-.modal-panel .btn-submit {
-  background: #956F4C;
-  color: #FEFDFB;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.modal-panel .btn-submit:hover {
-  background: #4A2B17;
-}
-
-.modal-panel .btn-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.modal-delete-btn {
-  background: #c1393f;
-  color: #FEFDFB;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.modal-delete-btn:hover {
-  background: #8f2a2f;
-}
-
-.modal-delete-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }

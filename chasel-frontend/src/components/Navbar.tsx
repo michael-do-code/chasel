@@ -8,8 +8,10 @@ import { useSavedCount } from '../context/SavedItemsContext';
 /** Badges stay a small disc, so anything past 9 collapses to "9+". */
 const formatBadge = (value: number) => (value > 9 ? '9+' : String(value));
 import api from '../api/axios';
+import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 import Cart from '../pages/Cart';
 import Notifications from '../pages/Notifications';
+import AccountMenu from './AccountMenu';
 import BookmarkIcon from './BookmarkIcon';
 import CartIcon from './CartIcon';
 import MessageIcon from './MessageIcon';
@@ -24,6 +26,7 @@ interface UserProfile {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  avatarUrl: string | null;
 }
 
 interface SearchSuggestion {
@@ -69,11 +72,12 @@ function getInitials(profile: UserProfile): string {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { searchQuery, setSearchQuery, searchItems } = useSearch();
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messages] = useState(0);
@@ -132,13 +136,20 @@ function Navbar() {
   useEffect(() => {
     if (!token) return;
 
-    api
-      .get<UserProfile>('/users/me')
-      .then((res) => setProfile(res.data))
-      .catch((error) => {
-        console.error('Could not load navbar profile:', error);
-        setProfile(null);
-      });
+    const loadProfile = () => {
+      api
+        .get<UserProfile>('/users/me')
+        .then((res) => setProfile(res.data))
+        .catch((error) => {
+          console.error('Could not load navbar profile:', error);
+          setProfile(null);
+        });
+    };
+
+    loadProfile();
+    // Pick up a new name or photo as soon as it's saved on /profile/edit.
+    window.addEventListener(PROFILE_UPDATED_EVENT, loadProfile);
+    return () => window.removeEventListener(PROFILE_UPDATED_EVENT, loadProfile);
   }, [token]);
 
 
@@ -192,6 +203,17 @@ function Navbar() {
     setShowSuggestions(false);
     setActiveSuggestion(-1);
     if (location.pathname !== '/browsing') navigate('/browsing');
+  };
+
+  const handleAccountNavigate = (path: string) => {
+    setAccountOpen(false);
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    setAccountOpen(false);
+    logout();
+    navigate('/login');
   };
 
   const handleCartClick = () => {
@@ -410,14 +432,19 @@ function Navbar() {
             </button>
           </div>
 
-          {/* Account avatar (logged in, links straight to Profile) or Login button (guest) */}
+          {/* Account avatar (logged in, opens the account menu) or Login button (guest) */}
           {isAuthenticated ? (
             <button
               className="navbar-avatar"
-              onClick={() => navigate('/profile')}
-              title="Go to your profile"
+              onClick={() => setAccountOpen(true)}
+              title="Account"
+              aria-label="Open account menu"
+              aria-haspopup="dialog"
+              aria-expanded={accountOpen}
             >
-              {profile ? getInitials(profile) : 'A'}
+              {profile?.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="" />
+              ) : profile ? getInitials(profile) : 'A'}
             </button>
           ) : (
             <button className="navbar-login" onClick={() => navigate('/login')}>
@@ -437,6 +464,14 @@ function Navbar() {
         </div>
       </div>
       <Cart open={cartOpen} onClose={() => setCartOpen(false)} />
+      <AccountMenu
+        open={accountOpen && isAuthenticated}
+        profile={profile}
+        initials={profile ? getInitials(profile) : 'A'}
+        onClose={() => setAccountOpen(false)}
+        onNavigate={handleAccountNavigate}
+        onLogout={handleLogout}
+      />
     </nav>
   );
 }

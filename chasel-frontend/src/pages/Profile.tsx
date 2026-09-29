@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import OwnerListingGrid from '../components/OwnerListingGrid';
+import { useMyListings } from '../hooks/useMyListings';
 import './Profile.css';
 import '../styles/marketplace.css';
 
@@ -10,43 +12,12 @@ interface UserProfile {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  avatarUrl: string | null;
   createdAt: string | null;
 }
 
-interface Listing {
-  id: number;
-  title: string;
-  brand: string;
-  description: string | null;
-  category: string;
-  size: string | null;
-  condition: string;
-  originalRetail: number | null;
-  price: number | null;
-  imageUrls: string[] | null;
-  location: string | null;
-  createdAt: string;
-}
-
-const listingCategories = [
-  'Clothing',
-  'Accessories',
-  'Footwear',
-  'Watches',
-  'Handbags',
-  'Jewelry',
-  'Beauty',
-  'Home',
-];
-
-const fallbackListingImages = [
-  'linear-gradient(135deg, #D2B499, #956F4C)',
-  'linear-gradient(135deg, #AEA397, #D2B499)',
-  'linear-gradient(135deg, #956F4C, #4A2B17)',
-  'linear-gradient(135deg, #E6C9AC, #AEA397)',
-  'linear-gradient(135deg, #956F4C, #D2B499)',
-  'linear-gradient(135deg, #D2B499, #E6C9AC)',
-];
+/** How many of the newest listings /profile shows before "View all". */
+const PROFILE_LISTING_PREVIEW = 3;
 
 const mockRating = { average: 4.2, count: 1284 };
 
@@ -115,103 +86,16 @@ function getInitials(profile: UserProfile): string {
 
 function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [myListings, setMyListings] = useState<Listing[]>([]);
-  const [editingListing, setEditingListing] = useState<Listing | null>(null);
-  const [editTitle, setEditTitle] = useState('');
-  const [editCategory, setEditCategory] = useState('');
-  const [editPrice, setEditPrice] = useState('');
-  const [savingEdit, setSavingEdit] = useState(false);
-  const [editError, setEditError] = useState('');
-  const [deletingListing, setDeletingListing] = useState<Listing | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  const { listings: myListings, replaceListing, removeListing } = useMyListings();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  const scrollByCard = (direction: 1 | -1) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.querySelector('.listing-card') as HTMLElement | null;
-    const step = card ? card.getBoundingClientRect().width + 32 : track.clientWidth * 0.8;
-    track.scrollBy({ left: direction * step, behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    fetchProfile();
-    fetchMyListings();
+    api.get<UserProfile>('/users/me').then((res) => setProfile(res.data));
   }, []);
-
-  const fetchProfile = async () => {
-    const res = await api.get<UserProfile>('/users/me');
-    setProfile(res.data);
-  };
-
-  const fetchMyListings = async () => {
-    const res = await api.get<Listing[]>('/listings/mine');
-    const sorted = [...res.data].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
-    setMyListings(sorted);
-  };
 
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  const openEditModal = (listing: Listing) => {
-    setEditingListing(listing);
-    setEditTitle(listing.title);
-    setEditCategory(listing.category);
-    setEditPrice(listing.price != null ? String(listing.price) : '');
-    setEditError('');
-  };
-
-  const closeEditModal = () => {
-    setEditingListing(null);
-  };
-
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingListing) return;
-
-    setSavingEdit(true);
-    setEditError('');
-
-    try {
-      // Send the full listing back, overriding only the fields this modal
-      // actually edits — otherwise fields this form doesn't expose (brand,
-      // size, condition, ...) get silently dropped/nulled on every save.
-      const res = await api.put<Listing>(`/listings/${editingListing.id}`, {
-        ...editingListing,
-        title: editTitle,
-        category: editCategory,
-        price: editPrice ? parseFloat(editPrice) : null,
-      });
-
-      setMyListings((prev) => prev.map((l) => (l.id === res.data.id ? res.data : l)));
-      setEditingListing(null);
-    } catch (err) {
-      setEditError('Failed to save changes. Please try again.');
-    } finally {
-      setSavingEdit(false);
-    }
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!deletingListing) return;
-
-    setDeleting(true);
-
-    try {
-      await api.delete(`/listings/${deletingListing.id}`);
-      setMyListings((prev) => prev.filter((l) => l.id !== deletingListing.id));
-      setDeletingListing(null);
-    } catch (err) {
-      // keep the confirm dialog open so the user can retry
-    } finally {
-      setDeleting(false);
-    }
   };
 
   if (!profile) {
@@ -223,7 +107,9 @@ function Profile() {
   return (
     <div className="profile-page">
       <section className="dashboard-info-panel">
-        <div className="dashboard-avatar">{getInitials(profile)}</div>
+        <div className="dashboard-avatar">
+          {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : getInitials(profile)}
+        </div>
 
         <div className="dashboard-info-main">
           <div className="dashboard-name-row">
@@ -258,58 +144,23 @@ function Profile() {
       </section>
 
       <section className="dashboard-listings-panel listings-section">
-        <h2 className="section-title">My listings</h2>
+        <div className="dashboard-section-header">
+          <h2 className="section-title">My listings</h2>
+          {myListings.length > 0 && (
+            <Link to="/my-listings" className="dashboard-view-all">
+              View all ({myListings.length}) <span aria-hidden="true">→</span>
+            </Link>
+          )}
+        </div>
 
         {myListings.length === 0 ? (
           <div className="dashboard-empty">No products yet</div>
         ) : (
-          <div className="dashboard-carousel">
-            <button
-              type="button"
-              className="dashboard-carousel-arrow dashboard-carousel-arrow-left"
-              onClick={() => scrollByCard(-1)}
-              aria-label="Scroll listings left"
-            >
-              ‹
-            </button>
-
-            <div className="dashboard-listings-track" ref={trackRef}>
-              {myListings.map((item, index) => (
-                <div className="listing-card" key={item.id}>
-                  <div
-                    className="listing-image"
-                    style={{
-                      background: item.imageUrls?.[0]
-                        ? `url(${item.imageUrls[0]}) center/cover`
-                        : fallbackListingImages[index % fallbackListingImages.length],
-                    }}
-                  >
-                    <span className="badge badge-sale">FOR SALE</span>
-                  </div>
-                  <div className="listing-info">
-                    <div className="listing-header">
-                      <h3 className="listing-title">{item.title}</h3>
-                      {item.price != null && <span className="listing-price">${item.price}</span>}
-                    </div>
-                    <p className="listing-brand">{item.category}</p>
-                    <div className="listing-owner-actions">
-                      <button type="button" onClick={() => openEditModal(item)}>Edit</button>
-                      <button type="button" className="listing-delete-btn" onClick={() => setDeletingListing(item)}>Delete</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              className="dashboard-carousel-arrow dashboard-carousel-arrow-right"
-              onClick={() => scrollByCard(1)}
-              aria-label="Scroll listings right"
-            >
-              ›
-            </button>
-          </div>
+          <OwnerListingGrid
+            listings={myListings.slice(0, PROFILE_LISTING_PREVIEW)}
+            onUpdated={replaceListing}
+            onDeleted={removeListing}
+          />
         )}
       </section>
 
@@ -337,76 +188,6 @@ function Profile() {
         </div>
       </section>
 
-      {editingListing && (
-        <div className="modal-overlay" onClick={closeEditModal}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-            <h2>Edit listing</h2>
-
-            <form onSubmit={handleEditSubmit}>
-              <div className="form-group">
-                <label className="form-label">Title</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Category</label>
-                <select
-                  className="form-input"
-                  value={editCategory}
-                  onChange={(e) => setEditCategory(e.target.value)}
-                >
-                  {listingCategories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Price</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={editPrice}
-                  onChange={(e) => setEditPrice(e.target.value)}
-                  placeholder="0"
-                />
-              </div>
-
-              {editError && <p className="profile-error">{editError}</p>}
-
-              <div className="modal-actions">
-                <button type="button" className="modal-cancel-btn" onClick={closeEditModal}>Cancel</button>
-                <button type="submit" className="btn-submit" disabled={savingEdit}>
-                  {savingEdit ? 'SAVING...' : 'SAVE CHANGES'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {deletingListing && (
-        <div className="modal-overlay" onClick={() => setDeletingListing(null)}>
-          <div className="modal-panel modal-panel-small" onClick={(e) => e.stopPropagation()}>
-            <h2>Delete listing?</h2>
-            <p className="modal-confirm-text">
-              Are you sure you want to delete "{deletingListing.title}"? This can't be undone.
-            </p>
-            <div className="modal-actions">
-              <button type="button" className="modal-cancel-btn" onClick={() => setDeletingListing(null)}>Cancel</button>
-              <button type="button" className="modal-delete-btn" onClick={handleConfirmDelete} disabled={deleting}>
-                {deleting ? 'DELETING...' : 'DELETE'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

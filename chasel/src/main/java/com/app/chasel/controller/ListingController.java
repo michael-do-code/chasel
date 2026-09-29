@@ -83,7 +83,7 @@ public class ListingController {
         listing.setOriginalRetail(request.getOriginalRetail());
         listing.setPrice(request.getPrice());
         listing.setImageUrls(request.getImageUrls());
-        listing.setLocation(request.getLocation() != null ? request.getLocation() : seller.getLocation());
+        listing.setLocation(request.getLocation() != null ? request.getLocation() : seller.getState());
         listing.setSeller(seller);
         listing.setStatus(ListingStatus.ACTIVE);
 

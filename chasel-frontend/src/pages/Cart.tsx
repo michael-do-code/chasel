@@ -23,7 +23,10 @@ interface UserProfile {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
-  location: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
 }
 
 interface CartProps {
@@ -114,7 +117,10 @@ function Cart({ open, onClose }: CartProps) {
         email: profile.email ?? '',
         phone: profile.phone ?? '',
         fullName: [profile.firstName, profile.lastName].filter(Boolean).join(' '),
-        state: profile.location ?? '',
+        addressLine1: profile.address ?? '',
+        city: profile.city ?? '',
+        state: profile.state ?? '',
+        zipCode: profile.zipCode ?? '',
       }));
     } catch (error) {
       console.error('Failed to load checkout details:', error);

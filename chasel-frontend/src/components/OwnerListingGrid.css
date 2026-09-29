@@ -1,0 +1,187 @@
+/* Grid of the seller's own listing cards, used on /profile and /my-listings. */
+.owner-listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 32px;
+  align-items: start;
+}
+
+.listing-owner-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.listing-owner-actions button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4A2B17;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.listing-owner-actions button:hover {
+  background: #956F4C;
+  color: #FEFDFB;
+  border-color: #956F4C;
+}
+
+.listing-owner-actions .listing-delete-btn:hover {
+  background: #c1393f;
+  border-color: #c1393f;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(74, 43, 23, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+}
+
+.modal-panel {
+  background: #FEFDFB;
+  width: 100%;
+  max-width: 440px;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(74, 43, 23, 0.2);
+}
+
+.modal-panel-small {
+  max-width: 380px;
+}
+
+.modal-panel h2 {
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  color: #4A2B17;
+  margin: 0 0 20px;
+}
+
+.modal-panel .form-group {
+  margin-bottom: 18px;
+}
+
+.modal-panel .form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4A2B17;
+  margin-bottom: 8px;
+}
+
+.modal-panel .form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #4A2B17;
+  background: #FEFDFB;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-panel .form-input:focus {
+  outline: none;
+  border-color: #956F4C;
+  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
+}
+
+.modal-error {
+  color: #c1393f;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.modal-confirm-text {
+  font-size: 14px;
+  color: #4A2B17;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modal-cancel-btn {
+  background: transparent;
+  border: 1px solid #D2B499;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4A2B17;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #E6C9AC;
+}
+
+.modal-panel .btn-submit {
+  background: #956F4C;
+  color: #FEFDFB;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-panel .btn-submit:hover {
+  background: #4A2B17;
+}
+
+.modal-panel .btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal-delete-btn {
+  background: #c1393f;
+  color: #FEFDFB;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-delete-btn:hover {
+  background: #8f2a2f;
+}
+
+.modal-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

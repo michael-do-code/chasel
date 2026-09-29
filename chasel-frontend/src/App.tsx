@@ -25,6 +25,7 @@ import Messages from './pages/Messages';
 import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import MyListings from './pages/MyListings';
 import SavedItems from './pages/SavedItems';
 import ProductDetail from './pages/ProductDetail';
 import AboutUs from './pages/AboutUs';
@@ -144,6 +145,15 @@ function App() {
             }
           />
 
+
+          <Route
+            path="/my-listings"
+            element={
+              <ProtectedRoute>
+                <MyListings />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/profile/edit"
