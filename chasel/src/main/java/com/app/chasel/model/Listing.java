@@ -1,5 +1,8 @@
 package com.app.chasel.model;
 
+import com.app.chasel.dto.SellerSummary;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -173,8 +176,16 @@ public class Listing {
         this.status = status;
     }
 
+    // The full account (password hash, email, reset code...) must never be
+    // serialized — listings are public. Clients get `seller` as a summary.
+    @JsonIgnore
     public Users getSeller() {
         return seller;
+    }
+
+    @JsonProperty("seller")
+    public SellerSummary getSellerSummary() {
+        return seller == null ? null : SellerSummary.from(seller);
     }
 
     public void setSeller(Users seller) {
