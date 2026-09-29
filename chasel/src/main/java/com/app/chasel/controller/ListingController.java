@@ -66,6 +66,12 @@ public class ListingController {
         return listingRepository.findBySellerId(seller.getId());
     }
 
+    // A seller's public storefront: only pieces that are currently for sale.
+    @GetMapping("/seller/{sellerId}")
+    public List<Listing> getSellerListings(@PathVariable Long sellerId) {
+        return listingRepository.findBySellerIdAndStatusOrderByCreatedAtDesc(sellerId, ListingStatus.ACTIVE);
+    }
+
     @PostMapping
     public Listing createListing(@RequestBody CreateListingRequest request, Authentication authentication) {
         // set by JwtAuthFilter

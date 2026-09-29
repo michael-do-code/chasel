@@ -1,6 +1,7 @@
 package com.app.chasel.service;
 
 import com.app.chasel.constants.LocationOptions;
+import com.app.chasel.dto.SellerProfileResponse;
 import com.app.chasel.dto.UpdateProfileRequest;
 import com.app.chasel.dto.UserProfileResponse;
 import com.app.chasel.model.Users;
@@ -22,6 +23,12 @@ public class UserService {
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return toResponse(user);
+    }
+
+    public SellerProfileResponse getSellerProfile(Long id) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seller not found"));
+        return SellerProfileResponse.from(user);
     }
 
     public UserProfileResponse updateProfile(String email, UpdateProfileRequest request) {
