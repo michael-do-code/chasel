@@ -1,151 +1,299 @@
-.profile-container {
-  display: flex;
+.edit-profile {
+  color-scheme: light;
   min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #F5F0E7;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-align: left;
 }
 
-.profile-panel {
-  background: #FEFDFB;
-  width: 100%;
-  max-width: 440px;
-  padding: 48px 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(74, 43, 23, 0.08);
+.edit-profile-shell {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 0 var(--shell-gutter) 96px;
 }
 
-.profile-logo {
-  color: #956F4C;
-  font-weight: bold;
-  font-size: 20px;
-  margin-bottom: 24px;
-  text-align: center;
-  letter-spacing: 1px;
+.edit-profile-rule {
+  margin: 34px 0 0;
 }
 
-.profile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.profile-header h1 {
-  font-size: 22px;
-  font-weight: 400;
-  font-style: italic;
-  color: #4A2B17;
-  margin: 0;
-}
-
-.profile-back-btn {
-  background: none;
-  border: 1px solid #D2B499;
-  border-radius: 4px;
-  padding: 8px 16px;
+.edit-profile-back {
+  display: inline-block;
+  margin-top: 24px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
+  text-decoration: none;
   text-transform: uppercase;
-  color: #4A2B17;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: color 180ms ease;
 }
 
-.profile-back-btn:hover {
-  background: #956F4C;
-  color: #FEFDFB;
-  border-color: #956F4C;
+.edit-profile-back:hover {
+  color: var(--ink);
 }
 
-.profile-email {
-  color: #AEA397;
-  font-size: 14px;
-  margin-bottom: 24px;
-}
+/* ------------------------------------------------------------------ *
+ * Form
+ * ------------------------------------------------------------------ */
 
-.profile-panel form {
+.edit-profile-form {
   display: flex;
   flex-direction: column;
+  gap: 56px;
+  max-width: 760px;
+  padding-top: 40px;
 }
 
-.profile-panel .form-group {
-  margin-bottom: 20px;
+.edit-profile-section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 14px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
 }
 
-.profile-panel .form-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+.edit-profile-section-heading .ed-kicker {
+  color: var(--ink);
+}
+
+/* Set explicitly: the global h2 colour in index.css turns near-white in dark mode. */
+.edit-profile-section-heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.edit-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 24px;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.edit-field-wide {
+  grid-column: 1 / -1;
+}
+
+.edit-field label {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #4A2B17;
-  margin-bottom: 8px;
 }
 
-.profile-panel .form-input {
+.edit-field input,
+.edit-field select {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #D2B499;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: inherit;
-  color: #4A2B17;
-  background: #FEFDFB;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  transition: border-color 180ms ease;
 }
 
-.profile-panel .form-input::placeholder {
-  color: #AEA397;
+.edit-field input::placeholder {
+  color: var(--ink-faint);
 }
 
-.profile-panel .form-input:focus {
+.edit-field input:hover,
+.edit-field select:hover {
+  border-color: var(--ink-faint);
+}
+
+.edit-field input:focus,
+.edit-field select:focus {
   outline: none;
-  border-color: #956F4C;
-  box-shadow: 0 0 0 2px rgba(149, 111, 76, 0.1);
+  border-color: var(--ink);
 }
 
-.profile-panel button[type='submit'] {
-  background: #956F4C;
-  color: #FEFDFB;
-  border: none;
-  padding: 14px;
-  border-radius: 4px;
+.edit-field input[readonly] {
+  border-color: var(--rule-soft);
+  background: var(--paper-sunk);
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+.edit-field.has-error input {
+  border-color: var(--accent);
+}
+
+.edit-field-hint,
+.edit-field-error {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.edit-field-hint {
+  color: var(--ink-muted);
+}
+
+.edit-field-error {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ *
+ * Profile photo
+ * ------------------------------------------------------------------ */
+
+.edit-photo {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.edit-photo-preview {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--ink-on-dark);
+  font-family: var(--font-serif);
+  font-size: 44px;
+  font-style: italic;
+}
+
+.edit-photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-photo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.edit-photo-copy {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.edit-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Footer
+ * ------------------------------------------------------------------ */
+
+.edit-profile-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.edit-profile-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.edit-profile-actions .ed-btn {
+  min-width: 150px;
+}
+
+.edit-profile-status {
+  margin: 0;
+  color: var(--ink-muted);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 8px;
 }
 
-.profile-panel button[type='submit']:hover {
-  background: #4A2B17;
+.edit-profile-shell > .edit-profile-status {
+  padding-top: 64px;
 }
 
-.profile-panel button[type='submit']:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.edit-profile-status-error {
+  color: var(--accent);
 }
 
-.profile-error {
-  color: #c1393f;
-  font-size: 13px;
-  margin: 0 0 16px;
+.edit-profile-status-success {
+  color: var(--ink);
 }
 
-.profile-success {
-  color: #4A7856;
-  font-size: 13px;
-  margin: 0 0 16px;
+.edit-profile-status-success::before {
+  content: '✓ ';
 }
 
-@media (max-width: 599px) {
-  .profile-panel {
-    padding: 32px 24px;
+/* ------------------------------------------------------------------ *
+ * Responsive
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 860px) {
+  .edit-profile-shell {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .edit-profile-shell {
+    padding-inline: 18px;
+  }
+
+  .edit-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-profile-section-heading h2 {
+    font-size: 26px;
+  }
+
+  .edit-photo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .edit-photo-preview {
+    width: 96px;
+    height: 96px;
+    font-size: 36px;
+  }
+
+  .edit-profile-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .edit-profile-actions {
+    margin-left: 0;
+  }
+
+  .edit-profile-actions .ed-btn {
+    flex: 1;
+    min-width: 0;
   }
 }

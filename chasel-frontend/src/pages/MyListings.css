@@ -1,0 +1,141 @@
+.my-listings {
+  color-scheme: light;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-align: left;
+}
+
+.my-listings-shell {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 0 var(--shell-gutter) 96px;
+}
+
+.my-listings-rule {
+  margin: 34px 0 0;
+}
+
+.my-listings-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 20px;
+}
+
+.my-listings-back {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.my-listings-back:hover {
+  color: var(--ink);
+}
+
+.my-listings-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.my-listings-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.my-listings-sort span {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.my-listings-sort select {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.my-listings-sort select:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.my-listings-body {
+  padding-top: 48px;
+}
+
+.my-listings-status {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.my-listings-status-error {
+  color: var(--accent);
+}
+
+.my-listings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 80px 24px;
+  border: 1px dashed var(--rule);
+  text-align: center;
+}
+
+.my-listings-empty .ed-display {
+  font-size: 36px;
+}
+
+.my-listings-empty p {
+  margin: 0 0 8px;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .my-listings-shell {
+    padding-inline: 24px;
+  }
+
+  .my-listings-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .my-listings-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 520px) {
+  .my-listings-shell {
+    padding-inline: 18px;
+  }
+
+  .my-listings-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .my-listings-sort select {
+    flex: 1;
+  }
+}

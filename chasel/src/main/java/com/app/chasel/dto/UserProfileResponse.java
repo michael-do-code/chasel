@@ -7,15 +7,25 @@ public class UserProfileResponse {
     private String firstName;
     private String lastName;
     private String phone;
-    private String location;
+    private String address;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String avatarUrl;
     private LocalDateTime createdAt;
 
-    public UserProfileResponse(String email, String firstName, String lastName, String phone, String location, LocalDateTime createdAt) {
+    public UserProfileResponse(String email, String firstName, String lastName, String phone,
+                               String address, String city, String state, String zipCode,
+                               String avatarUrl, LocalDateTime createdAt) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        this.location = location;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+        this.avatarUrl = avatarUrl;
         this.createdAt = createdAt;
     }
 
@@ -51,12 +61,44 @@ public class UserProfileResponse {
         this.phone = phone;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public LocalDateTime getCreatedAt() {
