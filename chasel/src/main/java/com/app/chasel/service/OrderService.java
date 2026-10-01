@@ -461,8 +461,11 @@ public class OrderService {
     }
 
     private String returnAddress(Users seller) {
-        String location = seller.getLocation();
-        return location == null || location.isBlank()
+        String location = java.util.stream.Stream.of(
+                        seller.getAddress(), seller.getCity(), seller.getState(), seller.getZipCode())
+                .filter(part -> part != null && !part.isBlank())
+                .collect(java.util.stream.Collectors.joining(", "));
+        return location.isEmpty()
                 ? "Seller will provide the return address after approving the request."
                 : location;
     }
