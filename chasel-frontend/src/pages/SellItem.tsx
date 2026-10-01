@@ -9,6 +9,9 @@ interface FormErrors {
   [key: string]: string;
 }
 
+/** Matches the API's upper bound on units per listing. */
+const MAX_QUANTITY = 999;
+
 function SellItem() {
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -22,6 +25,7 @@ function SellItem() {
   const [originalRetail, setOriginalRetail] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState('1');
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState('');
@@ -38,6 +42,10 @@ function SellItem() {
     if (!category.trim()) newErrors.category = 'Category is required';
     if (!condition) newErrors.condition = 'Condition is required';
     if (!price.trim()) newErrors.price = 'Price is required';
+    const units = Number(quantity);
+    if (!Number.isInteger(units) || units < 1 || units > MAX_QUANTITY) {
+      newErrors.quantity = `Quantity must be between 1 and ${MAX_QUANTITY}`;
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -129,6 +137,7 @@ const handleImageUpload = (
         ? parseFloat(originalRetail)
         : null,
       price: parseFloat(price),
+      quantity: Number(quantity),
       imageUrls,
     };
 
@@ -351,20 +360,35 @@ const handleImageUpload = (
                 />
               </div>
 
-              {/* Price */}
-              <div className="form-group">
-                <label className="form-label">ASKING PRICE</label>
-                <div className="input-prefix">
-                  <span>$</span>
+              {/* Price & quantity */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">ASKING PRICE</label>
+                  <div className="input-prefix">
+                    <span>$</span>
+                    <input
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      placeholder="0"
+                      className={`form-input ${errors.price ? 'error' : ''}`}
+                    />
+                  </div>
+                  {errors.price && <p className="field-error">{errors.price}</p>}
+                </div>
+                <div className="form-group">
+                  <label className="form-label">QUANTITY</label>
                   <input
                     type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="0"
-                    className={`form-input ${errors.price ? 'error' : ''}`}
+                    min="1"
+                    max={MAX_QUANTITY}
+                    step="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className={`form-input ${errors.quantity ? 'error' : ''}`}
                   />
+                  {errors.quantity && <p className="field-error">{errors.quantity}</p>}
                 </div>
-                {errors.price && <p className="field-error">{errors.price}</p>}
               </div>
 
               {/* Messages */}

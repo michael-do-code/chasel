@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useSavedItems } from './useSavedItems';
 import type { Listing } from '../types/listing';
 import { addCuratedListingToCart } from '../utils/curatedCart';
+import { cartErrorMessage } from '../utils/cartErrors';
 
 const NO_LISTINGS: ReadonlySet<number> = new Set();
 
@@ -64,20 +65,17 @@ export function useListingActions(listings: Listing[]) {
       return;
     }
 
-    if (productId < 0) {
-      if (!listing) return;
-
-      addCuratedListingToCart(listing);
-      alert('Added to cart!');
-      return;
-    }
-
     try {
-      await addItem(productId);
+      if (productId < 0) {
+        if (!listing) return;
+        addCuratedListingToCart(listing);
+      } else {
+        await addItem(productId);
+      }
       alert('Added to cart!');
     } catch (error) {
       console.error('Failed to add product:', error);
-      alert('Could not add product to cart.');
+      alert(cartErrorMessage(error));
     }
   }, [listings, ownListingIds, addItem]);
 

@@ -63,14 +63,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [isAuthenticated]);
 
   const addItem = useCallback(
-    async (productId: number) => {
+    async (productId: number, quantity = 1) => {
       if (!isAuthenticated) {
         const response = await api.get<Listing>(`/listings/${productId}`);
-        addCuratedListingToCart(response.data);
+        addCuratedListingToCart(response.data, quantity);
         await refresh();
         return;
       }
-      await api.post(`/cart/items/${productId}`);
+      await api.post(`/cart/items/${productId}`, null, { params: { quantity } });
       await refresh();
     },
     [isAuthenticated, refresh]

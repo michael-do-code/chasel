@@ -1,0 +1,56 @@
+/* Square, hairline-bordered stepper; takes its text colour from the host. */
+.quantity-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  height: 44px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.quantity-stepper button {
+  width: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.quantity-stepper button:hover:not(:disabled) {
+  background: var(--paper-sunk);
+}
+
+.quantity-stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.quantity-stepper input {
+  width: 48px;
+  padding: 0;
+  border: 0;
+  border-inline: 1px solid var(--rule);
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.quantity-stepper input::-webkit-outer-spin-button,
+.quantity-stepper input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.quantity-stepper button:focus-visible,
+.quantity-stepper input:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: -3px;
+}
