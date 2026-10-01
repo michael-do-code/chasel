@@ -5,7 +5,8 @@ export interface CartContextValue {
   count: number;
   /** Re-reads the bag from the API. */
   refresh: () => Promise<void>;
-  addItem: (productId: number) => Promise<void>;
+  /** Adds `quantity` units (default 1); rejects when it would exceed stock. */
+  addItem: (productId: number, quantity?: number) => Promise<void>;
   removeItem: (productId: number) => Promise<void>;
 }
 

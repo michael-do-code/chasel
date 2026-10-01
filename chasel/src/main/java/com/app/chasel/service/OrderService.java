@@ -161,6 +161,11 @@ public class OrderService {
             }
 
             int quantity = cartItem.getQuantity();
+            if (quantity < 1 || quantity > listing.getQuantity()) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Only " + listing.getQuantity() + " left of " + listing.getTitle());
+            }
             BigDecimal unitPrice = BigDecimal.valueOf(listing.getPrice());
 
             OrderItem orderItem = new OrderItem();
@@ -172,7 +177,7 @@ public class OrderService {
             order.addItem(orderItem);
 
             total = total.add(unitPrice.multiply(BigDecimal.valueOf(quantity)));
-            listing.markAsSold();
+            listing.takeStock(quantity);
         }
 
         BigDecimal tax = total.multiply(ESTIMATED_TAX_RATE).setScale(2, RoundingMode.HALF_UP);
@@ -237,7 +242,7 @@ public class OrderService {
         order.setCancelledAt(now);
         for (OrderItem item : order.getItems()) {
             item.setStatus(OrderItemStatus.CANCELLED);
-            item.getListing().markAsActive();
+            item.getListing().restock(item.getQuantity());
         }
         notificationService.notifyOrderCancelled(order);
         orderEmailService.sendStatusUpdate(order, "Cancelled", "Your order was cancelled.");

@@ -11,14 +11,19 @@ import com.app.chasel.repository.SavedItemRepository;
 import com.app.chasel.repository.UserRepository;
 import com.app.chasel.service.NotificationService;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/listings")
 public class ListingController {
+
+    /** Upper bound on units a single listing can offer. */
+    private static final int MAX_QUANTITY = 999;
 
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
@@ -93,6 +98,7 @@ public class ListingController {
         listing.setPrice(request.getPrice());
         listing.setImageUrls(request.getImageUrls());
         listing.setLocation(request.getLocation() != null ? request.getLocation() : seller.getState());
+        listing.setQuantity(request.getQuantity() == null ? 1 : validQuantity(request.getQuantity(), 1));
         listing.setSeller(seller);
         listing.setStatus(ListingStatus.ACTIVE);
 
@@ -141,6 +147,16 @@ public class ListingController {
         if (request.getLocation() != null) {
             listing.setLocation(request.getLocation());
         }
+        if (request.getQuantity() != null) {
+            // 0 means sold out; restocking a sold-out listing puts it back on sale.
+            int quantity = validQuantity(request.getQuantity(), 0);
+            listing.setQuantity(quantity);
+            if (quantity == 0) {
+                listing.markAsSold();
+            } else if (listing.isSold()) {
+                listing.markAsActive();
+            }
+        }
 
         Listing saved = listingRepository.save(listing);
 
@@ -166,5 +182,13 @@ public class ListingController {
         savedItemRepository.deleteByProduct(listing);
         productImageRepository.deleteByProduct(listing);
         listingRepository.delete(listing);
+    }
+
+    private static int validQuantity(int quantity, int min) {
+        if (quantity < min || quantity > MAX_QUANTITY) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Quantity must be between " + min + " and " + MAX_QUANTITY);
+        }
+        return quantity;
     }
 }

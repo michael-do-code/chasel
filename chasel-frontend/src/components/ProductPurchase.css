@@ -1,0 +1,95 @@
+/* Buy box at the foot of the product details, in the product page's tan palette. */
+.product-purchase {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.product-purchase-stock {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 14px;
+}
+
+.product-purchase-stock dt {
+  color: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-purchase-stock dd {
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.product-purchase-actions {
+  display: flex;
+  gap: 10px;
+  color: var(--ink-soft);
+}
+
+.product-purchase-add {
+  flex: 1;
+  min-height: 44px;
+  padding: 11px 16px;
+  border: 1px solid var(--tan);
+  background: var(--tan);
+  color: var(--surface);
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.product-purchase-add:hover:not(:disabled) {
+  border-color: var(--ink-soft);
+  background: var(--ink-soft);
+}
+
+.product-purchase-add:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.product-purchase-add:focus-visible {
+  outline: 1px solid var(--ink-soft);
+  outline-offset: 2px;
+}
+
+.product-purchase-note,
+.product-purchase-message {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.product-purchase-note {
+  color: var(--ink-muted);
+}
+
+.product-purchase-message {
+  margin-top: 12px;
+}
+
+.product-purchase-message-success {
+  color: var(--ink-soft);
+}
+
+.product-purchase-message-error {
+  color: var(--accent);
+}
+
+@media (max-width: 420px) {
+  .product-purchase-actions {
+    flex-direction: column;
+  }
+
+  .product-purchase-actions .quantity-stepper {
+    align-self: flex-start;
+  }
+}

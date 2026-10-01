@@ -1,3 +1,4 @@
+import { availableQuantity } from '../types/listing';
 import type { Listing } from '../types/listing';
 
 const STORAGE_KEY = 'chasel-curated-cart';
@@ -21,12 +22,25 @@ export const getCuratedCart = (): CuratedCartItem[] => {
   }
 };
 
-export const addCuratedListingToCart = (listing: Listing) => {
+/**
+ * Adds `quantity` units to the local (guest / preview) cart, capped at the
+ * seller's stock just like the server cart. Throws with a readable message
+ * when the request would exceed it.
+ */
+export const addCuratedListingToCart = (listing: Listing, quantity = 1) => {
   const items = getCuratedCart();
   const existing = items.find((item) => item.productId === listing.id);
+  const inCart = existing?.quantity ?? 0;
+  const available = availableQuantity(listing);
+
+  if (inCart + quantity > available) {
+    throw new Error(
+      `Only ${available} available${inCart > 0 ? ` and ${inCart} already in your cart` : ''}`
+    );
+  }
 
   if (existing) {
-    existing.quantity += 1;
+    existing.quantity += quantity;
   } else {
     items.push({
       cartItemId: listing.id,
@@ -34,7 +48,7 @@ export const addCuratedListingToCart = (listing: Listing) => {
       title: listing.title,
       price: listing.price,
       imageUrls: listing.imageUrls ?? [],
-      quantity: 1,
+      quantity,
     });
   }
 

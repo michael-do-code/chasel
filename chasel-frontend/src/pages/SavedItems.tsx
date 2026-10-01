@@ -4,6 +4,7 @@ import api from '../api/axios';
 import BookmarkIcon from '../components/BookmarkIcon';
 import { useCart } from '../context/CartContext';
 import { useSavedCount } from '../context/SavedItemsContext';
+import { cartErrorMessage } from '../utils/cartErrors';
 import './SavedItems.css';
 
 interface SavedItem {
@@ -60,7 +61,7 @@ function SavedItems() {
       alert('Added to cart!');
     } catch (error) {
       console.error('Failed to add product to cart:', error);
-      alert('Could not add this product to cart.');
+      alert(cartErrorMessage(error));
     }
   };
 

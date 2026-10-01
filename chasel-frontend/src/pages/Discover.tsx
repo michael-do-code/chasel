@@ -34,6 +34,7 @@ import promoNewWeekCollage from '../assets/promo-new-week-community-collage.png'
 import promoNewWeekCollage02 from '../assets/promo-new-week-community-collage-02.png';
 import promoNewWeekCollage03 from '../assets/promo-new-week-community-collage-03.png';
 import promoNewWeekCollage04 from '../assets/promo-new-week-community-collage-04.png';
+import { cartErrorMessage } from '../utils/cartErrors';
 import '../styles/marketplace.css';
 import './Discover.css';
 import './DiscoverOverrides.css';
@@ -252,7 +253,7 @@ function Discover() {
       alert('Added to cart!');
     } catch (error) {
       console.error('Failed to add product:', error);
-      alert('Could not add product to cart.');
+      alert(cartErrorMessage(error));
     }
   };
 

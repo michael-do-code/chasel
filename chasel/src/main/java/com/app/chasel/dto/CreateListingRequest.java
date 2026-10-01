@@ -13,6 +13,8 @@ public class CreateListingRequest {
     private Double price;
     private List<String> imageUrls;
     private String location;
+    // Units available; defaults to 1 (a single piece) when omitted.
+    private Integer quantity;
 
     // getters and setters
     public String getTitle() {
@@ -84,5 +86,13 @@ public class CreateListingRequest {
     }
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

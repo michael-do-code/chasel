@@ -4,6 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import SellerLink from '../components/SellerLink';
+import ProductPurchase from '../components/ProductPurchase';
+import { availableQuantity } from '../types/listing';
 import type { SellerSummary } from '../types/seller';
 import './ProductDetail.css';
 
@@ -20,6 +22,8 @@ interface Listing {
   previousPrice?: number;
   imageUrls?: string[];
   location?: string;
+  quantity?: number;
+  status?: 'ACTIVE' | 'SOLD' | 'DRAFT';
   seller?: SellerSummary;
 }
 
@@ -44,6 +48,7 @@ const createFormFromListing = (product: Listing) => ({
   originalRetail: product.originalRetail?.toString() ?? '',
   price: product.price.toString(),
   location: product.location ?? '',
+  quantity: availableQuantity(product).toString(),
   imageUrls: [...(product.imageUrls ?? [])],
 });
 
@@ -69,6 +74,7 @@ function ProductDetail() {
     originalRetail: '',
     price: '',
     location: '',
+    quantity: '1',
     imageUrls: [] as string[],
   });
 
@@ -165,6 +171,7 @@ function ProductDetail() {
           : null,
         price: Number(form.price),
         location: form.location || null,
+        quantity: Number(form.quantity),
         imageUrls: [...form.imageUrls, ...uploadedUrls],
       };
 
@@ -309,6 +316,8 @@ function ProductDetail() {
               <p>{listing.description || 'No description provided.'}</p>
             </div>
 
+            <ProductPurchase listing={listing} isOwner={isOwner} />
+
             {isOwner && (
               <div className="owner-actions">
                 <button
@@ -416,6 +425,19 @@ function ProductDetail() {
                 name="location"
                 value={form.location}
                 onChange={updateField}
+              />
+            </label>
+            <label>
+              Quantity available
+              <input
+                name="quantity"
+                type="number"
+                min="0"
+                max="999"
+                step="1"
+                value={form.quantity}
+                onChange={updateField}
+                required
               />
             </label>
           </div>
