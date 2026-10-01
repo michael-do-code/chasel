@@ -6,8 +6,10 @@ import com.app.chasel.model.CartItem;
 import com.app.chasel.model.Users;
 import com.app.chasel.repository.UserRepository;
 import com.app.chasel.service.CartService;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -43,10 +45,11 @@ public class CartController {
     @PostMapping("/items/{productId}")
     public CartItemResponse addProduct(
             @PathVariable Long productId,
+            @RequestParam(defaultValue = "1") int quantity,
             Authentication authentication) {
 
         Long userId = getUserId(authentication);
-        CartItem item = cartService.addProduct(userId, productId);
+        CartItem item = cartService.addProduct(userId, productId, quantity);
 
         return toResponse(item);
     }
@@ -58,6 +61,12 @@ public class CartController {
 
         Long userId = getUserId(authentication);
         cartService.removeProduct(userId, productId);
+    }
+
+    // Surface the reason (e.g. "Only 2 available") as `detail` so the page can show it.
+    @ExceptionHandler(ResponseStatusException.class)
+    public ProblemDetail handleStatus(ResponseStatusException ex) {
+        return ex.getBody();
     }
 
     private Long getUserId(Authentication authentication) {

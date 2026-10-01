@@ -50,6 +50,10 @@ public class Listing {
     // back up. Lets the frontend show "was $X" next to a markdown.
     private Double previousPrice;
 
+    // Units the seller still has available. Null on listings created before
+    // stock existed, which are single pieces — see getQuantity().
+    private Integer quantity;
+
     @ElementCollection
     private List<String> imageUrls;
 
@@ -241,5 +245,33 @@ public class Listing {
 
     public boolean isForSale() {
         return this.price != null;
+    }
+
+    public int getQuantity() {
+        if (quantity == null) {
+            return isSold() ? 0 : 1;
+        }
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    /** Removes sold units from stock; the listing is SOLD once none are left. */
+    public void takeStock(int units) {
+        if (units < 1 || units > getQuantity()) {
+            throw new IllegalArgumentException("Cannot take " + units + " of " + getQuantity() + " in stock");
+        }
+        this.quantity = getQuantity() - units;
+        if (this.quantity == 0) {
+            markAsSold();
+        }
+    }
+
+    /** Returns units to stock (e.g. a cancelled order) and puts the listing back on sale. */
+    public void restock(int units) {
+        this.quantity = getQuantity() + units;
+        markAsActive();
     }
 }

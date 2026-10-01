@@ -49,7 +49,11 @@ public class CartService {
     }
 
     @Transactional
-    public CartItem addProduct(Long userId, Long productId) {
+    public CartItem addProduct(Long userId, Long productId, int quantity) {
+        if (quantity < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be at least 1");
+        }
+
         Listing product = listingRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Product not found"));
@@ -68,14 +72,25 @@ public class CartService {
 
         Cart cart = getOrCreateCart(userId);
 
-        return cartItemRepository.findByCartAndProduct(cart, product)
+        CartItem item = cartItemRepository.findByCartAndProduct(cart, product)
                 .orElseGet(() -> {
-                    CartItem item = new CartItem();
-                    item.setCart(cart);
-                    item.setProduct(product);
-                    item.setQuantity(1);
-                    return cartItemRepository.save(item);
+                    CartItem created = new CartItem();
+                    created.setCart(cart);
+                    created.setProduct(product);
+                    created.setQuantity(0);
+                    return created;
                 });
+
+        int requested = item.getQuantity() + quantity;
+        if (requested > product.getQuantity()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Only " + product.getQuantity() + " available"
+                            + (item.getQuantity() > 0 ? " and " + item.getQuantity() + " already in your cart" : ""));
+        }
+
+        item.setQuantity(requested);
+        return cartItemRepository.save(item);
     }
 
     @Transactional
