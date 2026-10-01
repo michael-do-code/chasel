@@ -16,7 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.app.chasel.security.JwtAuthFilter;
 import java.util.Arrays;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -38,7 +38,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/**", "/api/options/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/options/**", "/error").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders/guest-checkout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                 // browsing listings (including trending) is public; "mine" still needs a user
                 .requestMatchers(HttpMethod.GET, "/api/listings/mine").authenticated()

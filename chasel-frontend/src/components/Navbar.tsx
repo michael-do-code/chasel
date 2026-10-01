@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
@@ -78,6 +78,7 @@ function Navbar() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [openCartAtCheckout, setOpenCartAtCheckout] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messages] = useState(0);
@@ -178,6 +179,15 @@ function Navbar() {
     };
   }, [location.key, location.state]);
 
+  useEffect(() => {
+    if (!(location.state as { openCartCheckout?: boolean } | null)?.openCartCheckout) return;
+    const openTimer = window.setTimeout(() => {
+      setOpenCartAtCheckout(true);
+      setCartOpen(true);
+    }, 0);
+    return () => window.clearTimeout(openTimer);
+  }, [location.key, location.state]);
+
   const handleLogoClick = () => {
     navigate('/discover', {
       replace: location.pathname === '/discover',
@@ -217,12 +227,14 @@ function Navbar() {
   };
 
   const handleCartClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
+    setOpenCartAtCheckout(false);
     setCartOpen(true);
   };
+
+  const handleCartClose = useCallback(() => {
+    setCartOpen(false);
+    setOpenCartAtCheckout(false);
+  }, []);
 
   const handleMessagesClick = () => {
     navigate(isAuthenticated ? '/messages' : '/login');
@@ -463,7 +475,11 @@ function Navbar() {
           </button>
         </div>
       </div>
-      <Cart open={cartOpen} onClose={() => setCartOpen(false)} />
+      <Cart
+        open={cartOpen}
+        startInCheckout={openCartAtCheckout}
+        onClose={handleCartClose}
+      />
       <AccountMenu
         open={accountOpen && isAuthenticated}
         profile={profile}

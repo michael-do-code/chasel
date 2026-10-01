@@ -20,11 +20,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final PasswordResetEmailService passwordResetEmailService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+                       PasswordResetEmailService passwordResetEmailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.passwordResetEmailService = passwordResetEmailService;
     }
 
     public String register(RegisterRequest request) {
@@ -70,15 +73,10 @@ userRepository.save(user);
 
     userRepository.save(user);
 
-    System.out.println(
-            "PASSWORD RESET CODE for "
-                    + user.getEmail()
-                    + ": "
-                    + code
-    );
+    passwordResetEmailService.sendVerificationCode(user.getEmail(), code);
 }
 
-public String verifyCode(VerifyCodeRequest request) {
+public void verifyCode(VerifyCodeRequest request) {
     Users user = userRepository.findByEmail(request.getEmail())
             .orElseThrow(() -> new RuntimeException("Email not found"));
 
@@ -100,7 +98,6 @@ public String verifyCode(VerifyCodeRequest request) {
 
     user.setResetCodeVerified(true);
     userRepository.save(user);
-    return jwtUtil.generateToken(user.getEmail());
 }
 
 public void resetPassword(ResetPasswordRequest request) {
@@ -111,6 +108,11 @@ public void resetPassword(ResetPasswordRequest request) {
         throw new RuntimeException(
                 "Verification code has not been verified"
         );
+    }
+
+    if (user.getResetCodeExpiresAt() == null
+            || LocalDateTime.now().isAfter(user.getResetCodeExpiresAt())) {
+        throw new RuntimeException("Verification code expired");
     }
 
     if (request.getNewPassword() == null

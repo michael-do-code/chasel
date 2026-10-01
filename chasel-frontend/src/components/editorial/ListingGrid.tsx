@@ -15,7 +15,7 @@ interface ListingGridProps {
  * Owns the save / cart / open wiring so each page only supplies listings.
  */
 function ListingGrid({ listings, columns = DEFAULT_GRID_COLUMNS }: ListingGridProps) {
-  const { isSaved, savingProductId, toggleSaved, openListing, addToCart } =
+  const { isSaved, savingProductId, toggleSaved, openListing, addToCart, canAddToCart } =
     useListingActions(listings);
 
   return (
@@ -32,6 +32,7 @@ function ListingGrid({ listings, columns = DEFAULT_GRID_COLUMNS }: ListingGridPr
           onOpen={openListing}
           onToggleSave={toggleSaved}
           onAddToCart={addToCart}
+          canAddToCart={canAddToCart(listing.id)}
         />
       ))}
     </div>

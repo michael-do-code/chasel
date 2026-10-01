@@ -1,5 +1,8 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
+import { setApiToken } from '../api/axios';
+
+const TOKEN_KEY = 'chasel_token';
 
 interface AuthContextType {
   token: string | null;
@@ -11,25 +14,27 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => {
+    // Never inherit the indefinitely persisted credential used by older builds.
+    // A session token survives refresh/HMR, but disappears when the tab closes.
+    localStorage.removeItem('token');
+    const savedToken = sessionStorage.getItem(TOKEN_KEY);
+    setApiToken(savedToken);
+    return savedToken;
+  });
 
-  // On first load, check if a token already exists (e.g. user refreshed the page)
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-      setToken(savedToken);
-    }
+  const login = useCallback((newToken: string) => {
+    sessionStorage.setItem(TOKEN_KEY, newToken);
+    setApiToken(newToken);
+    setToken(newToken);
   }, []);
 
-  const login = (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem(TOKEN_KEY);
+    setApiToken(null);
     setToken(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, login, logout, isAuthenticated: !!token }}>

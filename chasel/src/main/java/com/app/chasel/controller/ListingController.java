@@ -44,7 +44,10 @@ public class ListingController {
 
     @GetMapping
     public List<Listing> getAllListings() {
-        return listingRepository.findAll();
+        // A newly purchased piece remains visible as SOLD while the buyer can
+        // still cancel. It disappears when the order advances to PROCESSING;
+        // cancellation makes the listing ACTIVE and purchasable again.
+        return listingRepository.findMarketplaceListings();
     }
 
     @GetMapping("/trending")
@@ -114,15 +117,22 @@ public class ListingController {
         listing.setCondition(request.getCondition());
         listing.setOriginalRetail(request.getOriginalRetail());
 
-        // Track price drops so the frontend can show "was $X", and notify
-        // anyone watching this listing. A price that goes back up (or
-        // stays the same) is no longer a markdown.
-        boolean priceDropped = request.getPrice() < listing.getPrice();
-        if (priceDropped) {
-            listing.setPreviousPrice(listing.getPrice());
-        } else {
-            listing.setPreviousPrice(null);
+        // A markdown is always measured from the first asking price, not from
+        // the immediately preceding edit. Thus 100 -> 80 -> 90 remains reduced
+        // from 100. Existing rows are migrated lazily using the best baseline
+        // they already contain.
+        double currentPrice = listing.getPrice();
+        Double initialPrice = listing.getInitialPrice();
+        if (initialPrice == null) {
+            initialPrice = listing.getPreviousPrice() != null
+                    ? Math.max(listing.getPreviousPrice(), currentPrice)
+                    : currentPrice;
+            listing.setInitialPrice(initialPrice);
         }
+
+        boolean isDiscounted = request.getPrice() < initialPrice;
+        boolean priceDroppedFurther = request.getPrice() < currentPrice;
+        listing.setPreviousPrice(isDiscounted ? initialPrice : null);
         listing.setPrice(request.getPrice());
 
         if (request.getImageUrls() != null) {
@@ -134,7 +144,7 @@ public class ListingController {
 
         Listing saved = listingRepository.save(listing);
 
-        if (priceDropped) {
+        if (isDiscounted && priceDroppedFurther) {
             notificationService.notifyPriceDrop(saved);
         }
 

@@ -9,6 +9,21 @@
   overflow: hidden;
 }
 
+.ed-tile-sold {
+  position: absolute;
+  z-index: 4;
+  bottom: 14px;
+  left: 14px;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--ink-on-dark);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
 /* Reshape the shared carousel for the editorial grid: taller crop, paper
    ground, no card chrome. Scoped to .ed-tile so the legacy cards on Profile
    and Discover keep their own sizing. */

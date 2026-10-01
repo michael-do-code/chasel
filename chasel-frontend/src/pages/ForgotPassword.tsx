@@ -84,8 +84,16 @@ function ForgotPassword() {
         </p>
       </div>
 
-      <div className="login-illustration">
-        <div className="illustration-shape" />
+      <div className="login-illustration login-video-panel">
+        <video
+          className="login-fashion-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/videos/login-fashion.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
   );

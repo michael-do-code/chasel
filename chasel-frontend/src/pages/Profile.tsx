@@ -138,6 +138,8 @@ function Profile() {
         </div>
 
         <div className="dashboard-info-actions">
+          <Link to="/purchases" className="dashboard-edit-link">Purchases</Link>
+          <Link to="/sales" className="dashboard-edit-link">Sales</Link>
           <Link to="/profile/edit" className="dashboard-edit-link">Edit Profile</Link>
           <button onClick={handleLogout}>Log out</button>
         </div>

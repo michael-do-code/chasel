@@ -42,6 +42,10 @@ public class Listing {
     // Price is always required (no trade-only listings)
     private Double price;
 
+    // The seller's asking price when the listing was first published. Unlike
+    // originalRetail, this never changes and is the baseline for markdowns.
+    private Double initialPrice;
+
     // Set automatically when a seller lowers the price; cleared if it goes
     // back up. Lets the frontend show "was $X" next to a markdown.
     private Double previousPrice;
@@ -65,6 +69,9 @@ public class Listing {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.initialPrice == null) {
+            this.initialPrice = this.price;
+        }
         if (this.status == null) {
             this.status = ListingStatus.ACTIVE;
         }
@@ -141,6 +148,14 @@ public class Listing {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getInitialPrice() {
+        return initialPrice;
+    }
+
+    public void setInitialPrice(Double initialPrice) {
+        this.initialPrice = initialPrice;
     }
 
     public Double getPreviousPrice() {

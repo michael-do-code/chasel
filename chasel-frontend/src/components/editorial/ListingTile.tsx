@@ -12,6 +12,7 @@ interface ListingTileProps {
   onOpen: (listingId: number) => void;
   onToggleSave: (listingId: number) => void;
   onAddToCart: (listingId: number) => void;
+  canAddToCart?: boolean;
 }
 
 /**
@@ -28,7 +29,10 @@ function ListingTile({
   onOpen,
   onToggleSave,
   onAddToCart,
+  canAddToCart = true,
 }: ListingTileProps) {
+  const isSold = listing.status === 'SOLD';
+
   return (
     <article
       className="ed-tile"
@@ -50,6 +54,8 @@ function ListingTile({
       <div className="ed-tile-frame">
         <ProductImageCarousel title={listing.title} imageUrls={listing.imageUrls} />
 
+        {isSold && <span className="ed-tile-sold">Sold</span>}
+
         {/* Save sits top-right and stays visible once the piece is saved,
             because that is state rather than a hover affordance. */}
         <button
@@ -66,16 +72,18 @@ function ListingTile({
           <BookmarkIcon />
         </button>
 
-        <button
-          type="button"
-          className="ed-tile-cart"
-          onClick={(event) => {
-            event.stopPropagation();
-            onAddToCart(listing.id);
-          }}
-        >
-          Add to cart
-        </button>
+        {canAddToCart && !isSold && (
+          <button
+            type="button"
+            className="ed-tile-cart"
+            onClick={(event) => {
+              event.stopPropagation();
+              onAddToCart(listing.id);
+            }}
+          >
+            Add to cart
+          </button>
+        )}
       </div>
 
       <div className="ed-tile-body">

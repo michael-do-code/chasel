@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import api from '../api/axios';
 import { useAuth } from './AuthContext';
 import { CartContext } from './CartContext';
+import { addCuratedListingToCart, getCuratedCart, localCartChangedEvent, removeCuratedListingFromCart } from '../utils/curatedCart';
+import type { Listing } from '../types/listing';
 
 /** Response shape of `GET /cart/count`. */
 interface CartCount {
@@ -26,7 +28,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Reload whenever the signed-in member changes.
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      const syncLocalCount = () => setCount(getCuratedCart().reduce((sum, item) => sum + item.quantity, 0));
+      syncLocalCount();
+      window.addEventListener(localCartChangedEvent, syncLocalCount);
+      return () => window.removeEventListener(localCartChangedEvent, syncLocalCount);
+    }
 
     let active = true;
 
@@ -43,7 +50,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   /** Imperative re-read, used after the bag changes. */
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      setCount(getCuratedCart().reduce((sum, item) => sum + item.quantity, 0));
+      return;
+    }
 
     try {
       setCount(await fetchCount());
@@ -54,24 +64,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback(
     async (productId: number) => {
+      if (!isAuthenticated) {
+        const response = await api.get<Listing>(`/listings/${productId}`);
+        addCuratedListingToCart(response.data);
+        await refresh();
+        return;
+      }
       await api.post(`/cart/items/${productId}`);
       await refresh();
     },
-    [refresh]
+    [isAuthenticated, refresh]
   );
 
   const removeItem = useCallback(
     async (productId: number) => {
+      if (!isAuthenticated) {
+        removeCuratedListingFromCart(productId);
+        await refresh();
+        return;
+      }
       await api.delete(`/cart/items/${productId}`);
       await refresh();
     },
-    [refresh]
+    [isAuthenticated, refresh]
   );
 
   // Guests read zero without the provider having to write state, so signing
   // out clears the badge immediately and the next member starts clean.
   const value = useMemo(
-    () => ({ count: isAuthenticated ? count : 0, refresh, addItem, removeItem }),
+    () => ({ count, refresh, addItem, removeItem }),
     [count, isAuthenticated, refresh, addItem, removeItem]
   );
 
