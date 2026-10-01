@@ -44,6 +44,9 @@ public class SecurityConfig {
                 // browsing listings (including trending) is public; "mine" still needs a user
                 .requestMatchers(HttpMethod.GET, "/api/listings/mine").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/listings", "/api/listings/trending", "/api/listings/*").permitAll()
+                // seller storefronts are public; /api/users/me is not numeric so stays authenticated
+                .requestMatchers(HttpMethod.GET, "/api/listings/seller/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/users/{id:\\d+}").permitAll()
                 .anyRequest().authenticated()
             )
             // needed for H2 console to render

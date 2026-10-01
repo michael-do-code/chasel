@@ -11,6 +11,8 @@ interface PageHeadingProps {
   children?: React.ReactNode;
   /** `page` sizes the title for a full-width page; `panel` for a column. */
   size?: 'page' | 'panel';
+  /** Optional element set beside the title, e.g. a seller's avatar. */
+  leading?: React.ReactNode;
 }
 
 /**
@@ -23,13 +25,17 @@ function PageHeading({
   lede,
   children,
   size = 'page',
+  leading,
 }: PageHeadingProps) {
   return (
     <header className={`ed-page-heading ed-page-heading-${size}`}>
       <div className="ed-page-heading-row">
-        <div>
-          <p className="ed-kicker">{kicker}</p>
-          <h1 className="ed-display">{title}</h1>
+        <div className="ed-page-heading-title">
+          {leading}
+          <div>
+            <p className="ed-kicker">{kicker}</p>
+            <h1 className="ed-display">{title}</h1>
+          </div>
         </div>
         {lede && <p className="ed-page-lede">{lede}</p>}
       </div>

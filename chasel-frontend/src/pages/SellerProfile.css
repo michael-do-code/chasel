@@ -1,0 +1,58 @@
+/* Seller storefront — same paper ground and shell as Browsing. */
+.seller-page {
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.seller-page-shell {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 0 var(--shell-gutter) 96px;
+}
+
+.seller-page-rule {
+  margin: 34px 0 0;
+}
+
+.seller-page-empty,
+.seller-page-status {
+  color: var(--ink-muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+.seller-page-empty {
+  padding: 96px 0;
+}
+
+.seller-page-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 120px 24px;
+}
+
+.seller-page-status p {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .seller-page-shell {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .seller-page-shell {
+    padding-inline: 18px;
+  }
+
+  .seller-page .ed-avatar-lg {
+    width: 64px;
+    height: 64px;
+    font-size: 26px;
+  }
+}

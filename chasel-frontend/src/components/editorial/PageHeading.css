@@ -9,6 +9,13 @@
   gap: 48px;
 }
 
+.ed-page-heading-title {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  min-width: 0;
+}
+
 .ed-page-heading .ed-kicker {
   margin-bottom: 18px;
 }

@@ -1,3 +1,5 @@
+import type { SellerSummary } from './seller';
+
 /** Shape returned by `GET /listings`. Shared by every page that renders items. */
 export interface Listing {
   id: number;
@@ -14,6 +16,8 @@ export interface Listing {
   createdAt: string;
   /** Real marketplace inventory status; preview catalog pieces omit it. */
   status?: 'ACTIVE' | 'SOLD' | 'DRAFT';
+  /** Absent on curated (client-side) listings, which have no real seller. */
+  seller?: SellerSummary;
 }
 
 /** Shape returned by `GET /saved-items`. */

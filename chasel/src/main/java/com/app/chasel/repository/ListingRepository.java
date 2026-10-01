@@ -16,6 +16,8 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     Optional<Listing> findByIdForUpdate(@Param("id") Long id);
     List<Listing> findByLocation(String location);
     List<Listing> findBySellerId(Long sellerId);
+    List<Listing> findBySellerIdAndStatusOrderByCreatedAtDesc(Long sellerId, ListingStatus status);
+
     @Query("""
         SELECT DISTINCT listing
         FROM Listing listing

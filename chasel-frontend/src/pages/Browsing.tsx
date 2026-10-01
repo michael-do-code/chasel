@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
 import PageHeading from '../components/editorial/PageHeading';
 import FilterTabs from '../components/editorial/FilterTabs';
-import ListingTile from '../components/editorial/ListingTile';
-import { useSavedItems } from '../hooks/useSavedItems';
-import { useAuth } from '../context/AuthContext';
+import ListingGrid from '../components/editorial/ListingGrid';
+import { DEFAULT_GRID_COLUMNS, GRID_COLUMN_OPTIONS } from '../components/editorial/gridColumns';
 import { useSearch } from '../context/SearchContext';
-import { useCart } from '../context/CartContext';
 import type { Listing } from '../types/listing';
-import { addCuratedListingToCart } from '../utils/curatedCart';
 import { DEFAULT_HEADING, getCollection } from './browsing/collections';
 import {
   ALL_CATEGORIES,
@@ -21,8 +18,6 @@ import {
 import type { SortId } from './browsing/selectListings';
 import './Browsing.css';
 
-const GRID_COLUMNS = [2, 3, 4] as const;
-
 /**
  * The marketplace browse view (previously `Home`).
  *
@@ -31,15 +26,10 @@ const GRID_COLUMNS = [2, 3, 4] as const;
  */
 function Browsing() {
   const [listings, setListings] = useState<Listing[]>([]);
-  const [ownListingIds, setOwnListingIds] = useState<Set<number> | null>(null);
   const [sort, setSort] = useState<SortId>('curated');
-  const [columns, setColumns] = useState<number>(3);
+  const [columns, setColumns] = useState<number>(DEFAULT_GRID_COLUMNS);
 
   const { searchQuery, setSearchItems } = useSearch();
-  const { isSaved, savingProductId, toggleSaved } = useSavedItems();
-  const { addItem } = useCart();
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const collection = getCollection(searchParams.get('collection'));
@@ -75,21 +65,6 @@ function Browsing() {
       .catch((error) => console.error('Error fetching listings:', error));
   }, [endpoint, setSearchItems]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setOwnListingIds(new Set());
-      return;
-    }
-
-    setOwnListingIds(null);
-    api.get<Listing[]>('/listings/mine')
-      .then((response) => setOwnListingIds(new Set(response.data.map((item) => item.id))))
-      .catch((error) => {
-        console.error('Could not load your listings:', error);
-        setOwnListingIds(new Set());
-      });
-  }, [isAuthenticated]);
-
   const visibleListings = useMemo(
     () => selectListings({
       listings,
@@ -101,36 +76,6 @@ function Browsing() {
     }),
     [listings, category, searchQuery, maxPrice, collection, sort]
   );
-
-  const addToCart = async (productId: number) => {
-    const selectedListing = listings.find((item) => item.id === productId);
-    if (selectedListing?.status === 'SOLD') {
-      alert('This piece has sold and is no longer available.');
-      return;
-    }
-
-    if (isAuthenticated && ownListingIds?.has(productId)) {
-      alert('You cannot add your own item to the cart.');
-      return;
-    }
-
-    if (productId < 0) {
-      const listing = listings.find((item) => item.id === productId);
-      if (!listing) return;
-
-      addCuratedListingToCart(listing);
-      alert('Added to cart!');
-      return;
-    }
-
-    try {
-      await addItem(productId);
-      alert('Added to cart!');
-    } catch (error) {
-      console.error('Failed to add product:', error);
-      alert('Could not add product to cart.');
-    }
-  };
 
   const pieceCount = `${visibleListings.length} ${visibleListings.length === 1 ? 'PIECE' : 'PIECES'}`;
 
@@ -175,7 +120,7 @@ function Browsing() {
                   aria-label="Listings per row"
                   onChange={(event) => setColumns(Number(event.target.value))}
                 >
-                  {GRID_COLUMNS.map((count) => (
+                  {GRID_COLUMN_OPTIONS.map((count) => (
                     <option key={count} value={count}>{count} col</option>
                   ))}
                 </select>
@@ -191,23 +136,7 @@ function Browsing() {
             Nothing in the archive matches that yet. Try another category or search.
           </p>
         ) : (
-          <div
-            className="browse-grid"
-            style={{ '--browse-columns': columns } as React.CSSProperties}
-          >
-            {visibleListings.map((listing) => (
-              <ListingTile
-                key={listing.id}
-                listing={listing}
-                saved={isSaved(listing.id)}
-                saving={savingProductId === listing.id}
-                onOpen={(id) => navigate(`/items/${id}`)}
-                onToggleSave={toggleSaved}
-                onAddToCart={addToCart}
-                canAddToCart={!isAuthenticated || (ownListingIds !== null && !ownListingIds.has(listing.id))}
-              />
-            ))}
-          </div>
+          <ListingGrid listings={visibleListings} columns={columns} />
         )}
       </div>
     </div>

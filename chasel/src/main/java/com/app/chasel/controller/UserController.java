@@ -1,5 +1,6 @@
 package com.app.chasel.controller;
 
+import com.app.chasel.dto.SellerProfileResponse;
 import com.app.chasel.dto.UpdateProfileRequest;
 import com.app.chasel.dto.UserProfileResponse;
 import com.app.chasel.service.UserService;
@@ -29,6 +30,13 @@ public class UserController {
     @PutMapping("/me")
     public UserProfileResponse updateProfile(Authentication authentication, @Valid @RequestBody UpdateProfileRequest request) {
         return userService.updateProfile(authentication.getName(), request);
+    }
+
+    // Public: the storefront header for a seller. Declared after /me, and
+    // `\d+` keeps "me" from ever being read as an id.
+    @GetMapping("/{id:\\d+}")
+    public SellerProfileResponse getSellerProfile(@PathVariable Long id) {
+        return userService.getSellerProfile(id);
     }
 
     // Surface the first field error as `detail` so the edit form can show it.

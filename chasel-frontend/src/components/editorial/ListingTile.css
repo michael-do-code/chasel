@@ -118,7 +118,7 @@
 /* --- Meta ----------------------------------------------------------- */
 
 .ed-tile-body {
-  padding-top: 18px;
+  padding-top: 14px;
 }
 
 .ed-tile-line {
@@ -148,10 +148,10 @@
 }
 
 .ed-tile-title {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   letter-spacing: -0.005em;
 }
