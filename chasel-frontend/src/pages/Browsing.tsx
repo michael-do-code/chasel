@@ -31,6 +31,7 @@ const GRID_COLUMNS = [2, 3, 4] as const;
  */
 function Browsing() {
   const [listings, setListings] = useState<Listing[]>([]);
+  const [ownListingIds, setOwnListingIds] = useState<Set<number> | null>(null);
   const [sort, setSort] = useState<SortId>('curated');
   const [columns, setColumns] = useState<number>(3);
 
@@ -74,6 +75,21 @@ function Browsing() {
       .catch((error) => console.error('Error fetching listings:', error));
   }, [endpoint, setSearchItems]);
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setOwnListingIds(new Set());
+      return;
+    }
+
+    setOwnListingIds(null);
+    api.get<Listing[]>('/listings/mine')
+      .then((response) => setOwnListingIds(new Set(response.data.map((item) => item.id))))
+      .catch((error) => {
+        console.error('Could not load your listings:', error);
+        setOwnListingIds(new Set());
+      });
+  }, [isAuthenticated]);
+
   const visibleListings = useMemo(
     () => selectListings({
       listings,
@@ -87,8 +103,14 @@ function Browsing() {
   );
 
   const addToCart = async (productId: number) => {
-    if (!isAuthenticated) {
-      navigate('/login');
+    const selectedListing = listings.find((item) => item.id === productId);
+    if (selectedListing?.status === 'SOLD') {
+      alert('This piece has sold and is no longer available.');
+      return;
+    }
+
+    if (isAuthenticated && ownListingIds?.has(productId)) {
+      alert('You cannot add your own item to the cart.');
       return;
     }
 
@@ -182,6 +204,7 @@ function Browsing() {
                 onOpen={(id) => navigate(`/items/${id}`)}
                 onToggleSave={toggleSaved}
                 onAddToCart={addToCart}
+                canAddToCart={!isAuthenticated || (ownListingIds !== null && !ownListingIds.has(listing.id))}
               />
             ))}
           </div>

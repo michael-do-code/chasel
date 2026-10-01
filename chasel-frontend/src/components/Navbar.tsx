@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
@@ -69,11 +69,12 @@ function getInitials(profile: UserProfile): string {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { searchQuery, setSearchQuery, searchItems } = useSearch();
   const isAuthenticated = !!token;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [openCartAtCheckout, setOpenCartAtCheckout] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messages] = useState(0);
@@ -138,8 +139,9 @@ function Navbar() {
       .catch((error) => {
         console.error('Could not load navbar profile:', error);
         setProfile(null);
+        logout();
       });
-  }, [token]);
+  }, [token, logout]);
 
 
   useEffect(() => {
@@ -165,6 +167,15 @@ function Navbar() {
     return () => {
       window.cancelAnimationFrame(scrollFrame);
     };
+  }, [location.key, location.state]);
+
+  useEffect(() => {
+    if (!(location.state as { openCartCheckout?: boolean } | null)?.openCartCheckout) return;
+    const openTimer = window.setTimeout(() => {
+      setOpenCartAtCheckout(true);
+      setCartOpen(true);
+    }, 0);
+    return () => window.clearTimeout(openTimer);
   }, [location.key, location.state]);
 
   const handleLogoClick = () => {
@@ -195,12 +206,14 @@ function Navbar() {
   };
 
   const handleCartClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
+    setOpenCartAtCheckout(false);
     setCartOpen(true);
   };
+
+  const handleCartClose = useCallback(() => {
+    setCartOpen(false);
+    setOpenCartAtCheckout(false);
+  }, []);
 
   const handleMessagesClick = () => {
     navigate(isAuthenticated ? '/messages' : '/login');
@@ -417,7 +430,7 @@ function Navbar() {
               onClick={() => navigate('/profile')}
               title="Go to your profile"
             >
-              {profile ? getInitials(profile) : 'A'}
+              {profile ? getInitials(profile) : '…'}
             </button>
           ) : (
             <button className="navbar-login" onClick={() => navigate('/login')}>
@@ -436,7 +449,11 @@ function Navbar() {
           </button>
         </div>
       </div>
-      <Cart open={cartOpen} onClose={() => setCartOpen(false)} />
+      <Cart
+        open={cartOpen}
+        startInCheckout={openCartAtCheckout}
+        onClose={handleCartClose}
+      />
     </nav>
   );
 }

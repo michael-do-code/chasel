@@ -38,6 +38,107 @@
   height: 14px;
 }
 
+/* Reuse Browse's editorial tile, scaled down instead of clipped. */
+.marketplace-shell .community-listings-grid {
+  column-gap: clamp(14px, 1.25vw, 24px);
+  row-gap: clamp(16px, 2vh, 24px);
+}
+
+.marketplace-shell .community-listings-grid .ed-tile {
+  min-width: 0;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-frame {
+  background: #efe7da;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile .listing-image {
+  aspect-ratio: 16 / 9;
+  background: #efe7da;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile .product-image {
+  object-fit: contain;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-body {
+  padding-top: 9px;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-title {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-meta {
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-cart {
+  right: 9px;
+  bottom: 9px;
+  left: 9px;
+  height: 32px;
+}
+
+.marketplace-shell .community-listings-grid .ed-tile-save {
+  top: 9px;
+  right: 9px;
+  width: 32px;
+  height: 32px;
+}
+
+@media (min-width: 1000px) and (min-height: 700px) {
+  .marketplace-shell .listings-section:not(.is-empty) {
+    box-sizing: border-box;
+    min-height: calc(100svh - 64px);
+    height: auto;
+    padding: clamp(18px, 2.5vh, 30px) clamp(28px, 4.5vw, 72px);
+    overflow: visible;
+  }
+
+  .marketplace-shell .listings-section:not(.is-empty) .section-heading-row {
+    margin-bottom: clamp(12px, 1.5vh, 18px);
+  }
+}
+
+/* Animated affordance for the Community "View all" action. */
+.marketplace-shell .listings-section .view-all-button {
+  position: relative;
+  padding: 3px 0 6px;
+}
+
+.marketplace-shell .listings-section .view-all-button::after {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  content: '';
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 220ms ease;
+}
+
+.marketplace-shell .listings-section .view-all-button:hover::after,
+.marketplace-shell .listings-section .view-all-button:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.marketplace-shell .listings-section .view-all-button:focus-visible {
+  outline: 2px solid rgba(74, 43, 23, 0.35);
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketplace-shell .listings-section .view-all-button::after {
+    transition: none;
+  }
+}
+
 /* Match the archive's italic editorial voice across every carousel slide. */
 .campaign-grid .category-carousel-slide .campaign-copy,
 .campaign-grid .category-carousel-slide .campaign-copy > p,

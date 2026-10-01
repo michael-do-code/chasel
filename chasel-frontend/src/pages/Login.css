@@ -32,6 +32,15 @@
   font-size: 22px;
   margin-bottom: 24px;
   color: #4A2B17;
+  text-align: center;
+}
+
+.login-checkout-intro {
+  margin: -12px 0 20px;
+  color: #7c6c60;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .login-panel form {
@@ -136,6 +145,24 @@
 
 .login-divider span {
   padding: 0 12px;
+}
+
+.guest-checkout-button {
+  width: 100%;
+  padding: 13px 18px;
+  color: #956F4C;
+  background: #FEFDFB;
+  border: 1px solid #956F4C;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.guest-checkout-button:hover {
+  color: #FEFDFB;
+  background: #4A2B17;
 }
 
 .login-social {

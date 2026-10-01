@@ -27,9 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Editing a listing's price down should mark it as a price drop (so the
- * frontend can show the old price struck through); editing it back up
- * should clear that mark.
+ * A listing's first asking price remains the markdown baseline across edits.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -114,6 +112,24 @@ class ListingPriceDropTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.price").value(120.0))
                 .andExpect(jsonPath("$.previousPrice").doesNotExist());
+    }
+
+    @Test
+    void raisingPriceWhileStillBelowInitialPriceRemainsDiscounted() throws Exception {
+        mockMvc.perform(put("/api/listings/" + listingId)
+                        .header("Authorization", "Bearer " + sellerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatePayload(80.0)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.previousPrice").value(100.0));
+
+        mockMvc.perform(put("/api/listings/" + listingId)
+                        .header("Authorization", "Bearer " + sellerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatePayload(90.0)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(90.0))
+                .andExpect(jsonPath("$.previousPrice").value(100.0));
     }
 
     @Test

@@ -31,6 +31,7 @@ import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import Purchases from './pages/Purchases';
+import Sales from './pages/Sales';
 
 /**
  * `/home` was renamed to `/browsing`. Redirect, keeping any `?category=` or
@@ -140,6 +141,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Purchases />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/sales"
+            element={
+              <ProtectedRoute>
+                <Sales />
               </ProtectedRoute>
             }
           />

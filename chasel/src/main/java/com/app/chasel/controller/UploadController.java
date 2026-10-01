@@ -23,8 +23,8 @@ public class UploadController {
             @RequestParam("files") List<MultipartFile> files
     ) throws IOException {
 
-        if (files.size() > 4) {
-            throw new RuntimeException("Maximum 4 images allowed");
+        if (files.size() > 5) {
+            throw new RuntimeException("Maximum 5 files allowed");
         }
 
         Files.createDirectories(uploadDirectory);
@@ -33,9 +33,10 @@ public class UploadController {
 
         for (MultipartFile file : files) {
             if (file.getContentType() == null ||
-                    !file.getContentType().startsWith("image/")) {
-                throw new RuntimeException("Only image files are allowed");
+                    (!file.getContentType().startsWith("image/") && !file.getContentType().startsWith("video/"))) {
+                throw new RuntimeException("Only image and video files are allowed");
             }
+            if (file.getSize() > 25L * 1024 * 1024) throw new RuntimeException("Each file must be 25 MB or smaller");
 
             String originalName = file.getOriginalFilename();
             String extension = "";

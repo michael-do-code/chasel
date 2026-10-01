@@ -1,9 +1,16 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import React from 'react';
 import './Login.css';
+import { clearCuratedCart, getCuratedCart } from '../utils/curatedCart';
+
+interface LoginNavigationState {
+  message?: string;
+  checkout?: boolean;
+  returnTo?: string;
+}
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -13,6 +20,19 @@ function Login() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigationState = location.state as LoginNavigationState | null;
+  const sessionMessage = navigationState?.message;
+  const isCheckoutLogin = navigationState?.checkout === true;
+  const returnTo = navigationState?.returnTo || '/discover';
+
+  const continueAsGuest = () => {
+    if (isCheckoutLogin) {
+      navigate(returnTo, { state: { openCartCheckout: true } });
+      return;
+    }
+    navigate('/discover');
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,10 +42,21 @@ function Login() {
     try {
       const res = await api.post('/auth/login', { email, password });
       login(res.data.token);
+      if (isCheckoutLogin) {
+        const localItems = getCuratedCart();
+        for (const item of localItems) {
+          for (let quantity = 0; quantity < item.quantity; quantity += 1) {
+            await api.post(`/cart/items/${item.productId}`);
+          }
+        }
+        clearCuratedCart();
+        navigate(returnTo, { state: { openCartCheckout: true } });
+        return;
+      }
       navigate('/welcome', {
         state: { type: 'login' },
       });
-    } catch (err) {
+    } catch {
       setError('Invalid email or password');
     } finally {
       setLoading(false);
@@ -38,12 +69,17 @@ function Login() {
         <div className="login-logo">chasel</div>
         <h1>Log In</h1>
 
+        <p className="login-checkout-intro">
+          Sign in to use your account, or continue without creating one.
+        </p>
+
         <form onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="email id"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoFocus
             required
           />
           <input
@@ -61,21 +97,19 @@ function Login() {
             <Link to="/forgot-password">Forgot password</Link>
           </div>
 
-          {error && <p className="login-error">{error}</p>}
+          {(error || sessionMessage) && (
+            <p className="login-error">{error || sessionMessage}</p>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
-        <div className="login-divider">
-          <span>or</span>
-        </div>
-
-        <div className="login-social">
-          <button className="social-btn" type="button" aria-label="Continue with Google">G</button>
-          <button className="social-btn" type="button" aria-label="Continue with Twitter">𝕏</button>
-        </div>
+        <div className="login-divider"><span>or</span></div>
+        <button className="guest-checkout-button" type="button" onClick={continueAsGuest}>
+          Continue as guest
+        </button>
 
         <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: '#AEA397' }}>
           Don't have an account?{' '}

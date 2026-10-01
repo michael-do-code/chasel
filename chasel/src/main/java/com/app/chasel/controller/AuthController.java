@@ -44,11 +44,11 @@ public Map<String, String> forgotPassword(
 }
 
 @PostMapping("/verify-code")
-public AuthResponse verifyCode(
+public Map<String, String> verifyCode(
         @RequestBody VerifyCodeRequest request
 ) {
-    String token = authService.verifyCode(request);
-    return new AuthResponse(token);
+    authService.verifyCode(request);
+    return Map.of("message", "Verification code accepted");
 }
 
 @PostMapping("/reset-password")

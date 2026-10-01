@@ -15,9 +15,9 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NotificationType type;
+    /** Stored as text so adding a notification type does not break existing H2 data. */
+    @Column(nullable = false, length = 50)
+    private String type;
 
     @Column(nullable = false)
     private String title;
@@ -27,6 +27,9 @@ public class Notification {
 
     // Nullable: future notification types might not point at a listing.
     private Long relatedListingId;
+
+    // Order notifications deep-link to the exact purchase or seller transaction.
+    private Long relatedOrderId;
 
     @Column(nullable = false)
     private boolean read = false;
@@ -52,11 +55,11 @@ public class Notification {
     }
 
     public NotificationType getType() {
-        return type;
+        return NotificationType.valueOf(type);
     }
 
     public void setType(NotificationType type) {
-        this.type = type;
+        this.type = type.name();
     }
 
     public String getTitle() {
@@ -83,6 +86,14 @@ public class Notification {
         this.relatedListingId = relatedListingId;
     }
 
+    public Long getRelatedOrderId() {
+        return relatedOrderId;
+    }
+
+    public void setRelatedOrderId(Long relatedOrderId) {
+        this.relatedOrderId = relatedOrderId;
+    }
+
     public boolean isRead() {
         return read;
     }
@@ -93,5 +104,9 @@ public class Notification {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void touch() {
+        this.createdAt = LocalDateTime.now();
     }
 }

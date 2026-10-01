@@ -9,7 +9,9 @@ import com.app.chasel.repository.CartRepository;
 import com.app.chasel.repository.ListingRepository;
 import com.app.chasel.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -48,10 +50,23 @@ public class CartService {
 
     @Transactional
     public CartItem addProduct(Long userId, Long productId) {
-        Cart cart = getOrCreateCart(userId);
-
         Listing product = listingRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Product not found"));
+
+        if (product.getSeller().getId().equals(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "You cannot add your own listing to the cart");
+        }
+
+        if (!product.isActive()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "This listing is no longer available: " + product.getTitle());
+        }
+
+        Cart cart = getOrCreateCart(userId);
 
         return cartItemRepository.findByCartAndProduct(cart, product)
                 .orElseGet(() -> {
@@ -63,9 +78,23 @@ public class CartService {
                 });
     }
 
+    @Transactional
     public List<CartItem> getCartItems(Long userId) {
         Cart cart = getOrCreateCart(userId);
-        return cartItemRepository.findByCart(cart);
+        List<CartItem> items = cartItemRepository.findByCart(cart);
+        List<CartItem> unavailableItems = items.stream()
+                .filter(item -> item.getProduct().getSeller().getId().equals(userId)
+                        || !item.getProduct().isActive())
+                .toList();
+
+        if (!unavailableItems.isEmpty()) {
+            cartItemRepository.deleteAll(unavailableItems);
+        }
+
+        return items.stream()
+                .filter(item -> !item.getProduct().getSeller().getId().equals(userId)
+                        && item.getProduct().isActive())
+                .toList();
     }
 
     /**
@@ -74,12 +103,27 @@ public class CartService {
      * Unlike the other reads this does not create a cart as a side effect —
      * a member who has never added anything simply has a count of zero.
      */
+    @Transactional
     public int countItems(Long userId) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return cartRepository.findByUser(user)
-                .map(cart -> cartItemRepository.sumQuantityByCart(cart).intValue())
+                .map(cart -> {
+                    List<CartItem> items = cartItemRepository.findByCart(cart);
+                    List<CartItem> unavailableItems = items.stream()
+                            .filter(item -> item.getProduct().getSeller().getId().equals(userId)
+                                    || !item.getProduct().isActive())
+                            .toList();
+                    if (!unavailableItems.isEmpty()) {
+                        cartItemRepository.deleteAll(unavailableItems);
+                    }
+                    return items.stream()
+                            .filter(item -> !item.getProduct().getSeller().getId().equals(userId)
+                                    && item.getProduct().isActive())
+                            .mapToInt(CartItem::getQuantity)
+                            .sum();
+                })
                 .orElse(0);
     }
 

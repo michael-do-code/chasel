@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import BookmarkIcon from '../components/BookmarkIcon';
-import ProductImageCarousel from '../components/ProductImageCarousel';
+import ListingTile from '../components/editorial/ListingTile';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { useSavedCount } from '../context/SavedItemsContext';
 import { useSearch } from '../context/SearchContext';
+import type { Listing, SavedItem } from '../types/listing';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
 import promoDesigner from '../assets/promo-category-handbags-wide.png';
 import promoCategoryClothing from '../assets/promo-category-clothing-wide.png';
@@ -36,22 +37,6 @@ import promoNewWeekCollage04 from '../assets/promo-new-week-community-collage-04
 import '../styles/marketplace.css';
 import './Discover.css';
 import './DiscoverOverrides.css';
-
-interface Listing {
-  id: number;
-  title: string;
-  brand: string;
-  price: number;
-  condition: string;
-  size?: string;
-  category: string;
-  description?: string;
-  imageUrls?: string[];
-}
-
-interface SavedItem {
-  productId: number;
-}
 
 const categorySlides = [
   { category: 'Seasonal Edit', kicker: 'THE SEASONAL EDIT', title: 'Considered pieces. Loved for longer.', slogan: 'Chosen with care, worn with purpose, and loved through every chapter.', sloganStyle: 'editorial', button: 'Shop the collection', href: '/browsing?category=All%20Items', image: discoverHeroFrame04, position: 'center top' },
@@ -120,6 +105,7 @@ function Discover() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { addItem } = useCart();
   const { refresh: refreshSavedCount } = useSavedCount();
   const activeNewWeekCollage = newWeekCollages[newWeekCycle % newWeekCollages.length];
 
@@ -196,18 +182,29 @@ function Discover() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const [listingsResponse, savedResponse] = await Promise.all([
-          api.get<Listing[]>('/listings'),
-          isAuthenticated ? api.get<SavedItem[]>('/saved-items') : Promise.resolve(null),
-        ]);
+        // Community cards and Browse > All Items use the exact same source.
+        // Do not let an expired login or a saved-items error hide public listings.
+        const listingsResponse = await api.get<Listing[]>('/listings');
         const communityListings = listingsResponse.data;
         setHighlightedListings(getRandomListings(communityListings, 10));
-        setSavedProductIds(savedResponse ? savedResponse.data.map((item) => item.productId) : []);
         setSearchItems(communityListings);
       } catch (err) {
-        console.error('Error fetching home data:', err);
+        console.error('Error fetching community listings:', err);
         setHighlightedListings([]);
         setSearchItems([]);
+      }
+
+      if (!isAuthenticated) {
+        setSavedProductIds([]);
+        return;
+      }
+
+      try {
+        const savedResponse = await api.get<SavedItem[]>('/saved-items');
+        setSavedProductIds(savedResponse.data.map((item) => item.productId));
+      } catch (err) {
+        console.error('Error fetching saved items:', err);
+        setSavedProductIds([]);
       }
     };
 
@@ -246,6 +243,16 @@ function Discover() {
       alert('Could not update your saved items.');
     } finally {
       setSavingProductId(null);
+    }
+  };
+
+  const addToCart = async (productId: number) => {
+    try {
+      await addItem(productId);
+      alert('Added to cart!');
+    } catch (error) {
+      console.error('Failed to add product:', error);
+      alert('Could not add product to cart.');
     }
   };
 
@@ -379,7 +386,7 @@ function Discover() {
               type="button"
               className="price-drop-editorial-link"
               aria-label="Shop newly reduced prices"
-              onClick={() => navigate('/browsing')}
+              onClick={() => navigate('/browsing?collection=price-drops')}
             >
               <span className="price-drop-center">
                 <span className="price-drop-kicker">JUST REDUCED</span>
@@ -465,62 +472,25 @@ function Discover() {
         <section className={`listings-section${highlightedListings.length === 0 ? ' is-empty' : ''}`}>
           <div className="section-heading-row">
             <h2 className="section-title">From the community</h2>
-            <button className="view-all-button" onClick={() => navigate('/browsing')}>
+            <button
+              className="view-all-button"
+              onClick={() => navigate('/browsing?category=All%20Items')}
+            >
               View all <span aria-hidden="true">→</span>
             </button>
           </div>
 
-          {highlightedListings.length > 0 ? <div className="listings-grid">
+          {highlightedListings.length > 0 ? <div className="listings-grid community-listings-grid">
             {highlightedListings.map((item) => (
-              <div
-                className="highlight-listing-card"
+              <ListingTile
                 key={item.id}
-                role="link"
-                tabIndex={0}
-                onClick={() => navigate(item.id < 0
-                  ? `/browsing?category=${encodeURIComponent(item.category)}`
-                  : `/items/${item.id}`)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    navigate(item.id < 0
-                      ? `/browsing?category=${encodeURIComponent(item.category)}`
-                      : `/items/${item.id}`);
-                  }
-                }}
-              >
-                <button
-                  type="button"
-                  className={`highlight-save-button ${savedProductIds.includes(item.id) ? 'saved' : ''}`}
-                  aria-label={savedProductIds.includes(item.id) ? 'Remove from saved items' : 'Save item'}
-                  aria-pressed={savedProductIds.includes(item.id)}
-                  disabled={savingProductId === item.id}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleSaved(item.id);
-                  }}
-                  onKeyDown={(event) => event.stopPropagation()}
-                >
-                  <BookmarkIcon />
-                </button>
-
-                <ProductImageCarousel
-                  title={item.title}
-                  imageUrls={item.imageUrls}
-                />
-                <div className="highlight-listing-info">
-                  <div className="highlight-listing-header">
-                    <div>
-                      <p className="highlight-listing-brand">{item.brand}</p>
-                      <h3>{item.title}</h3>
-                    </div>
-                    <span>${item.price}</span>
-                  </div>
-                  <div className="highlight-listing-details">
-                    <span>{item.condition}</span>
-                    {item.size && <span>Size {item.size}</span>}
-                  </div>
-                </div>
-              </div>
+                listing={item}
+                saved={savedProductIds.includes(item.id)}
+                saving={savingProductId === item.id}
+                onOpen={(id) => navigate(`/items/${id}`)}
+                onToggleSave={toggleSaved}
+                onAddToCart={addToCart}
+              />
             ))}
           </div> : (
             <div
