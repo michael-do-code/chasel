@@ -6,7 +6,6 @@ import {
 } from 'react-router-dom';
 import api from '../api/axios';
 import './Login.css';
-import { useAuth } from '../context/AuthContext';
 
 function VerifyCode() {
   const [code, setCode] = useState('');
@@ -17,7 +16,6 @@ function VerifyCode() {
   const navigate = useNavigate();
 
   const email = location.state?.email as string | undefined;
-  const { login } = useAuth();
   if (!email) {
     return <Navigate to="/forgot-password" replace />;
   }
@@ -30,17 +28,15 @@ function VerifyCode() {
     setLoading(true);
 
     try {
-      const res = await api.post('/auth/verify-code', {
+      await api.post('/auth/verify-code', {
         email,
         code,
-    });
+      });
 
-    login(res.data.token);
-
-    navigate('/welcome', {
-    replace: true,
-    state: { type: 'verification' },
-    });
+      navigate('/reset-password', {
+        replace: true,
+        state: { email },
+      });
     } catch {
       setError('The verification code is invalid or expired.');
     } finally {
@@ -91,8 +87,10 @@ function VerifyCode() {
         </form>
       </div>
 
-      <div className="login-illustration">
-        <div className="illustration-shape" />
+      <div className="login-illustration login-video-panel">
+        <video className="login-fashion-video" autoPlay muted loop playsInline>
+          <source src="/videos/login-fashion.mp4" type="video/mp4" />
+        </video>
       </div>
     </div>
   );

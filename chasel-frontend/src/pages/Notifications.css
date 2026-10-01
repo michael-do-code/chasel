@@ -3,7 +3,7 @@
   top: 100%;
   right: 0;
   margin-top: 8px;
-  width: 360px;
+  width: 420px;
   max-width: calc(100vw - 32px);
   max-height: 480px;
   display: flex;
@@ -59,6 +59,47 @@
   gap: 6px;
 }
 
+.notifications-audience-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 8px;
+  gap: 4px;
+  background: #f8f3ec;
+  border-bottom: 1px solid #eadfd3;
+}
+
+.notifications-audience-tabs button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  color: #7c6c60;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.notification-tab-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  background: #c8442b;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff7ef;
+}
+
+.notifications-audience-tabs button.is-active {
+  color: #4a2b17;
+  background: #fff;
+  border-color: #d2b499;
+}
+
 .notification-card {
   position: relative;
   display: flex;
@@ -81,6 +122,8 @@
   background: #FFFAF3;
   border-color: #E6C9AC;
 }
+
+.notification-card.unread .notification-time { padding-right: 12px; }
 
 .notification-icon {
   flex-shrink: 0;
@@ -116,6 +159,43 @@
   color: #4A2B17;
   font-size: 13px;
   font-weight: 600;
+}
+
+.notification-title-with-status {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.notification-status {
+  padding: 3px 6px;
+  border: 1px solid;
+  font-family: var(--font-mono, monospace);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.notification-status.status-complete {
+  color: #315c3a;
+  background: #edf5ed;
+  border-color: #aac5ae;
+}
+
+.notification-status.status-active {
+  color: #74521d;
+  background: #fff8e8;
+  border-color: #d9bd8d;
+}
+
+.notification-status.status-alert {
+  color: #9a3529;
+  background: #fff2f0;
+  border-color: #e4b3ad;
 }
 
 .notification-time {

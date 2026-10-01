@@ -49,6 +49,8 @@ function ProductDetail() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [listing, setListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [isOwner, setIsOwner] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -68,26 +70,47 @@ function ProductDetail() {
   });
 
   useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        // Guests can view a listing, but ownership (for edit/delete) requires an account.
-        const [listingResponse, mineResponse] = await Promise.all([
-          api.get<Listing>(`/listings/${id}`),
-          isAuthenticated ? api.get<Listing[]>('/listings/mine') : Promise.resolve(null),
-        ]);
+    let cancelled = false;
 
+    const loadProduct = async () => {
+      setLoading(true);
+      setLoadError('');
+      setListing(null);
+      setIsOwner(false);
+      setSelectedImage(0);
+
+      try {
+        // The public product request must never depend on the private ownership check.
+        const listingResponse = await api.get<Listing>(`/listings/${id}`);
+        if (cancelled) return;
         const product = listingResponse.data;
         setListing(product);
-        setIsOwner(
-          mineResponse ? mineResponse.data.some((mine) => mine.id === product.id) : false
-        );
         setForm(createFormFromListing(product));
+
+        if (isAuthenticated) {
+          try {
+            const mineResponse = await api.get<Listing[]>('/listings/mine');
+            if (!cancelled) {
+              setIsOwner(mineResponse.data.some((mine) => mine.id === product.id));
+            }
+          } catch (ownershipError) {
+            console.error('Failed to check product ownership:', ownershipError);
+            if (!cancelled) setIsOwner(false);
+          }
+        }
       } catch (error) {
         console.error('Failed to load product:', error);
+        if (!cancelled) setLoadError('This product could not be loaded.');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
 
     loadProduct();
+
+    return () => {
+      cancelled = true;
+    };
   }, [id, isAuthenticated]);
 
   const updateField = (
@@ -176,8 +199,19 @@ function ProductDetail() {
     }
   };
 
-  if (!listing) {
+  if (loading) {
     return <main className="product-loading">Loading product…</main>;
+  }
+
+  if (!listing) {
+    return (
+      <main className="product-loading">
+        <p>{loadError || 'This product could not be loaded.'}</p>
+        <button type="button" onClick={() => navigate('/browsing')}>
+          ← Back to browse
+        </button>
+      </main>
+    );
   }
 
   const visibleImages = listing.imageUrls ?? [];

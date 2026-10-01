@@ -4,6 +4,7 @@ import com.app.chasel.dto.NotificationResponse;
 import com.app.chasel.model.Notification;
 import com.app.chasel.model.Users;
 import com.app.chasel.repository.UserRepository;
+import com.app.chasel.repository.OrderRepository;
 import com.app.chasel.service.NotificationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,15 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     public NotificationController(
             NotificationService notificationService,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            OrderRepository orderRepository) {
         this.notificationService = notificationService;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
     @GetMapping
@@ -57,6 +61,15 @@ public class NotificationController {
                 notification.getTitle(),
                 notification.getMessage(),
                 notification.getRelatedListingId(),
+                notification.getRelatedOrderId(),
+                notification.getRelatedOrderId() == null ? null : orderRepository
+                        .findById(notification.getRelatedOrderId())
+                        .map(order -> order.getOrderNumber())
+                        .orElse(null),
+                notification.getRelatedOrderId() == null ? null : orderRepository
+                        .findById(notification.getRelatedOrderId())
+                        .map(order -> order.getStatus().name())
+                        .orElse(null),
                 notification.isRead(),
                 notification.getCreatedAt()
         );

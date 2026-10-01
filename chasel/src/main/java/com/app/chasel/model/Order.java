@@ -29,12 +29,23 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "public_order_number", unique = true, length = 8)
+    private String orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Users buyer;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal taxAmount;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal deliveryAmount;
+
+    private String contactEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -52,6 +63,16 @@ public class Order {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    /**
+     * Server-controlled deadline for cancelling a newly placed order.
+     * Nullable so orders created before this feature remain readable.
+     */
+    private LocalDateTime cancelUntil;
+
+    private LocalDateTime cancelledAt;
+
+    private LocalDateTime processingAt;
 
     @PrePersist
     protected void onCreate() {
@@ -82,6 +103,10 @@ public class Order {
         return id;
     }
 
+    public String getOrderNumber() { return orderNumber; }
+
+    public void setOrderNumber(String orderNumber) { this.orderNumber = orderNumber; }
+
     public Users getBuyer() {
         return buyer;
     }
@@ -97,6 +122,22 @@ public class Order {
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
+
+    public BigDecimal getTaxAmount() { return taxAmount == null ? BigDecimal.ZERO : taxAmount; }
+
+    public void setTaxAmount(BigDecimal taxAmount) { this.taxAmount = taxAmount; }
+
+    public BigDecimal getDeliveryAmount() {
+        return deliveryAmount == null ? BigDecimal.ZERO : deliveryAmount;
+    }
+
+    public void setDeliveryAmount(BigDecimal deliveryAmount) { this.deliveryAmount = deliveryAmount; }
+
+    public String getContactEmail() {
+        return contactEmail == null ? buyer.getEmail() : contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
 
     public OrderStatus getStatus() {
         return status;
@@ -124,5 +165,29 @@ public class Order {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDateTime getCancelUntil() {
+        return cancelUntil;
+    }
+
+    public void setCancelUntil(LocalDateTime cancelUntil) {
+        this.cancelUntil = cancelUntil;
+    }
+
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
+    }
+
+    public LocalDateTime getProcessingAt() {
+        return processingAt;
+    }
+
+    public void setProcessingAt(LocalDateTime processingAt) {
+        this.processingAt = processingAt;
     }
 }

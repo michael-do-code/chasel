@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 import './SellItem.css';
 
 interface FormErrors {
@@ -26,6 +28,7 @@ function SellItem() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const validateForm = () => {
     const newErrors: FormErrors = {};
@@ -137,6 +140,14 @@ const handleImageUpload = (
     setTimeout(() => navigate('/browsing'), 1500);
   } catch (err) {
     console.error('Error creating listing:', err);
+
+    if (axios.isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 403)) {
+      logout();
+      navigate('/login', {
+        state: { message: 'Your session expired. Please log in again to list this item.' },
+      });
+      return;
+    }
 
     const errorMessage =
       err instanceof Error

@@ -1,6 +1,7 @@
 import type { Listing } from '../types/listing';
 
 const STORAGE_KEY = 'chasel-curated-cart';
+const CART_CHANGED_EVENT = 'chasel:local-cart-changed';
 
 export interface CuratedCartItem {
   cartItemId: number;
@@ -38,9 +39,18 @@ export const addCuratedListingToCart = (listing: Listing) => {
   }
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  window.dispatchEvent(new Event(CART_CHANGED_EVENT));
 };
 
 export const removeCuratedListingFromCart = (productId: number) => {
   const items = getCuratedCart().filter((item) => item.productId !== productId);
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  window.dispatchEvent(new Event(CART_CHANGED_EVENT));
 };
+
+export const clearCuratedCart = () => {
+  window.localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event(CART_CHANGED_EVENT));
+};
+
+export const localCartChangedEvent = CART_CHANGED_EVENT;

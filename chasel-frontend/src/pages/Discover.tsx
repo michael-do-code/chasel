@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import BookmarkIcon from '../components/BookmarkIcon';
-import ProductImageCarousel from '../components/ProductImageCarousel';
+import ListingTile from '../components/editorial/ListingTile';
 import { useAuth } from '../context/AuthContext';
-import { useSearch } from '../context/SearchContext';
+import { useCart } from '../context/CartContext';
 import { useSavedCount } from '../context/SavedItemsContext';
+import { useSearch } from '../context/SearchContext';
+import type { Listing, SavedItem } from '../types/listing';
 import discoverHeroFrame04 from '../assets/discover-hero-frame-04.png';
 import promoDesigner from '../assets/promo-category-handbags-wide.png';
 import promoCategoryClothing from '../assets/promo-category-clothing-wide.png';
@@ -15,31 +16,27 @@ import promoCategoryJewelry from '../assets/promo-category-jewelry-wide.png';
 import promoCategoryWatches from '../assets/promo-category-watches-wide.png';
 import promoHome from '../assets/promo-home.png';
 import promoBeauty from '../assets/promo-beauty.png';
-import promoPriceDrops from '../assets/promo-price-drops-symbols.png';
-import promoTrendingNow from '../assets/promo-trending-model-green-purse.png';
-import promoUnder100 from '../assets/promo-under-100-price-line.png';
-import promoNewWeek from '../assets/promo-new-week-refined.png';
-import promoMostSaved from '../assets/promo-most-saved-refined.png';
-import promoAuthenticated from '../assets/promo-authenticated-refined.png';
-import promoCompleteLook from '../assets/promo-complete-look-refined.png';
+import priceDropsEditorial from '../assets/price-drops-static-background-v2.png';
+import priceDropsBag from '../assets/price-drops-bag-layer.png';
+import priceDropsChair from '../assets/price-drops-chair-layer.png';
+import priceDropsShoes from '../assets/price-drops-shoes-layer.png';
+import priceDropsBelt from '../assets/price-drops-belt-layer.png';
+import promoTrendingNowBase from '../assets/trending-now-clean-background-v6.png';
+import trendingCard01 from '../assets/trending-card-01-clean.png';
+import trendingCard02 from '../assets/trending-card-02-clean.png';
+import trendingCard03 from '../assets/trending-card-03-clean.png';
+import under100Handbag from '../assets/under-100-community-handbag.png';
+import under100Cardigan from '../assets/under-100-community-cardigan.png';
+import under100Boots from '../assets/under-100-community-boots.png';
+import under100Scarf from '../assets/under-100-community-scarf.png';
+import under100Watch from '../assets/under-100-community-watch.png';
+import promoNewWeekCollage from '../assets/promo-new-week-community-collage.png';
+import promoNewWeekCollage02 from '../assets/promo-new-week-community-collage-02.png';
+import promoNewWeekCollage03 from '../assets/promo-new-week-community-collage-03.png';
+import promoNewWeekCollage04 from '../assets/promo-new-week-community-collage-04.png';
 import '../styles/marketplace.css';
 import './Discover.css';
-
-interface Listing {
-  id: number;
-  title: string;
-  brand: string;
-  price: number;
-  condition: string;
-  size?: string;
-  category: string;
-  description?: string;
-  imageUrls?: string[];
-}
-
-interface SavedItem {
-  productId: number;
-}
+import './DiscoverOverrides.css';
 
 const categorySlides = [
   { category: 'Seasonal Edit', kicker: 'THE SEASONAL EDIT', title: 'Considered pieces. Loved for longer.', slogan: 'Chosen with care, worn with purpose, and loved through every chapter.', sloganStyle: 'editorial', button: 'Shop the collection', href: '/browsing?category=All%20Items', image: discoverHeroFrame04, position: 'center top' },
@@ -54,6 +51,21 @@ const categorySlides = [
 ];
 
 const carouselSlides = [...categorySlides, categorySlides[0]];
+
+const under100Slides = [
+  { name: 'Leather Crossbody', detail: 'Everyday structure in rich oxblood leather.', price: 64, image: under100Handbag },
+  { name: 'Cable-Knit Cardigan', detail: 'A polished layer with timeless texture.', price: 48, image: under100Cardigan },
+  { name: 'Chocolate Ankle Boots', detail: 'A refined staple made for repeat wear.', price: 89, image: under100Boots },
+  { name: 'Silk Scarf & Pendant', detail: 'Two finishing touches, one easy find.', price: 36, image: under100Scarf },
+  { name: 'Classic Leather Watch', detail: 'Quiet polish for every day of the week.', price: 75, image: under100Watch },
+];
+
+const newWeekCollages = [
+  promoNewWeekCollage,
+  promoNewWeekCollage02,
+  promoNewWeekCollage03,
+  promoNewWeekCollage04,
+];
 
 const getRandomListings = (items: Listing[], count: number) => {
   const shuffled = [...items];
@@ -70,23 +82,32 @@ const fullPanelStyle = (image: string, position = 'center') => ({
   backgroundImage: `url(${image})`,
   backgroundPosition: position,
   backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
 });
 
 function Discover() {
   const [highlightedListings, setHighlightedListings] = useState<Listing[]>([]);
   const [activeCategorySlide, setActiveCategorySlide] = useState(0);
   const [isCategoryCarouselPaused, setIsCategoryCarouselPaused] = useState(false);
+  const [activeUnder100Slide, setActiveUnder100Slide] = useState(0);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const [isNewWeekRevealed, setIsNewWeekRevealed] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  const [newWeekCycle, setNewWeekCycle] = useState(0);
   const [savedProductIds, setSavedProductIds] = useState<number[]>([]);
   const [savingProductId, setSavingProductId] = useState<number | null>(null);
   const { setSearchItems } = useSearch();
   const categoryCarouselRef = useRef<HTMLDivElement>(null);
   const categoryScrollEndTimerRef = useRef<number | undefined>(undefined);
+  const newWeekRef = useRef<HTMLElement>(null);
 
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { addItem } = useCart();
   const { refresh: refreshSavedCount } = useSavedCount();
+  const activeNewWeekCollage = newWeekCollages[newWeekCycle % newWeekCollages.length];
 
   useEffect(() => {
     const carousel = categoryCarouselRef.current;
@@ -129,18 +150,61 @@ function Discover() {
   }, [isCategoryCarouselPaused]);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      setActiveUnder100Slide((current) => (current + 1) % under100Slides.length);
+    }, 4200);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const panel = newWeekRef.current;
+    if (!panel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setIsNewWeekRevealed(true);
+      observer.disconnect();
+    }, { threshold: 0.35 });
+
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isNewWeekRevealed) return;
+    const timer = window.setInterval(() => {
+      setNewWeekCycle((current) => current + 1);
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [isNewWeekRevealed]);
+
+  useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        // Guests can browse listings, but saved items are per-account.
-        const [listingsResponse, savedResponse] = await Promise.all([
-          api.get<Listing[]>('/listings'),
-          isAuthenticated ? api.get<SavedItem[]>('/saved-items') : Promise.resolve(null),
-        ]);
-        setHighlightedListings(getRandomListings(listingsResponse.data, 5));
-        setSavedProductIds(savedResponse ? savedResponse.data.map((item) => item.productId) : []);
-        setSearchItems(listingsResponse.data);
+        // Community cards and Browse > All Items use the exact same source.
+        // Do not let an expired login or a saved-items error hide public listings.
+        const listingsResponse = await api.get<Listing[]>('/listings');
+        const communityListings = listingsResponse.data;
+        setHighlightedListings(getRandomListings(communityListings, 10));
+        setSearchItems(communityListings);
       } catch (err) {
-        console.error('Error fetching home data:', err);
+        console.error('Error fetching community listings:', err);
+        setHighlightedListings([]);
+        setSearchItems([]);
+      }
+
+      if (!isAuthenticated) {
+        setSavedProductIds([]);
+        return;
+      }
+
+      try {
+        const savedResponse = await api.get<SavedItem[]>('/saved-items');
+        setSavedProductIds(savedResponse.data.map((item) => item.productId));
+      } catch (err) {
+        console.error('Error fetching saved items:', err);
+        setSavedProductIds([]);
       }
     };
 
@@ -154,6 +218,14 @@ function Discover() {
     }
 
     const isSaved = savedProductIds.includes(productId);
+
+    if (productId < 0) {
+      setSavedProductIds((current) => isSaved
+        ? current.filter((id) => id !== productId)
+        : [...current, productId]);
+      return;
+    }
+
     setSavingProductId(productId);
 
     try {
@@ -171,6 +243,16 @@ function Discover() {
       alert('Could not update your saved items.');
     } finally {
       setSavingProductId(null);
+    }
+  };
+
+  const addToCart = async (productId: number) => {
+    try {
+      await addItem(productId);
+      alert('Added to cart!');
+    } catch (error) {
+      console.error('Failed to add product:', error);
+      alert('Could not add product to cart.');
     }
   };
 
@@ -292,144 +374,173 @@ function Discover() {
         <section className="category-campaign-grid" aria-label="Marketplace highlights">
           <article
             className="campaign-panel marketplace-promo marketplace-promo-price"
-            style={fullPanelStyle(promoPriceDrops)}
+            style={fullPanelStyle(priceDropsEditorial)}
           >
-            <div className="campaign-copy">
-              <p>JUST REDUCED</p>
-              <h2>Price Drops</h2>
-              <span>New markdowns across the marketplace</span>
-              <div className="price-examples" aria-label="Old prices reduced to new prices">
-                <div className="price-change">
-                  <del>Old price</del><span aria-hidden="true">→</span><strong>New price</strong>
-                </div>
-              </div>
-              <button onClick={() => navigate('/browsing')}>See new prices</button>
+            <div className="price-drop-product-layers" aria-hidden="true">
+              <img className="price-drop-product product-bag" src={priceDropsBag} alt="" />
+              <img className="price-drop-product product-chair" src={priceDropsChair} alt="" />
+              <img className="price-drop-product product-shoes" src={priceDropsShoes} alt="" />
+              <img className="price-drop-product product-belt" src={priceDropsBelt} alt="" />
             </div>
+            <button
+              type="button"
+              className="price-drop-editorial-link"
+              aria-label="Shop newly reduced prices"
+              onClick={() => navigate('/browsing?collection=price-drops')}
+            >
+              <span className="price-drop-center">
+                <span className="price-drop-kicker">JUST REDUCED</span>
+                <span className="price-drop-heading" aria-label="New price">
+                  <span>NEW</span>
+                  <span>PRICE</span>
+                </span>
+                <span className="price-drop-description">Fresh markdowns worth a second look.</span>
+                <span className="price-drop-cta">Shop new prices <span aria-hidden="true">→</span></span>
+              </span>
+            </button>
           </article>
 
           <article
             className="campaign-panel marketplace-promo marketplace-promo-trending"
-            style={fullPanelStyle(promoTrendingNow)}
+            style={fullPanelStyle(promoTrendingNowBase)}
           >
-            <div className="campaign-copy">
-              <p>WHAT’S RISING</p>
-              <h2>Trending Now</h2>
-              <span>The pieces gaining attention fastest right now</span>
-              <button onClick={() => navigate('/browsing?collection=trending')}>Explore trending</button>
+            <div className="trending-card-layers" aria-hidden="true">
+              <span className="trending-tape-scrap tape-scrap-01a" />
+              <span className="trending-tape-scrap tape-scrap-01b" />
+              <span className="trending-tape-scrap tape-scrap-02a" />
+              <span className="trending-tape-scrap tape-scrap-02b" />
+              <img className="trending-card-layer trending-card-01" src={trendingCard01} alt="" />
+              <img className="trending-card-layer trending-card-02" src={trendingCard02} alt="" />
+              <img className="trending-card-layer trending-card-03" src={trendingCard03} alt="" />
             </div>
+            <button
+              type="button"
+              className="trending-editorial-link"
+              aria-label="Shop the Trending Now edit"
+              onClick={() => navigate('/browsing?collection=trending')}
+            >
+              <span>Shop the edit</span>
+            </button>
           </article>
 
           <article
-            className="campaign-panel marketplace-promo marketplace-promo-fresh"
-            style={fullPanelStyle(promoUnder100)}
+            className="campaign-panel marketplace-promo marketplace-promo-fresh under-100-campaign"
+            aria-label="Shop five featured finds under $100"
           >
-            <div className="campaign-copy">
-              <p>GREAT FINDS, SMALLER PRICES</p>
-              <h2>Under $100</h2>
-              <span>Designer style, always within reach</span>
-              <button onClick={() => navigate('/browsing?maxPrice=100')}>Shop under $100</button>
+            <div className="under-100-slide-images" aria-hidden="true">
+              {under100Slides.map((slide, index) => (
+                <div
+                  key={slide.name}
+                  className={index === activeUnder100Slide ? 'active' : ''}
+                  style={fullPanelStyle(slide.image)}
+                />
+              ))}
+            </div>
+            <div className="campaign-copy under-100-copy">
+              <p className="under-100-kicker">EVERYTHING SHOWN IS UNDER $100</p>
+              <h2>Great style.<br /><em>Smaller prices.</em></h2>
+              <div className="under-100-item-copy" aria-live="polite">
+                <h3>{under100Slides[activeUnder100Slide].name}</h3>
+                <p>{under100Slides[activeUnder100Slide].detail}</p>
+              </div>
+              <button onClick={() => navigate('/browsing?maxPrice=100')}>
+                Shop all items under $100 <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div className="under-100-price" aria-live="polite">
+              <small>THIS FIND</small>
+              <strong>${under100Slides[activeUnder100Slide].price}</strong>
+              <span>UNDER $100</span>
+            </div>
+            <div className="under-100-dots" aria-label="Choose an under $100 featured item">
+              {under100Slides.map((slide, index) => (
+                <button
+                  type="button"
+                  key={slide.name}
+                  className={index === activeUnder100Slide ? 'active' : ''}
+                  aria-label={`Show ${slide.name}, $${slide.price}`}
+                  aria-current={index === activeUnder100Slide ? 'true' : undefined}
+                  onClick={() => setActiveUnder100Slide(index)}
+                />
+              ))}
             </div>
           </article>
 
         </section>
 
-        {/* Listings Section */}
-        <section className="listings-section">
+        {/* Keep the community heading visible, but never invent demo listings. */}
+        <section className={`listings-section${highlightedListings.length === 0 ? ' is-empty' : ''}`}>
           <div className="section-heading-row">
             <h2 className="section-title">From the community</h2>
-            <button className="view-all-button" onClick={() => navigate('/browsing')}>
+            <button
+              className="view-all-button"
+              onClick={() => navigate('/browsing?category=All%20Items')}
+            >
               View all <span aria-hidden="true">→</span>
             </button>
           </div>
 
-          <div className="listings-grid">
+          {highlightedListings.length > 0 ? <div className="listings-grid community-listings-grid">
             {highlightedListings.map((item) => (
-              <div
-                className="highlight-listing-card"
+              <ListingTile
                 key={item.id}
-                role="link"
-                tabIndex={0}
-                onClick={() => navigate(`/items/${item.id}`)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    navigate(`/items/${item.id}`);
-                  }
-                }}
-              >
-                <button
-                  type="button"
-                  className={`highlight-save-button ${savedProductIds.includes(item.id) ? 'saved' : ''}`}
-                  aria-label={savedProductIds.includes(item.id) ? 'Remove from saved items' : 'Save item'}
-                  aria-pressed={savedProductIds.includes(item.id)}
-                  disabled={savingProductId === item.id}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleSaved(item.id);
-                  }}
-                  onKeyDown={(event) => event.stopPropagation()}
-                >
-                  <BookmarkIcon />
-                </button>
-
-                <ProductImageCarousel
-                  title={item.title}
-                  imageUrls={item.imageUrls}
-                />
-                <div className="highlight-listing-info">
-                  <div className="highlight-listing-header">
-                    <div>
-                      <p className="highlight-listing-brand">{item.brand}</p>
-                      <h3>{item.title}</h3>
-                    </div>
-                    <span>${item.price}</span>
-                  </div>
-                  <div className="highlight-listing-details">
-                    <span>{item.condition}</span>
-                    {item.size && <span>Size {item.size}</span>}
-                  </div>
-                </div>
-              </div>
+                listing={item}
+                saved={savedProductIds.includes(item.id)}
+                saving={savingProductId === item.id}
+                onOpen={(id) => navigate(`/items/${id}`)}
+                onToggleSave={toggleSaved}
+                onAddToCart={addToCart}
+              />
             ))}
-          </div>
+          </div> : (
+            <div
+              className="community-empty-space"
+              role="status"
+              aria-label="No community listings available"
+            />
+          )}
         </section>
 
-        {/* Supporting campaigns keep the page useful without competing with listings. */}
         <section className="campaign-lower" aria-label="More featured promotions">
-          <article className="campaign-panel campaign-panel-wide campaign-new-week" style={fullPanelStyle(promoNewWeek)}>
-            <div className="campaign-copy">
-              <p>FRESHLY LISTED</p>
-              <h2>New This Week</h2>
-              <span>Handpicked arrivals from our community.</span>
-              <button onClick={() => navigate('/browsing?collection=new-this-week')}>Browse new arrivals</button>
+          <article
+            ref={newWeekRef}
+            className={`campaign-panel campaign-panel-wide campaign-new-week${isNewWeekRevealed ? ' is-revealed' : ''}`}
+            style={fullPanelStyle(activeNewWeekCollage)}
+          >
+            <div className="new-week-photo-reveal" aria-hidden="true">
+              {newWeekCollages.map((collage, index) => (
+                <img
+                  key={collage}
+                  className={`new-week-collage-base${index === newWeekCycle % newWeekCollages.length ? ' active' : ''}`}
+                  src={collage}
+                  alt=""
+                />
+              ))}
+              <div key={newWeekCycle} className="new-week-photo-pieces">
+                {Array.from({ length: 14 }, (_, index) => (
+                  <img
+                    key={`${newWeekCycle}-${index}`}
+                    className={`new-week-photo-piece new-week-photo-piece-${index + 1}`}
+                    src={activeNewWeekCollage}
+                    alt=""
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="new-week-edition" aria-hidden="true">
+              <span>WEEKLY EDIT</span>
+              <span>№ 24</span>
+            </div>
+            <div className="campaign-copy new-week-copy">
+              <p><span aria-hidden="true" />JUST LISTED</p>
+              <h2>New this<br /><em>week</em></h2>
+              <span>New finds posted by our community, all in one thoughtfully curated edit.</span>
+              <button onClick={() => navigate('/browsing?collection=new-this-week')}>
+                Explore new arrivals <span aria-hidden="true">→</span>
+              </button>
             </div>
             <span className="sponsored-label">Sponsored</span>
           </article>
-          <div className="campaign-trust-grid">
-            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoMostSaved)}>
-              <div className="campaign-copy">
-                <p>COMMUNITY SIGNAL</p>
-                <h3>Most Saved</h3>
-                <span>The pieces shoppers keep coming back to.</span>
-                <button onClick={() => navigate('/browsing?collection=most-saved')}>See most saved</button>
-              </div>
-            </article>
-            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoAuthenticated)}>
-              <div className="campaign-copy">
-                <p>BUY WITH CONFIDENCE</p>
-                <h3>Authenticated Icons</h3>
-                <span>Recognizable designs, checked with care.</span>
-                <button onClick={() => navigate('/browsing?collection=authenticated')}>Explore authenticated</button>
-              </div>
-            </article>
-            <article className="campaign-panel campaign-trust-card" style={fullPanelStyle(promoCompleteLook)}>
-              <div className="campaign-copy">
-                <p>STYLE IT TOGETHER</p>
-                <h3>Complete the Look</h3>
-                <span>Thoughtful pairings across every category.</span>
-                <button onClick={() => navigate('/browsing?collection=complete-the-look')}>Build your look</button>
-              </div>
-            </article>
-          </div>
         </section>
 
         <footer className="site-footer" aria-label="Chasel footer">
@@ -447,7 +558,6 @@ function Discover() {
               <h4>Here when you need us.</h4>
               <p>Guidance for buying, selling, delivery, and every step in between.</p>
               <div className="footer-link-grid">
-                <button type="button" onClick={() => navigate('/about')}>About us</button>
                 <span>Contact support</span>
                 <span>Shipping &amp; returns</span>
                 <span>Authentication</span>
@@ -462,8 +572,8 @@ function Discover() {
               <h4>Clear, considered standards.</h4>
               <p>How we protect the marketplace, your information, and our community.</p>
               <div className="footer-link-grid">
-                <button type="button" onClick={() => navigate('/privacy-policy')}>Privacy policy</button>
-                <button type="button" onClick={() => navigate('/terms-of-use')}>Terms of use</button>
+                <span>Privacy policy</span>
+                <span>Terms of use</span>
                 <span>Community guidelines</span>
                 <span>Cookie policy</span>
                 <span>Accessibility</span>

@@ -8,6 +8,9 @@ public record NotificationResponse(
         String title,
         String message,
         Long relatedListingId,
+        Long relatedOrderId,
+        String relatedOrderNumber,
+        String relatedOrderStatus,
         boolean read,
         LocalDateTime createdAt
 ) {

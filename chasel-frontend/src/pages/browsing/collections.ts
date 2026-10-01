@@ -49,6 +49,20 @@ const LUXURY_BRANDS = [
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const COLLECTIONS: Record<string, CollectionDefinition> = {
+  'price-drops': {
+    kicker: 'JUST REDUCED',
+    title: 'New prices',
+    lede: 'Only pieces whose sellers have lowered the original asking price.',
+    matches: (listing) =>
+      typeof listing.previousPrice === 'number' &&
+      listing.previousPrice > listing.price,
+    compare: (a, b) => {
+      const aSaving = (a.previousPrice ?? a.price) - a.price;
+      const bSaving = (b.previousPrice ?? b.price) - b.price;
+      return bSaving - aSaving || newestFirst(a, b);
+    },
+  },
+
   sustainable: {
     kicker: 'THE SUSTAINABLE EDIT',
     title: 'Worn well, worn again',

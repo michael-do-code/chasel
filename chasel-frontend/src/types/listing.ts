@@ -12,6 +12,8 @@ export interface Listing {
   description?: string;
   imageUrls?: string[];
   createdAt: string;
+  /** Real marketplace inventory status; preview catalog pieces omit it. */
+  status?: 'ACTIVE' | 'SOLD' | 'DRAFT';
 }
 
 /** Shape returned by `GET /saved-items`. */
