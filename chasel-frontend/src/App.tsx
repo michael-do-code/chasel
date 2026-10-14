@@ -34,6 +34,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import Purchases from './pages/Purchases';
 import Sales from './pages/Sales';
+import Activity from './pages/Activity';
 
 /**
  * `/home` was renamed to `/browsing`. Redirect, keeping any `?category=` or
@@ -145,6 +146,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Purchases />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/activity"
+            element={
+              <ProtectedRoute>
+                <Activity />
               </ProtectedRoute>
             }
           />

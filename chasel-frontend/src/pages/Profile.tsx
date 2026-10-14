@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import OwnerListingGrid from '../components/OwnerListingGrid';
-import { useMyListings } from '../hooks/useMyListings';
+import ListingGrid from '../components/editorial/ListingGrid';
+import PageHeading from '../components/editorial/PageHeading';
+import Avatar from '../components/editorial/Avatar';
+import type { Listing } from '../types/listing';
 import './Profile.css';
-import '../styles/marketplace.css';
 
 interface UserProfile {
   email: string;
@@ -17,57 +18,29 @@ interface UserProfile {
 }
 
 /** How many of the newest listings /profile shows before "View all". */
-const PROFILE_LISTING_PREVIEW = 3;
+const PROFILE_LISTING_PREVIEW = 4;
 
-const mockRating = { average: 4.2, count: 1284 };
-
-interface Review {
-  id: number;
-  reviewer: string;
-  rating: number;
-  comment: string;
-  item: string;
-  date: string;
+// Only the fields the stats need from /orders/my-sales.
+interface SaleSummary {
+  quantity: number;
+  status: string;
+  returnStatus: string | null;
 }
 
-const mockReviews: Review[] = [
-  {
-    id: 1,
-    reviewer: 'Amelia R.',
-    rating: 5,
-    comment: 'Exactly as described, shipped fast and packaged with care. Would buy from again.',
-    item: 'Raw Silk Overshirt',
-    date: 'June 2026',
-  },
-  {
-    id: 2,
-    reviewer: 'Marcus T.',
-    rating: 4,
-    comment: 'Great condition, a little later on shipping but seller kept me updated the whole time.',
-    item: 'Archive Chelsea Boot 02',
-    date: 'May 2026',
-  },
-  {
-    id: 3,
-    reviewer: 'Priya K.',
-    rating: 5,
-    comment: 'Beautiful piece, even better in person. Very responsive and easy to work with.',
-    item: 'Heavy Wool Trouser',
-    date: 'April 2026',
-  },
-];
-
-function getReviewerInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase();
+interface SellerStats {
+  itemsSold: number;
 }
 
-function formatRatingCount(count: number): string {
-  if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k+`;
-  return `${count}`;
+// Sales that didn't stick: cancelled orders and completed returns.
+function countsAsSold(sale: SaleSummary): boolean {
+  return sale.status !== 'CANCELLED' && sale.returnStatus !== 'RETURNED' && sale.returnStatus !== 'REFUNDED';
+}
+
+function summarizeSales(sales: SaleSummary[]): SellerStats {
+  const kept = sales.filter(countsAsSold);
+  return {
+    itemsSold: kept.reduce((total, sale) => total + sale.quantity, 0),
+  };
 }
 
 function formatMemberSince(createdAt: string | null): string {
@@ -76,21 +49,22 @@ function formatMemberSince(createdAt: string | null): string {
   return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long' });
 }
 
-function getInitials(profile: UserProfile): string {
-  const first = profile.firstName?.trim()[0];
-  const last = profile.lastName?.trim()[0];
-  if (first && last) return (first + last).toUpperCase();
-  if (first) return first.toUpperCase();
-  return profile.email[0].toUpperCase();
-}
-
 function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const { listings: myListings, replaceListing, removeListing } = useMyListings();
+  const [myListings, setMyListings] = useState<Listing[]>([]);
+  const [stats, setStats] = useState<SellerStats | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     api.get<UserProfile>('/users/me').then((res) => setProfile(res.data));
+    api.get<Listing[]>('/listings/mine')
+      .then((res) => setMyListings(
+        [...res.data].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+      ))
+      .catch((error) => console.error('Failed to load your listings:', error));
+    api.get<SaleSummary[]>('/orders/my-sales')
+      .then((res) => setStats(summarizeSales(res.data)))
+      .catch((error) => console.error('Failed to load sales for stats:', error));
   }, []);
 
   const handleLogout = () => {
@@ -99,97 +73,93 @@ function Profile() {
   };
 
   if (!profile) {
-    return null;
+    return (
+      <div className="profile-page">
+        <div className="profile-shell">
+          <p className="profile-status">Loading your profile…</p>
+        </div>
+      </div>
+    );
   }
 
   const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ') || profile.email;
+  const memberSince = formatMemberSince(profile.createdAt);
 
   return (
     <div className="profile-page">
-      <section className="dashboard-info-panel">
-        <div className="dashboard-avatar">
-          {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : getInitials(profile)}
-        </div>
+      <div className="profile-shell">
+        <PageHeading
+          kicker="Your account"
+          title={fullName}
+          leading={<Avatar name={fullName} imageUrl={profile.avatarUrl} size="lg" />}
+        >
+          <hr className="ed-rule profile-rule" />
 
-        <div className="dashboard-info-main">
-          <div className="dashboard-name-row">
-            <h2>{fullName}</h2>
-            <div className="dashboard-rating">
-              <span className="dashboard-rating-star">★</span>
-              <span className="dashboard-rating-score">{mockRating.average.toFixed(1)}</span>
-              <span className="dashboard-rating-count">({formatRatingCount(mockRating.count)} ratings)</span>
+          <div className="profile-details-row">
+            <dl className="profile-details">
+              <div>
+                <dt>Email</dt>
+                <dd>{profile.email}</dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd>{profile.phone || '—'}</dd>
+              </div>
+              <div>
+                <dt>Member since</dt>
+                <dd>{memberSince || '—'}</dd>
+              </div>
+              <div>
+                <dt>Rating</dt>
+                <dd className="profile-detail-muted">No ratings yet</dd>
+              </div>
+              <div>
+                <dt>Items sold</dt>
+                <dd>{stats ? stats.itemsSold : '—'}</dd>
+              </div>
+            </dl>
+
+            <div className="profile-actions">
+              <Link to="/profile/edit" className="ed-btn ed-btn-solid">Edit profile</Link>
+              <button type="button" className="ed-btn ed-btn-outline" onClick={handleLogout}>Log out</button>
             </div>
           </div>
+        </PageHeading>
 
-          <dl className="dashboard-info">
-            <div className="dashboard-info-item">
-              <dt>Email</dt>
-              <dd>{profile.email}</dd>
-            </div>
-            <div className="dashboard-info-item">
-              <dt>Phone</dt>
-              <dd>{profile.phone || '—'}</dd>
-            </div>
-            <div className="dashboard-info-item">
-              <dt>Member since</dt>
-              <dd>{formatMemberSince(profile.createdAt) || '—'}</dd>
-            </div>
-          </dl>
-        </div>
+        <section className="profile-section">
+          <header className="profile-section-heading">
+            <span className="ed-kicker">01</span>
+            <h2>My listings</h2>
+            {myListings.length > 0 && (
+              <Link to="/my-listings" className="profile-view-all">
+                View all ({myListings.length}) <span aria-hidden="true">→</span>
+              </Link>
+            )}
+          </header>
 
-        <div className="dashboard-info-actions">
-          <Link to="/purchases" className="dashboard-edit-link">Purchases</Link>
-          <Link to="/sales" className="dashboard-edit-link">Sales</Link>
-          <Link to="/profile/edit" className="dashboard-edit-link">Edit Profile</Link>
-          <button onClick={handleLogout}>Log out</button>
-        </div>
-      </section>
-
-      <section className="dashboard-listings-panel listings-section">
-        <div className="dashboard-section-header">
-          <h2 className="section-title">My listings</h2>
-          {myListings.length > 0 && (
-            <Link to="/my-listings" className="dashboard-view-all">
-              View all ({myListings.length}) <span aria-hidden="true">→</span>
-            </Link>
+          {myListings.length === 0 ? (
+            <div className="profile-empty">
+              <p>You haven't listed anything yet.</p>
+              <Link to="/sell-item" className="ed-btn ed-btn-outline">List an item</Link>
+            </div>
+          ) : (
+            // Exactly how shoppers see these pieces in Browse; the grid already
+            // hides "Add to cart" on the member's own listings.
+            <ListingGrid listings={myListings.slice(0, PROFILE_LISTING_PREVIEW)} />
           )}
-        </div>
+        </section>
 
-        {myListings.length === 0 ? (
-          <div className="dashboard-empty">No products yet</div>
-        ) : (
-          <OwnerListingGrid
-            listings={myListings.slice(0, PROFILE_LISTING_PREVIEW)}
-            onUpdated={replaceListing}
-            onDeleted={removeListing}
-          />
-        )}
-      </section>
+        <section className="profile-section">
+          <header className="profile-section-heading">
+            <span className="ed-kicker">02</span>
+            <h2>Reviews from buyers</h2>
+          </header>
 
-      <section className="dashboard-reviews-panel listings-section">
-        <h2 className="section-title">Reviews from buyers</h2>
-
-        <div className="dashboard-reviews-list">
-          {mockReviews.map((review) => (
-            <div className="dashboard-review-card" key={review.id}>
-              <div className="dashboard-review-avatar">{getReviewerInitials(review.reviewer)}</div>
-              <div className="dashboard-review-body">
-                <div className="dashboard-review-header">
-                  <span className="dashboard-review-name">{review.reviewer}</span>
-                  <span className="dashboard-review-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
-                </div>
-                <p className="dashboard-review-comment">{review.comment}</p>
-                <div className="dashboard-review-meta">
-                  <span>{review.item}</span>
-                  <span>·</span>
-                  <span>{review.date}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+          <div className="profile-empty">
+            <p>No reviews yet. Reviews from your buyers will show up here.</p>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

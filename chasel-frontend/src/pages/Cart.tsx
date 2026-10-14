@@ -140,24 +140,29 @@ function Cart({ open, onClose, startInCheckout = false }: CartProps) {
   async function startCheckout() {
     setView('checkout');
     setCheckoutError('');
+    // Loaded independently so a failed states request can't stop the prefill.
+    api.get<string[]>('/options/states')
+      .then((response) => setStates(response.data))
+      .catch((error) => console.error('Failed to load states:', error));
+
+    if (!isAuthenticated) return;
+
     try {
-      const statesResponse = await api.get<string[]>('/options/states');
-      setStates(statesResponse.data);
-      if (isAuthenticated) {
-        const profileResponse = await api.get<UserProfile>('/users/me');
-        const profile = profileResponse.data;
-        setForm((current) => ({
-          ...current,
-          email: profile.email ?? '',
-          phone: profile.phone ?? '',
-          firstName: profile.firstName ?? '',
-          lastName: profile.lastName ?? '',
-          addressLine1: profile.address ?? '',
-          city: profile.city ?? '',
-          state: profile.state ?? '',
-          zipCode: profile.zipCode ?? '',
-        }));
-      }
+      const profileResponse = await api.get<UserProfile>('/users/me');
+      const profile = profileResponse.data;
+      // Prefill from the saved profile, but never overwrite something the
+      // shopper already typed (e.g. after going back to the bag and returning).
+      setForm((current) => ({
+        ...current,
+        email: current.email || profile.email || '',
+        phone: current.phone || profile.phone || '',
+        firstName: current.firstName || profile.firstName || '',
+        lastName: current.lastName || profile.lastName || '',
+        addressLine1: current.addressLine1 || profile.address || '',
+        city: current.city || profile.city || '',
+        state: current.state || profile.state || '',
+        zipCode: current.zipCode || profile.zipCode || '',
+      }));
     } catch (error) {
       console.error('Failed to load checkout details:', error);
       setCheckoutError('Could not load your saved details. You can still enter them below.');
