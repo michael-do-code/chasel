@@ -25,7 +25,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { label: 'Profile', path: '/profile' },
-  { label: 'Order history' },
+  { label: 'Manage activity', path: '/activity' },
   { label: 'My listings', path: '/my-listings' },
   { label: 'Manage drafts' },
   { label: 'Manage reviews' },

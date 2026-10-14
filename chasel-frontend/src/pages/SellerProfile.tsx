@@ -8,6 +8,8 @@ import ListingGrid from '../components/editorial/ListingGrid';
 import type { Listing } from '../types/listing';
 import { formatMemberSince } from '../types/seller';
 import type { SellerProfile as SellerProfileData } from '../types/seller';
+// Shares the account page's layout so a storefront looks like the seller's own profile.
+import './Profile.css';
 import './SellerProfile.css';
 
 type LoadState = 'loading' | 'ready' | 'not-found' | 'error';
@@ -59,29 +61,63 @@ function SellerProfile() {
     );
   }
 
-  const pieceCount = `${listings.length} ${listings.length === 1 ? 'PIECE' : 'PIECES'}`;
-  const details = [
-    seller.state,
-    seller.memberSince && `Member since ${formatMemberSince(seller.memberSince)}`,
-  ].filter(Boolean).join(' · ');
-
   return (
-    <div className="seller-page">
-      <div className="seller-page-shell">
+    <div className="profile-page">
+      <div className="profile-shell">
         <PageHeading
-          kicker={`SELLER · ${pieceCount}`}
+          kicker="Seller"
           title={seller.displayName}
-          lede={details || undefined}
           leading={<Avatar name={seller.displayName} imageUrl={seller.avatarUrl} size="lg" />}
         >
-          <hr className="ed-rule seller-page-rule" />
+          <hr className="ed-rule profile-rule" />
+
+          <div className="profile-details-row">
+            <dl className="profile-details">
+              <div>
+                <dt>Location</dt>
+                <dd>{seller.state || '—'}</dd>
+              </div>
+              <div>
+                <dt>Member since</dt>
+                <dd>{formatMemberSince(seller.memberSince) || '—'}</dd>
+              </div>
+              <div>
+                <dt>Rating</dt>
+                <dd className="profile-detail-muted">No ratings yet</dd>
+              </div>
+              <div>
+                <dt>For sale</dt>
+                <dd>{listings.length} {listings.length === 1 ? 'piece' : 'pieces'}</dd>
+              </div>
+            </dl>
+          </div>
         </PageHeading>
 
-        {listings.length === 0 ? (
-          <p className="seller-page-empty">Nothing for sale from this seller right now.</p>
-        ) : (
-          <ListingGrid listings={listings} />
-        )}
+        <section className="profile-section">
+          <header className="profile-section-heading">
+            <span className="ed-kicker">01</span>
+            <h2>Listings</h2>
+          </header>
+
+          {listings.length === 0 ? (
+            <div className="profile-empty">
+              <p>Nothing for sale from this seller right now.</p>
+            </div>
+          ) : (
+            <ListingGrid listings={listings} />
+          )}
+        </section>
+
+        <section className="profile-section">
+          <header className="profile-section-heading">
+            <span className="ed-kicker">02</span>
+            <h2>Reviews from buyers</h2>
+          </header>
+
+          <div className="profile-empty">
+            <p>No reviews yet.</p>
+          </div>
+        </section>
       </div>
     </div>
   );

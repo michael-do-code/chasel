@@ -14,6 +14,7 @@ export interface OwnerListing {
   price: number | null;
   imageUrls: string[] | null;
   location: string | null;
+  status?: 'ACTIVE' | 'SOLD' | 'DRAFT';
   createdAt: string;
 }
 

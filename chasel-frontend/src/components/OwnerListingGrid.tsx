@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ProductImageCarousel from './ProductImageCarousel';
+import { DEFAULT_GRID_COLUMNS } from './editorial/gridColumns';
+import { formatListingMeta, formatPrice } from '../types/listing';
+import './editorial/ListingGrid.css';
+import './editorial/ListingTile.css';
 import api from '../api/axios';
 import type { OwnerListing } from '../hooks/useMyListings';
 import './OwnerListingGrid.css';
@@ -12,15 +18,6 @@ const listingCategories = [
   'Jewelry',
   'Beauty',
   'Home',
-];
-
-const fallbackListingImages = [
-  'linear-gradient(135deg, #D2B499, #956F4C)',
-  'linear-gradient(135deg, #AEA397, #D2B499)',
-  'linear-gradient(135deg, #956F4C, #4A2B17)',
-  'linear-gradient(135deg, #E6C9AC, #AEA397)',
-  'linear-gradient(135deg, #956F4C, #D2B499)',
-  'linear-gradient(135deg, #D2B499, #E6C9AC)',
 ];
 
 interface OwnerListingGridProps {
@@ -39,6 +36,7 @@ function OwnerListingGrid({ listings, onUpdated, onDeleted }: OwnerListingGridPr
   const [editError, setEditError] = useState('');
   const [deletingListing, setDeletingListing] = useState<OwnerListing | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const openEditModal = (listing: OwnerListing) => {
     setEditingListing(listing);
@@ -93,55 +91,93 @@ function OwnerListingGrid({ listings, onUpdated, onDeleted }: OwnerListingGridPr
 
   return (
     <>
-      <div className="owner-listing-grid">
-        {listings.map((item, index) => (
-          <div className="listing-card" key={item.id}>
-            <div
-              className="listing-image"
-              style={{
-                background: item.imageUrls?.[0]
-                  ? `url(${item.imageUrls[0]}) center/cover`
-                  : fallbackListingImages[index % fallbackListingImages.length],
+      {/* Same grid and tile as Browsing, so a seller sees their pieces the way
+          shoppers do — plus Edit / Delete under each one. */}
+      <div
+        className="ed-listing-grid owner-listing-grid"
+        style={{ '--grid-columns': DEFAULT_GRID_COLUMNS } as React.CSSProperties}
+      >
+        {listings.map((item) => {
+          const meta = formatListingMeta({ size: item.size ?? undefined, condition: item.condition });
+          return (
+            <article
+              className="ed-tile"
+              key={item.id}
+              role="link"
+              tabIndex={0}
+              aria-label={`${item.brand} ${item.title}`}
+              onClick={() => navigate(`/items/${item.id}`)}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  navigate(`/items/${item.id}`);
+                }
               }}
             >
-              <span className="badge badge-sale">FOR SALE</span>
-            </div>
-            <div className="listing-info">
-              <div className="listing-header">
-                <h3 className="listing-title">{item.title}</h3>
-                {item.price != null && <span className="listing-price">${item.price}</span>}
+              <div className="ed-tile-frame">
+                <ProductImageCarousel title={item.title} imageUrls={item.imageUrls ?? []} />
+                {item.status === 'SOLD' && <span className="ed-tile-sold">Sold</span>}
               </div>
-              <p className="listing-brand">{item.category}</p>
-              <div className="listing-owner-actions">
-                <button type="button" onClick={() => openEditModal(item)}>Edit</button>
-                <button type="button" className="listing-delete-btn" onClick={() => setDeletingListing(item)}>Delete</button>
+
+              <div className="ed-tile-body">
+                <div className="ed-tile-line">
+                  <p className="ed-kicker ed-tile-brand">{item.brand}</p>
+                  {item.price != null && <span className="ed-figure">{formatPrice(item.price)}</span>}
+                </div>
+                <h3 className="ed-tile-title">{item.title}</h3>
+                {meta && <p className="ed-meta ed-tile-meta">{meta}</p>}
+
+                <div className="owner-card-actions">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      openEditModal(item);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="owner-card-delete"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setDeletingListing(item);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </article>
+          );
+        })}
       </div>
 
       {editingListing && (
-        <div className="modal-overlay" onClick={() => setEditingListing(null)}>
-          <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="owner-modal-overlay" onClick={() => setEditingListing(null)}>
+          <div className="owner-modal" onClick={(e) => e.stopPropagation()}>
             <h2>Edit listing</h2>
 
             <form onSubmit={handleEditSubmit}>
-              <div className="form-group">
-                <label className="form-label">Title</label>
+              <div className="owner-field">
+                <label htmlFor="edit-listing-title">Title</label>
                 <input
+                  id="edit-listing-title"
                   type="text"
-                  className="form-input"
+                  className="owner-input"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Category</label>
+              <div className="owner-field">
+                <label htmlFor="edit-listing-category">Category</label>
                 <select
-                  className="form-input"
+                  id="edit-listing-category"
+                  className="owner-input"
                   value={editCategory}
                   onChange={(e) => setEditCategory(e.target.value)}
                 >
@@ -151,23 +187,24 @@ function OwnerListingGrid({ listings, onUpdated, onDeleted }: OwnerListingGridPr
                 </select>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Price</label>
+              <div className="owner-field">
+                <label htmlFor="edit-listing-price">Price</label>
                 <input
+                  id="edit-listing-price"
                   type="number"
-                  className="form-input"
+                  className="owner-input"
                   value={editPrice}
                   onChange={(e) => setEditPrice(e.target.value)}
                   placeholder="0"
                 />
               </div>
 
-              {editError && <p className="modal-error">{editError}</p>}
+              {editError && <p className="owner-modal-error">{editError}</p>}
 
-              <div className="modal-actions">
-                <button type="button" className="modal-cancel-btn" onClick={() => setEditingListing(null)}>Cancel</button>
-                <button type="submit" className="btn-submit" disabled={savingEdit}>
-                  {savingEdit ? 'SAVING...' : 'SAVE CHANGES'}
+              <div className="owner-modal-actions">
+                <button type="button" className="ed-btn ed-btn-outline" onClick={() => setEditingListing(null)}>Cancel</button>
+                <button type="submit" className="ed-btn ed-btn-solid" disabled={savingEdit}>
+                  {savingEdit ? 'Saving…' : 'Save changes'}
                 </button>
               </div>
             </form>
@@ -176,16 +213,16 @@ function OwnerListingGrid({ listings, onUpdated, onDeleted }: OwnerListingGridPr
       )}
 
       {deletingListing && (
-        <div className="modal-overlay" onClick={() => setDeletingListing(null)}>
-          <div className="modal-panel modal-panel-small" onClick={(e) => e.stopPropagation()}>
+        <div className="owner-modal-overlay" onClick={() => setDeletingListing(null)}>
+          <div className="owner-modal owner-modal-small" onClick={(e) => e.stopPropagation()}>
             <h2>Delete listing?</h2>
-            <p className="modal-confirm-text">
+            <p className="owner-modal-text">
               Are you sure you want to delete "{deletingListing.title}"? This can't be undone.
             </p>
-            <div className="modal-actions">
-              <button type="button" className="modal-cancel-btn" onClick={() => setDeletingListing(null)}>Cancel</button>
-              <button type="button" className="modal-delete-btn" onClick={handleConfirmDelete} disabled={deleting}>
-                {deleting ? 'DELETING...' : 'DELETE'}
+            <div className="owner-modal-actions">
+              <button type="button" className="ed-btn ed-btn-outline" onClick={() => setDeletingListing(null)}>Cancel</button>
+              <button type="button" className="ed-btn owner-modal-delete" onClick={handleConfirmDelete} disabled={deleting}>
+                {deleting ? 'Deleting…' : 'Delete'}
               </button>
             </div>
           </div>
