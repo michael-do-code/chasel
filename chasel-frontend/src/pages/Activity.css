@@ -1,0 +1,76 @@
+.activity {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-align: left;
+}
+
+.activity-bar {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 34px var(--shell-gutter) 0;
+  box-sizing: border-box;
+}
+
+.activity-bar-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.activity-back {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.activity-back:hover {
+  color: var(--ink);
+}
+
+.activity-summary {
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.activity-loading {
+  width: min(100%, var(--shell-width));
+  margin: 0 auto;
+  padding: 40px var(--shell-gutter);
+  box-sizing: border-box;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+/* The embedded Purchases / Sales pages are full pages on their own; under the
+   tab bar they only need a little top spacing, not a full page's worth. */
+.activity-panel .purchases-page,
+.activity-panel .sales-page {
+  min-height: 0;
+  padding-top: 40px;
+}
+
+@media (max-width: 860px) {
+  .activity-bar {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .activity-bar {
+    padding-inline: 18px;
+  }
+
+  .activity-bar-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

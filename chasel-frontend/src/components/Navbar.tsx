@@ -475,7 +475,10 @@ function Navbar() {
           </button>
         </div>
       </div>
+      {/* Keyed by account so a logout/login on the same tab starts with an empty
+          checkout form instead of the previous shopper's details. */}
       <Cart
+        key={token ?? 'guest'}
         open={cartOpen}
         startInCheckout={openCartAtCheckout}
         onClose={handleCartClose}

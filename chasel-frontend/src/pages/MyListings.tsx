@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import PageHeading from '../components/editorial/PageHeading';
 import OwnerListingGrid from '../components/OwnerListingGrid';
 import { useMyListings, type OwnerListing } from '../hooks/useMyListings';
-import '../styles/marketplace.css';
 import './MyListings.css';
 
 type SortOption = 'newest' | 'oldest' | 'price-high' | 'price-low';
